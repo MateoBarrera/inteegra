@@ -1,0 +1,423 @@
+<!--
+
+=========================================================
+* Volt Free - Bootstrap 5 Dashboard
+=========================================================
+
+* Product Page: https://themesberg.com/product/admin-dashboard/volt-bootstrap-5-dashboard
+* Copyright 2021 Themesberg (https://www.themesberg.com)
+* License (https://themesberg.com/licensing)
+
+* Designed and coded by https://themesberg.com
+
+=========================================================
+
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. Please contact us to request a removal.
+
+-->
+
+{% extends 'base.html' %} {% import 'module/modals.html' as modals %} {% block title %} {{ super()
+}} Dashboard {% endblock %} {% block navbar %} {% include 'navbar.html' %} {% endblock %} {% block
+body %} {{ super() }}
+<main>
+	<section id="main-home">
+		<div class="d-flex pt-2 justify-content-center px-1 min-vh-100">
+			<div class="col-xxl-8 col-md-10 col-sm-12 container-md">
+				<div
+					class="card border-0 shadow components-section flex-grow-1 px-2 px-md-5 px-lg-2 px-xxl-5"
+				>
+					<div class="card-body px-2">
+						<div class="row mt-4 text-center">
+							<div class="col-12">
+								<h2 class="h3 fw-extrabold">Bienvenido a INTEEGRA</h2>
+								<p class="mb-0 justified-text px-lg-4">
+									Desde aquí pude acceder a cada uno de los siguientes módulos disponibles.
+								</p>
+							</div>
+						</div>
+						<div class="p-2">
+							<div class="row align-middle mt-2">
+								<div class="col-12 col-lg-6 flex-grow-1 p-2">
+									<div class="card border-1 shadow card-effect" id="card-base-datos">
+										<div class="card-body px-auto">
+											<div class="row d-flex align-items-center">
+												<div class="col-10 text-center justify-content-between">
+													<a href="{{url_for('dashboard.database')}}"
+														><h4 class="fw-extrabold mb-1">Base de datos</h4></a
+													>
+												</div>
+												<div class="col-2 d-flex justify-content-center">
+													<button
+														type="button"
+														aria-label="info base de datos"
+														class="btn btn btn-link text-dark p-1"
+														data-bs-toggle="modal"
+														data-bs-target="#modal-database"
+													>
+														<svg
+															class="icon icon-sm"
+															fill="currentColor"
+															viewBox="0 0 20 20"
+															xmlns="http://www.w3.org/2000/svg"
+														>
+															<path
+																fill-rule="evenodd"
+																d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+																clip-rule="evenodd"
+															></path>
+														</svg>
+													</button>
+												</div>
+												<a href="{{url_for('dashboard.database')}}">
+													<div class="row">
+														<div
+															class="col-5 mb-3 d-flex align-items-center justify-content-center"
+														>
+															<div
+																class="icon-shape icon-shape-primary rounded me-4 me-sm-0 card-effect-icon"
+															>
+																<svg
+																	class="w-6 h-6"
+																	fill="currentColor"
+																	viewBox="0 0 20 20"
+																	xmlns="http://www.w3.org/2000/svg"
+																>
+																	<path
+																		d="M3 12v3c0 1.657 3.134 3 7 3s7-1.343 7-3v-3c0 1.657-3.134 3-7 3s-7-1.343-7-3z"
+																	/>
+																	<path
+																		d="M3 7v3c0 1.657 3.134 3 7 3s7-1.343 7-3V7c0 1.657-3.134 3-7 3S3 8.657 3 7z"
+																	/>
+																	<path
+																		d="M17 5c0 1.657-3.134 3-7 3S3 6.657 3 5s3.134-3 7-3 7 1.343 7 3z"
+																	/>
+																</svg>
+															</div>
+														</div>
+														<div class="col-7 px-lg-0">
+															<div class="d-sm-none">
+																<div class="d-flex align-items-center m-2">
+																	<span
+																		class="dot rounded-circle bg-gray-400 me-2 card-effect-text"
+																	></span>
+																	<span class="fw-normal small card-effect-text">Indicadores</span>
+																</div>
+																<div class="d-flex align-items-center m-2">
+																	<span
+																		class="dot rounded-circle bg-gray-400 me-2 card-effect-text"
+																	></span>
+																	<span class="fw-normal small card-effect-text">Variables</span>
+																</div>
+															</div>
+															<div class="d-none d-sm-block">
+																<div class="d-flex align-items-center m-2">
+																	<span class="dot rounded-circle bg-gray-400 me-2"></span
+																	><span class="fw-normal text-gray-400 small card-effect-text"
+																		>Indicadores</span
+																	>
+																</div>
+																<div class="d-flex align-items-center m-2">
+																	<span class="dot rounded-circle bg-gray-400 me-2"></span
+																	><span class="fw-normal text-gray-400 small card-effect-text"
+																		>Variables</span
+																	>
+																</div>
+															</div>
+														</div>
+													</div>
+												</a>
+											</div>
+										</div>
+									</div>
+									{{modals.render_modal('info','database','Base de datos', text_module_db)}}
+								</div>
+								<div class="col-12 col-lg-6 flex-grow-1 p-2">
+									<div class="card border-1 shadow card-effect">
+										<div class="card-body px-auto">
+											<div class="row d-flex align-items-center">
+												<div class="col-10 text-center justify-content-between">
+													<a href="{{url_for('dashboard.calc')}}"
+														><h4 class="fw-extrabold mb-1">Escenario base</h4></a
+													>
+												</div>
+												<div class="col-2 d-flex justify-content-center">
+													<button
+														type="button"
+														aria-label="info calculo"
+														class="btn btn btn-link text-dark p-1"
+														data-bs-toggle="modal"
+														data-bs-target="#modal-calc"
+													>
+														<svg
+															class="icon icon-sm"
+															fill="currentColor"
+															viewBox="0 0 20 20"
+															xmlns="http://www.w3.org/2000/svg"
+														>
+															<path
+																fill-rule="evenodd"
+																d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+																clip-rule="evenodd"
+															></path>
+														</svg>
+													</button>
+												</div>
+												<a href="{{url_for('dashboard.calc')}}">
+													<div class="row">
+														<div
+															class="col-5 mb-3 d-flex align-items-center justify-content-center"
+														>
+															<div
+																class="icon-shape icon-shape-secondary rounded me-4 me-sm-0 card-effect-icon"
+															>
+																<svg
+																	class="w-6 h-6"
+																	fill="currentColor"
+																	viewBox="0 0 20 20"
+																	xmlns="http://www.w3.org/2000/svg"
+																>
+																	<path
+																		fill-rule="evenodd"
+																		d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V4a2 2 0 00-2-2H6zm1 2a1 1 0 000 2h6a1 1 0 100-2H7zm6 7a1 1 0 011 1v3a1 1 0 11-2 0v-3a1 1 0 011-1zm-3 3a1 1 0 100 2h.01a1 1 0 100-2H10zm-4 1a1 1 0 011-1h.01a1 1 0 110 2H7a1 1 0 01-1-1zm1-4a1 1 0 100 2h.01a1 1 0 100-2H7zm2 1a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1zm4-4a1 1 0 100 2h.01a1 1 0 100-2H13zM9 9a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1zM7 8a1 1 0 000 2h.01a1 1 0 000-2H7z"
+																		clip-rule="evenodd"
+																	></path>
+																</svg>
+															</div>
+														</div>
+														<div class="col-7 px-lg-0">
+															<div class="d-sm-none">
+																<div class="d-flex align-items-center m-2">
+																	<span class="dot rounded-circle bg-gray-400 me-2"></span>
+																	<span class="fw-normal small">Línea base</span>
+																</div>
+																<div class="d-flex align-items-center m-2">
+																	<span class="dot rounded-circle bg-gray-400 me-2"></span>
+																	<span class="fw-normal small">Indicadores de EE</span>
+																</div>
+															</div>
+															<div class="d-none d-sm-block">
+																<div class="d-flex align-items-center m-2">
+																	<span class="dot rounded-circle bg-gray-400 me-2"></span
+																	><span class="fw-normal text-gray-400 small card-effect-text"
+																		>Línea base</span
+																	>
+																</div>
+																<div class="d-flex align-items-center m-2">
+																	<span class="dot rounded-circle bg-gray-400 me-2"></span
+																	><span class="fw-normal text-gray-400 small card-effect-text"
+																		>Indicadores de EE</span
+																	>
+																</div>
+															</div>
+														</div>
+													</div>
+												</a>
+											</div>
+										</div>
+									</div>
+									{{modals.render_modal('info','calc','Escenario base', text_module_calc)}}
+								</div>
+							</div>
+							<div class="row align-middle">
+								<div class="col-12 col-lg-6 flex-grow-1 p-2">
+									<div class="card border-1 shadow card-effect">
+										<div class="card-body px-auto">
+											<div class="row d-flex align-items-center">
+												<div class="col-10 text-center justify-content-between">
+													<a href="{{url_for('dashboard.analysis')}}"
+														><h4 class="fw-extrabold mb-1">Análisis de estrategias</h4></a
+													>
+												</div>
+												<div class="col-2 d-flex justify-content-center">
+													<button
+														type="button"
+														aria-label="info analisis"
+														class="btn btn btn-link text-dark p-1"
+														data-bs-toggle="modal"
+														data-bs-target="#modal-analysis"
+													>
+														<svg
+															class="icon icon-sm"
+															fill="currentColor"
+															viewBox="0 0 20 20"
+															xmlns="http://www.w3.org/2000/svg"
+														>
+															<path
+																fill-rule="evenodd"
+																d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+																clip-rule="evenodd"
+															></path>
+														</svg>
+													</button>
+												</div>
+												<a href="{{url_for('dashboard.analysis')}}">
+													<div class="row">
+														<div
+															class="col-5 mb-3 d-flex align-items-center justify-content-center"
+														>
+															<div
+																class="icon-shape icon-shape-secondary rounded me-4 me-sm-0 card-effect-icon"
+															>
+																<svg
+																	class="w-6 h-6"
+																	fill="currentColor"
+																	viewBox="0 0 20 20"
+																	xmlns="http://www.w3.org/2000/svg"
+																>
+																	<path
+																		fill-rule="evenodd"
+																		d="M5 3a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V5a2 2 0 00-2-2H5zm9 4a1 1 0 10-2 0v6a1 1 0 102 0V7zm-3 2a1 1 0 10-2 0v4a1 1 0 102 0V9zm-3 3a1 1 0 10-2 0v1a1 1 0 102 0v-1z"
+																		clip-rule="evenodd"
+																	></path>
+																</svg>
+															</div>
+														</div>
+														<div class="col-7 px-lg-0">
+															<div class="d-sm-none">
+																<div class="d-flex align-items-center m-2">
+																	<span class="dot rounded-circle bg-gray-400 me-2"></span>
+																	<span class="fw-normal small">Escenarios</span>
+																</div>
+																<div class="d-flex align-items-center m-2">
+																	<span class="dot rounded-circle bg-gray-400 me-2"></span>
+																	<span class="fw-normal small">Resultados</span>
+																</div>
+															</div>
+															<div class="d-none d-sm-block">
+																<div class="d-flex align-items-center m-2">
+																	<span class="dot rounded-circle bg-gray-400 me-2"></span
+																	><span class="fw-normal text-gray-400 small card-effect-text"
+																		>Escenarios</span
+																	>
+																</div>
+																<div class="d-flex align-items-center m-2">
+																	<span class="dot rounded-circle bg-gray-400 me-2"></span
+																	><span class="fw-normal text-gray-400 small card-effect-text"
+																		>Resultados</span
+																	>
+																</div>
+															</div>
+														</div>
+													</div>
+												</a>
+											</div>
+										</div>
+									</div>
+									{{modals.render_modal('info','analysis','Análisis de estrategias',
+									text_module_anl)}}
+								</div>
+								<div class="col-12 col-lg-6 flex-grow-1 p-2">
+									<div class="card border-1 shadow card-effect">
+										<div class="card-body px-auto">
+											<div class="row d-flex align-items-center">
+												<div class="col-10 text-center justify-content-between">
+													<a href="{{url_for('dashboard.config')}}"
+														><h4 class="fw-extrabold mb-1">Configuración</h4></a
+													>
+												</div>
+												<div class="col-2 d-flex justify-content-center">
+													<button
+														type="button"
+														aria-label="info configuracion"
+														class="btn btn btn-link text-dark p-1"
+														data-bs-toggle="modal"
+														data-bs-target="#modal-config"
+													>
+														<svg
+															class="icon icon-sm"
+															fill="currentColor"
+															viewBox="0 0 20 20"
+															xmlns="http://www.w3.org/2000/svg"
+														>
+															<path
+																fill-rule="evenodd"
+																d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+																clip-rule="evenodd"
+															></path>
+														</svg>
+													</button>
+												</div>
+												<a href="{{url_for('dashboard.config')}}">
+													<div class="row">
+														<div
+															class="col-5 mb-3 d-flex align-items-center justify-content-center"
+														>
+															<div
+																class="icon-shape icon-shape-primary rounded me-4 me-sm-0 card-effect-icon"
+															>
+																<svg
+																	class="w-6 h-6"
+																	fill="currentColor"
+																	viewBox="0 0 20 20"
+																	xmlns="http://www.w3.org/2000/svg"
+																>
+																	<path
+																		fill-rule="evenodd"
+																		d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z"
+																		clip-rule="evenodd"
+																	></path>
+																</svg>
+															</div>
+														</div>
+														<div class="col-7 px-0">
+															<div class="d-sm-none">
+																<div class="d-flex align-items-center m-2">
+																	<span class="dot rounded-circle bg-gray-400 me-2"></span>
+																	<span class="fw-normal small">Información de usuario</span>
+																</div>
+																<div class="d-flex align-items-center m-2">
+																	<span class="dot rounded-circle bg-gray-400 me-2"></span>
+																	<span class="fw-normal small">Ajustes de acceso</span>
+																</div>
+															</div>
+															<div class="d-none d-sm-block">
+																<div class="d-flex align-items-center m-2">
+																	<span class="dot rounded-circle bg-gray-400 me-2"></span
+																	><span class="fw-normal text-gray-400 small card-effect-text"
+																		>Información de Usuario</span
+																	>
+																</div>
+																<div class="d-flex align-items-center m-2">
+																	<span class="dot rounded-circle bg-gray-400 me-2"></span
+																	><span class="fw-normal text-gray-400 small card-effect-text"
+																		>Ajustes de acceso</span
+																	>
+																</div>
+															</div>
+														</div>
+													</div>
+												</a>
+											</div>
+										</div>
+									</div>
+									{{modals.render_modal('info','config','Configuración', text_module_conf)}}
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				{% if admin_user %}
+				<div class="bg-white rounded shadow p-4 mt-2">
+					<div class="row justify-content-between px-5">
+						<div class="d-flex col-10">
+                            <h4 class="fw-extrabold">Panel de administrador</h4>
+						</div>
+                        <div class="d-flex col-2">
+                            <a href="/admin" class="btn btn-primary">Abrir</a>
+                        </div>
+					</div>
+				</div>
+				{% endif %} {% block footer %} {% include 'module/footer.html' %} {% endblock %}
+			</div>
+		</div>
+	</section>
+</main>
+{% endblock %} {% block scripts %} {{super()}}
+<script type="text/javascript">
+	function clickFn(event) {
+		const checkbox = event.currentTarget
+		document.getElementById("admin-session-text").value = checkbox.checked ? "True" : "False"
+		event.currentTarget.closest("form").submit()
+	}
+</script>
+{% endblock %}

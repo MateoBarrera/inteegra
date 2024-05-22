@@ -1,0 +1,17 @@
+.sidebar .nav-item .dropdown-menu {
+    position: relative !important;
+    background: #fcbf0c;
+    width: 100%;
+    transform: none !important;
+}
+
+
+.dropdown-menu .dropdown-item.active,
+.dropdown-menu .dropdown-item:hover {
+    color: #ffffff !important;
+    background-color: #1f2937 !important;
+}
+
+.nav {
+    background: none;
+}

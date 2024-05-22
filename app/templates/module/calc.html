@@ -1,0 +1,930 @@
+<!--
+
+=========================================================
+* Volt Free - Bootstrap 5 Dashboard
+=========================================================
+
+* Product Page: https://themesberg.com/product/admin-dashboard/volt-bootstrap-5-dashboard
+* Copyright 2021 Themesberg (https://www.themesberg.com)
+* License (https://themesberg.com/licensing)
+
+* Designed and coded by https://themesberg.com
+
+=========================================================
+
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. Please contact us to request a removal.
+
+-->
+
+{% extends 'base.html' %} {% import 'module/modals.html' as modals %} {% block head %} {{ super() }}
+    <!-- Datatables CSS -->
+    <link rel="stylesheet" href="//cdn.datatables.net/1.12.0/css/jquery.dataTables.min.css"/>
+
+    <!-- stonly-widget - copy into the head -->
+    <script>
+        window.STONLY_WID = "557476f0-4f0d-11ed-871a-0a52ff1ec764"
+    </script>
+    <script>
+        !(function (s, t, o, n, l, y, w, g) {
+            s.StonlyWidget ||
+            (((w = s.StonlyWidget =
+                function () {
+                    w._api ? w._api.apply(w, arguments) : w.queue.push(arguments)
+                }).scriptPath = n),
+                (w.queue = []),
+                ((y = t.createElement(o)).async = !0),
+                (g = new XMLHttpRequest()).open("GET", n + "version?v=" + Date.now(), !0),
+                (g.onreadystatechange = function () {
+                    4 === g.readyState &&
+                    ((y.src = n + "stonly-widget.js?v=" + (200 === g.status ? g.responseText : Date.now())),
+                        (l = t.getElementsByTagName(o)[0]).parentNode.insertBefore(y, l))
+                }),
+                g.send())
+        })(window, document, "script", "https://stonly.com/js/widget/v2/")
+    </script>
+{% endblock %} {% block title %} {{ super() }} Cálculo {% endblock %} {% block content %} {{ super() }}
+    <body onload="ActivateLink('calc')">
+    {% block sidebar %} {% include 'module/sidebar.html' %} {% endblock %}
+
+    <main class="content">
+        <div class="d-none d-lg-flex">
+            {% block nav %} {% include 'module/navbar.html' %} {% endblock %}
+        </div>
+
+        <section id="main">
+            <div class="row mt-2">
+                <div class="col-12 d-flex flex-column">
+                    <div class="card border-0 shadow components-section flex-grow-1 pt-3 px-2 px-md-4 px-xxl-5">
+                        <div class="card-body p-0">
+                            <div class="row mt-4 mt-lg-4">
+                                <div class="col-12 px-4 px-md-2">
+                                    <h3 class="fw-extrabold">Bienvenido a escenario base</h3>
+                                    <p class="mb-0 justified-text">
+                                        En este módulo se presenta la especificación del modelo de proyección para las variables, empleadas en la evaluación de estrategias de eficiencia energética del sector eléctrico en Colombia. También se incluye la visualización de los resultados de proyección con la tendencia histórica de las variables hasta el 2030.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="row main-row">
+                                <div class="col-12 col-sm-6 col-xl-4 my-4 flex-grow-1">
+                                    <a href="#projections" onclick="ActiveSection('projections')">
+                                        {#                                    <a href="#stages" data-bs-toggle="modal" data-bs-target="#modal-analysis-1">#}
+                                        <div class="card border-1 shadow card-effect">
+                                            <div class="card-body">
+                                                {# TEMPORAL #}
+                                                {#                                                <img class="image comming-soon top-0 end-0"#}
+                                                {#                                                     src="{{ url_for('static',filename='images/proximamente3.png') }}"#}
+                                                {#                                                     height="84"#}
+                                                {#                                                     width="104" alt="Próximamente logo.">#}
+                                                {# TEMPORAL #}
+                                                <div class="row d-block d-xl-flex align-items-center">
+                                                    <div
+                                                            class="col-12 col-xl-5 text-xl-center mb-3 mb-xl-0 d-flex align-items-center justify-content-xl-center"
+                                                    >
+                                                        <div
+                                                                class="icon-shape icon-shape-primary rounded me-4 me-sm-0 card-effect-icon"
+                                                        >
+                                                            <svg
+                                                                    class="w-6 h-6"
+                                                                    fill="currentColor"
+                                                                    xmlns="http://www.w3.org/2000/svg"
+                                                                    viewBox="0 0 24 24">
+                                                                <path d="M19 10V7c0-1.103-.897-2-2-2h-3c0-1.654-1.346-3-3-3S8 3.346 8 5H5c-1.103 0-2 .897-2 2v4h1a2 2 0 0 1 0 4H3v4c0 1.103.897 2 2 2h4v-1a2 2 0 0 1 4 0v1h4c1.103 0 2-.897 2-2v-3c1.654 0 3-1.346 3-3s-1.346-3-3-3z"></path>
+                                                            </svg>
+                                                        </div>
+                                                        <div class="d-sm-none">
+                                                            <h3 class="fw-extrabold mb-1">Proyecciones</h3>
+                                                            <h2 class="h6 text-gray-400 mb-0">Modelo de regresión</h2>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-12 col-xl-7 px-xl-0">
+                                                        <div class="d-none d-sm-block">
+                                                            <h3 class="fw-extrabold mb-2">Proyecciones</h3>
+                                                            <h2 class="h6 text-gray-400 mb-0">Modelo de regresión</h2>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {# TEMPORAL #}
+                                        {% set text_module1 = 'En el módulo de análisis se  se incluyen la especificación de los modelos de proyección empleados en la evaluación de estrategias de eficiencia energética.' %}
+                                        {{ modals.render_modal('coming','analysis-1','Proyecciones: modelo de regresión', text_module1) }}
+                                        {# TEMPORAL #}
+                                    </a>
+                                </div>
+
+                                <div class="col-12 col-sm-6 col-xl-4 my-4 flex-grow-1">
+                                    <a href="#calculation" onclick="ActiveSection('calculation')">
+                                        {#                                    <a href="#stages" data-bs-toggle="modal" data-bs-target="#modal-analysis-1">#}
+                                        <div class="card border-1 shadow card-effect">
+                                            <div class="card-body">
+                                                {#                                              {# TEMPORAL #}
+                                                {#                                                <img class="image comming-soon top-0 end-0"#}
+                                                {#                                                     src="{{ url_for('static',filename='images/proximamente3.png') }}"#}
+                                                {#                                                     height="84"#}
+                                                {#                                                     width="104" alt="Próximamente logo.">#}
+                                                {# TEMPORAL #}
+                                                <div class="row d-block d-xl-flex align-items-center">
+                                                    <div
+                                                            class="col-12 col-xl-5 text-xl-center mb-3 mb-xl-0 d-flex align-items-center justify-content-xl-center"
+                                                    >
+                                                        <div
+                                                                class="icon-shape icon-shape-secondary rounded me-4 me-sm-0 card-effect-icon"
+                                                        >
+                                                            <svg
+                                                                    class="w-6 h-6"
+                                                                    fill="currentColor"
+                                                                    viewBox="0 0 20 20"
+                                                                    xmlns="http://www.w3.org/2000/svg"
+                                                            >
+                                                                <path
+                                                                        d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"
+                                                                ></path>
+                                                            </svg>
+                                                        </div>
+                                                        <div class="d-sm-none">
+                                                            <h3 class="fw-extrabold mb-1">Graficas</h3>
+                                                            <h2 class="h6 text-gray-400 mb-0">de las variables
+                                                                energéticas</h2>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-12 col-xl-7 px-xl-0">
+                                                        <div class="d-none d-sm-block">
+                                                            <h3 class="fw-extrabold mb-2">Graficas</h3>
+                                                            <h2 class="h6 text-gray-400 mb-0">de las variables
+                                                                energéticas</h2>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section id="projections" hidden>
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center">
+                <div class="d-block">
+                    <nav aria-label="breadcrumb" class="d-none d-md-inline-block pt-2">
+                        <ol class="breadcrumb breadcrumb-dark breadcrumb-transparent">
+                            <li class="breadcrumb-item">
+                                <a href="{{ url_for('dashboard.main') }}">
+                                    <svg class="icon icon-xxs" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                         xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+                                        </path>
+                                    </svg>
+                                </a>
+                            </li>
+                            <li class="breadcrumb-item"><a href="#" onclick="ActiveSection('main')">Escenario base</a>
+                            </li>
+                            <li class="breadcrumb-item active" aria-current="page">Proyecciones</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+            <div class="row mb-2 min-vh-85">
+                <div class="col-12">
+                    <div class="card border-0 shadow h-100">
+                        <div class="card-body px-1 px-md-3 d-flex flex-column">
+                            <div class="row mb-2">
+                                <div class="col-12">
+                      <span class="icon-shape icon-xs icon-shape-primary rounded me-4 me-sm-0 card-effect-icon">
+                          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"
+                               xmlns="http://www.w3.org/2000/svg">><path
+                                  d="M20 12a2 2 0 0 0-.703.133l-2.398-1.963c.059-.214.101-.436.101-.67C17 8.114 15.886 7 14.5 7S12 8.114 12 9.5c0 .396.1.765.262 1.097l-2.909 3.438A2.06 2.06 0 0 0 9 14c-.179 0-.348.03-.512.074l-2.563-2.563C5.97 11.348 6 11.179 6 11c0-1.108-.892-2-2-2s-2 .892-2 2 .892 2 2 2c.179 0 .348-.03.512-.074l2.563 2.563A1.906 1.906 0 0 0 7 16c0 1.108.892 2 2 2s2-.892 2-2c0-.237-.048-.46-.123-.671l2.913-3.442c.227.066.462.113.71.113a2.48 2.48 0 0 0 1.133-.281l2.399 1.963A2.077 2.077 0 0 0 18 14c0 1.108.892 2 2 2s2-.892 2-2-.892-2-2-2z"></path></svg>
+                      </span>
+                                    <span class="h2 fw-extrabold">Proyecciones</span>
+                                </div>
+                            </div>
+                            <div class="row flex-fill px-4">
+                                <div class="d-block pt-3 w-75">
+                                    <p class="m-1 fs-5 fw-extrabold">Descripción</p>
+                                    <p>Las proyecciones son una herramienta esencial para generar información relevante
+                                        y actualizada que permita a los tomadores de decisiones realizar su labor de
+                                        manera más informadas y precisa sobre el sector eléctrico en el futuro.
+                                        Un método de proyección es una técnica estadística que se utiliza para predecir
+                                        el valor futuro de una serie de tiempo en función de sus valores previos y/o de
+                                        otras variables relacionadas.
+                                        Las proyecciones se realizaron con el objetivo de validar el Escenario BAU y
+                                        crear una metodología de evaluación
+                                        de estrategias de eficiencia energética funcional posterior al año 2030, el cual
+                                        es el año de análisis de la mayoría de políticas públicas energéticas del país.
+                                        Estos métodos son utilizados en el análisis de
+                                        series de tiempo para hacer pronósticos de eventos futuros y tomar decisiones
+                                        basadas en esos pronósticos.
+                                        En este estudio se pretenden aplicar modelos de proyección a largo plazo, es
+                                        decir anualmente, sobre las series de datos históricas de las variables
+                                        asociadas a la cadena de valor de la energía eléctrica nacional.
+                                    </p>
+                                </div>
+                                <div class="d-block p-4 w-25">
+                                    <img
+                                            src="{{ url_for('static',filename='/images/projections-man.svg') }}"
+                                            alt="Context image - Image about projections"
+                                            focusable="false">
+                                </div>
+                            </div>
+                            {# Inicio zona de contenido  #}
+                            <div class="row flex-fill px-4">
+                                <div class="d-block pt-3">
+                                    <div class="d-flex align-items-center mb-3">
+                                        A continuación se indican las variables asociadas a la cadena de valor de la
+                                        energía eléctrica de Colombia que se pretenden proyectar hasta el año 2030,
+                                        indicando la frecuencia de muestreo y la fuente de las series de datos. Así
+                                        mismo, se define el tratamiento previo de las series de datos necesario para
+                                        emplear modelos de proyección, se realiza una revisión del estado del arte de
+                                        los métodos de proyección existentes, y finalmente, se indican los estadísticos
+                                        empleados para comparar y seleccionar los métodos de proyección a utilizar.
+                                    </div>
+                                    <div class="card-body p-0">
+                                        <div class="table-responsive">
+                                            <table class="table table-centered table-nowrap mb-0 rounded">
+                                                <thead class="thead-light">
+                                                <tr>
+                                                    <th class="border-0 rounded-start">Tipo</th>
+                                                    <th class="border-0">Variable</th>
+                                                    <th class="border-0">Desagregación</th>
+                                                    <th class="border-0">Frecuencia de muestreo</th>
+                                                    <th class="border-0 rounded-end">Fuente</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr>
+                                                    <td>Variable de interés</td>
+                                                    <td class="fw-bold d-flex align-items-center">
+                                                        Energía eléctrica generada <br> G [GWh]
+                                                    </td>
+                                                    <td><strong>Nivel 1:</strong> Energía eléctrica generada total.</td>
+                                                    <td>Trimestralmente desde el año 2000 hasta el año 2021. 88 datos en
+                                                        total.
+                                                    </td>
+                                                    <td>Sinergox - XM</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Variable de interés</td>
+                                                    <td class="fw-bold d-flex align-items-center">
+                                                        Energía primaria consumida <br> C [GWh]
+                                                    </td>
+                                                    <td><strong>Nivel 1:</strong> Energía primaria consumida total.</td>
+                                                    <td>Trimestralmente desde el año 2000 hasta el año 2021. 88 datos en
+                                                        total.
+                                                    </td>
+                                                    <td>BECO - UPME</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Variable de interés</td>
+                                                    <td class="fw-bold d-flex align-items-center">
+                                                        Energía Facturada <br> EF [GWh]
+                                                    </td>
+                                                    <td><strong>Nivel 1:</strong> Energía eléctrica facturada total.
+                                                    </td>
+                                                    <td>Trimestralmente desde el año 2010 hasta el año 2021. 44 datos en
+                                                        total.
+                                                    </td>
+                                                    <td>LAC ADD- XM</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Variable de interés</td>
+                                                    <td class="fw-bold d-flex align-items-center">
+                                                        Costo de distribución eléctrica <br> CD [$/kWh]
+                                                    </td>
+                                                    <td><strong>Nivel 1:</strong> Costo asociado a la distribución
+                                                        eléctrica.
+                                                    </td>
+                                                    <td>Trimestralmente desde el año 2010 hasta el año 2021. 44 datos en
+                                                        total.
+                                                    </td>
+                                                    <td>LAC ADD - XM</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Variable de interés</td>
+                                                    <td class="fw-bold d-flex align-items-center">
+                                                        Demanda de energía eléctrica <br> DEE [GWh]
+                                                    </td>
+                                                    <td><strong>Nivel 1:</strong> Energía eléctrica consumida total en
+                                                        el uso final.
+                                                    </td>
+                                                    <td>Trimestralmente desde el año 2000 hasta el año 2021. 88 datos en
+                                                        total.
+                                                    </td>
+                                                    <td>UPME</td>
+                                                </tr>
+                                                <tr></tr>
+                                                <tr>
+                                                    <td>Variable exógena</td>
+                                                    <td class="fw-bold d-flex align-items-center">
+                                                        Producto Interno Bruto <br> PIB
+                                                        [billones de dólares]
+                                                    </td>
+                                                    <td><strong>Nivel 1:</strong> PIB real base 2015: PIB nacional a
+                                                        precios constantes del 2015.
+                                                    </td>
+                                                    <td>Trimestralmente desde el año 2000 hasta el año 2030. 124 datos
+                                                        en
+                                                        total.
+                                                    </td>
+                                                    <td>UPME</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Variable exógena</td>
+                                                    <td class="fw-bold d-flex align-items-center">
+                                                        Población <br> POB
+                                                        [miles de personas]
+                                                    </td>
+                                                    <td><strong>Nivel 1:</strong> Población total de Colombia.
+                                                    </td>
+                                                    <td>Trimestralmente desde el año 2000 hasta el año 2030. 124 datos
+                                                        en
+                                                        total.
+                                                    </td>
+                                                    <td>UPME</td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row flex-fill px-4 mt-2">
+                                <div class="d-block p-4 w-25">
+                                    <img
+                                            src="{{ url_for('static',filename='/images/choose.svg') }}"
+                                            alt="Context image - Image about projections"
+                                            focusable="false">
+                                </div>
+                                <div class="d-block pt-3 w-75">
+                                    <p>En la validación del Escenario BAU para las variables de cada proceso, se
+                                        contemplaron las siguientes comparaciones:</p>
+                                    <div class="d-flex align-items-center mb-3">
+                                        <svg class="icon icon-md me-2" fill="currentColor" viewBox="0 0 20 20"
+                                             xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd"
+                                                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                                  clip-rule="evenodd"></path>
+                                        </svg>
+                                        <span>Para la Generación, se comparó la proyección de los datos históricos de la variable Energía eléctrica generada (G) con la generación asociada a la CEN del Escenario 0.2 de la Unidad de Planeación Minero Energética - UPME.
+                            </span>
+                                    </div>
+                                    <div class="d-flex align-items-center mb-3">
+                                        <svg class="icon icon-md me-2" fill="currentColor" viewBox="0 0 20 20"
+                                             xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd"
+                                                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                                  clip-rule="evenodd"></path>
+                                        </svg>
+                                        <span>Para la Distribución, se comparó la proyección de los datos históricos de la variable de energía facturada y componente de Distribución del CU, con los estimados y resultados reportados por parte de la Superintendencia Servicios Públicos Domiciliarios.
+                            </span>
+                                    </div>
+                                    <div class="d-flex align-items-center mb-3">
+                                        <svg class="icon icon-md me-2" fill="currentColor" viewBox="0 0 20 20"
+                                             xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd"
+                                                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                                  clip-rule="evenodd"></path>
+                                        </svg>
+                                        <span>Para el Uso final, se comparó la proyección de los datos históricos de la variable Demanda de energía eléctrica (DEE) con el escenario medio de la proyección de la demanda de energía eléctrica realizado en el año 2021 por la UPME.
+                            </span>
+                                    </div>
+                                </div>
+                            </div>
+                            {# Fin zona de contenido  #}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </section>
+
+        <section id="calculation" hidden>
+            <!-- section header -->
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center">
+                <div class="d-block">
+                    <nav aria-label="breadcrumb" class="d-none d-md-inline-block pt-2">
+                        <ol class="breadcrumb breadcrumb-dark breadcrumb-transparent">
+                            <li class="breadcrumb-item">
+                                <a href="{{ url_for('dashboard.main') }}">
+                                    <svg
+                                            class="icon icon-xxs"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                        <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                                        ></path>
+                                    </svg>
+                                </a>
+                            </li>
+                            <li class="breadcrumb-item">
+                                <a href="#" onclick="ActiveSection('main')">Escenario base</a>
+                            </li>
+                            <li class="breadcrumb-item active" aria-current="page">Proyecciones de variables</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+            <div class="row mb-2 min-vh-85">
+                <div class="col-12">
+                    <div class="card border-0 shadow h-100">
+                        <div class="card-body px-1 px-md-3 d-flex flex-column">
+                            <div class="row mb-2">
+                                <div class="col-12">
+									<span
+                                            class="icon-shape icon-xs icon-shape-primary rounded me-4 me-sm-0 card-effect-icon"
+                                    >
+										<svg
+                                                class="w-6 h-6"
+                                                fill="currentColor"
+                                                viewBox="0 0 20 20"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                        >
+											<path
+                                                    d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"
+                                            ></path>
+										</svg>
+									</span>
+                                    <span class="h2 fw-extrabold">Proyecciones de variables</span>
+                                    <p class="m-1">Tándem de proyecciones de las variables enérgeticas.</p>
+                                </div>
+                            </div>
+                            <div class="row flex-fill px-1">
+                                <div class="card border-1 shadow mx-2 mx-md-0">
+                                    <div class="card-header p-0">
+                                        <div class="row justify-content-between m-0">
+                                            <!-- Dropdown menu-->
+                                            <div
+                                                    class="mx-0 my-1 col-xl-4 col-md-12 d-flex align-items-center justify-content-between flex-grow-1"
+                                            >
+                                                <div class="d-block mb-3 mb-sm-0 align-items-center">
+													<span class="sidebar-icon">
+														<svg
+                                                                class="icon-shape icon-xxs"
+                                                                fill="black"
+                                                                viewBox="0 0 720 720"
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                        >
+															<path
+                                                                    d="M88 48C101.3 48 112 58.75 112 72V120C112 133.3 101.3 144 88 144H40C26.75 144 16 133.3 16 120V72C16 58.75 26.75 48 40 48H88zM480 64C497.7 64 512 78.33 512 96C512 113.7 497.7 128 480 128H192C174.3 128 160 113.7 160 96C160 78.33 174.3 64 192 64H480zM480 224C497.7 224 512 238.3 512 256C512 273.7 497.7 288 480 288H192C174.3 288 160 273.7 160 256C160 238.3 174.3 224 192 224H480zM480 384C497.7 384 512 398.3 512 416C512 433.7 497.7 448 480 448H192C174.3 448 160 433.7 160 416C160 398.3 174.3 384 192 384H480zM16 232C16 218.7 26.75 208 40 208H88C101.3 208 112 218.7 112 232V280C112 293.3 101.3 304 88 304H40C26.75 304 16 293.3 16 280V232zM88 368C101.3 368 112 378.7 112 392V440C112 453.3 101.3 464 88 464H40C26.75 464 16 453.3 16 440V392C16 378.7 26.75 368 40 368H88z"
+                                                            />
+														</svg>
+													</span>
+                                                    <span class="fs-5 fw-extrabold mb-2">Variables energéticas</span>
+                                                </div>
+                                            </div>
+                                            <!-- <div class="mx-0 my-1 col-xl-4 col-md-12 d-flex align-items-center justify-content-between justify-content-xl-center">
+                        <span class="h6 fw-bold p-1"><strong>Nivel de desagregación</strong> </span>
+                        <div class="btn-group p-1">
+                          <button id="select-dropdown" type="button"
+                            class="btn btn-sm btn-sm btn-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">
+                            <span>Seleccionar</span>
+                            <svg class="icon icon-xs" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                              <path fill-rule="evenodd"
+                                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                clip-rule="evenodd"></path>
+                            </svg>
+                          </button>
+                          <div class="dropdown-menu">
+                            <a class="dropdown-item" onclick="update_list_agregados('Agregados')" href="#">Agregados</a>
+                            <a class="dropdown-item" onclick="update_list_desagregados('generation')" href="#">Desagregados</a>
+                          </div>
+                        </div>
+                      </div> -->
+                                        </div>
+                                    </div>
+                                    <div class="card-body px-1 px-md-3 py-1">
+                                        <div class="row mb-2 mt-1 m-0">
+                                            <div class="col-12 col-xl-4 mb-1 px-0 d-flex align-self-stretch flex-fill">
+                                                <div class="card border-0 flex-fill">
+                                                    <p class="fs-5 fw-extrabold mt-4">Datos de proyecciones</p>
+                                                    <div class="card-body align-self-stretch p-2">
+                                                        <!-- Section Table -->
+                                                        <div class="table-responsive info-table"
+                                                             id="table_content-generation"></div>
+                                                        <div class="table-responsive info-table"
+                                                             id="table_content-distribution"></div>
+                                                        <div class="table-responsive info-table"
+                                                             id="table_content-end_use"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-12 col-xl-8 mb-1 px-0 d-flex align-self-stretch">
+                                                <div class="card border-0 flex-fill">
+                                                    <div class="card-header p-1 d-sm-flex flex-row align-items-center">
+                                                        <div class="card-body p-0">
+                                                            <!-- Graph Section -->
+                                                            <div class="row mb-2 mt-2 m-0">
+                                                                <div class="col-12 col-xl-12 mb-1 px-0 d-flex align-self-stretch">
+                                                                    <div class="card border-0 flex-fill">
+                                                                        <div
+                                                                                class="card-header d-sm-flex flex-row align-items-center flex-0"
+                                                                        >
+                                                                            <div class="d-block mb-3 mb-sm-0">
+																				<span class="fs-5 fw-extrabold mb-2"
+                                                                                      id="chart_title"
+                                                                                >Variable seleccionada</span
+                                                                                >
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="card-body p-1 flex-fill"
+                                                                             id="graph-container">
+                                                                            <canvas id="line-chart" width="100%"
+                                                                                    height="50%"></canvas>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Graph Section -->
+            <!--   <div class="row">
+    <div class="col-12 mb-4">
+      <div class="card bg-yellow-100 border-0 shadow">
+        <div class="card-header d-sm-flex flex-row align-items-center flex-0">
+          <div class="d-block mb-3 mb-sm-0">
+            <div class="fs-5 fw-normal mb-2">Sales Value</div>
+            <h2 class="fs-3 fw-extrabold">$10,567</h2>
+            <div class="small mt-2">
+              <span class="fw-normal me-2">Yesterday</span>
+              <span class="fas fa-angle-up text-success"></span>
+              <span class="text-success fw-bold">10.57%</span>
+            </div>
+          </div>
+          <div class="d-flex ms-auto">
+            <a href="#" class="btn btn-secondary text-dark btn-sm me-2">Month</a>
+            <a href="#" class="btn btn-dark btn-sm me-3">Week</a>
+          </div>
+        </div>
+        <div class="card-body p-2">
+          <div class="ct-chart-sales-value ct-double-octave ct-series-g"></div>
+        </div>
+      </div>
+    </div>
+  </div> -->
+            <!-- Configuration buttons for the number of table rows -->
+        </section>
+
+        {% block footer %} {% include 'module/footer.html' %} {% endblock %}
+    </main>
+    </body>
+{% endblock %} {% block scripts %} {{ super() }}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+    <script
+            src="https://cdn.jsdelivr.net/npm/simple-datatables@latest"
+            crossorigin="anonymous"
+    ></script>
+    <script charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/datatables.net-colreorder/1.5.6/dataTables.colReorder.min.js"
+            integrity="sha512-BA+XWPyIsXxbBMmGU7Acq8vBGWAFldhFLOkoU4dL+B6Fs16RnhCC9ff+vy5GzmB783tyuzYs42QGHRbV73e1ug=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"
+    ></script>
+    <script
+            id="MathJax-script"
+            async
+            src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+    ></script>
+
+    <script type="text/javascript">
+        MathJax = {
+            tex: {
+                inlineMath: [
+                    ["$", "$"],
+                    ["\\(", "\\)"],
+                ],
+            },
+        }
+    </script>
+
+    <script type="text/javascript">
+        var _table_ = document.createElement("table"),
+            _tr_ = document.createElement("tr"),
+            _th_ = document.createElement("th"),
+            _td_ = document.createElement("td"),
+            _thead_ = document.createElement("thead"),
+            _tbody_ = document.createElement("tbody"),
+            _i_ = document.createElement("i"),
+            _a_ = document.createElement("a")
+        var last_indicator = ""
+        var limite_graficas = false
+
+        function update_list_project(list_name) {
+            //prettier-ignore
+            let json_file = JSON.parse('{{data_projections | tojson | safe}}')
+            for (const value_chain in json_file) {
+                let keys_list = Object.keys(json_file[value_chain])
+                let keys_list_2 = []
+                let json_new = {}
+
+                keys_list.forEach(function (item, index) {
+                    let name = item
+                    let json_aux = json_file[value_chain][item]
+                    keys_list_2 = Object.keys(json_aux[0])
+                    keys_list_2.shift()
+                    json_new[item] = keys_list_2
+                })
+                loadTable_projections(value_chain, json_new)
+            }
+        }
+
+        function loadTable_projections(list_name, json_new) {
+            var list_names = Object.keys(json_new)
+            var table = _table_.cloneNode(false)
+            var tbody = _tbody_.cloneNode(false),
+                columns = addAllColumnHeaders(list_name)
+            list_names.forEach(function (items, index) {
+                var tr = _tr_.cloneNode(false)
+                var td = _td_.cloneNode(false)
+                var a = _a_.cloneNode(false)
+
+                a.appendChild(document.createTextNode(items || ""))
+                td.classList.add("fw-extrabold")
+                td.classList.add("showhr")
+                var i = _i_.cloneNode(false)
+                i.classList.add("fa-solid")
+                /* i.classList.add('fa-angle-right') */
+                i.classList.add("fa-caret-down")
+                i.classList.add("pe-1")
+
+                td.appendChild(i)
+                td.appendChild(a)
+                tr.appendChild(td)
+                tbody.appendChild(tr)
+                var keys_list = json_new[items]
+                //prettier-ignore
+                var translate_array = JSON.parse('{{translating_dict | tojson | safe}}')
+                keys_list.forEach(function (item, index) {
+                    var tr = _tr_.cloneNode(false)
+                    var td = _td_.cloneNode(false)
+                    var cell_value
+                    if (item in translate_array) {
+                        cell_value = translate_array[item]
+                    } else {
+                        cell_value = item
+                    }
+                    td.appendChild(document.createTextNode(cell_value || ""))
+                    td.classList.add("aser")
+                    td.classList.add("fw-normal")
+                    tr.appendChild(td)
+                    tr.style.display = "none"
+                    tbody.appendChild(tr)
+                })
+            })
+
+            table.appendChild(tbody)
+            let table_name = "table_projections_" + list_name
+            table.id = table_name
+            table.classList.add("table")
+            table.classList.add("table-centered")
+            table.classList.add("table-nowrap")
+            table.classList.add("rounded")
+            table.classList.add("mb-0")
+            table.classList.add("border-0")
+            table.classList.add("dt-responsive")
+
+            function addAllColumnHeaders(list_name) {
+                var columnSet = [],
+                    thead = _thead_.cloneNode(false)
+                tr = _tr_.cloneNode(false)
+                var th = _th_.cloneNode(false)
+                if (list_name === "generation") {
+                    var key = "Generación"
+                } else if (list_name === "distribution") {
+                    var key = "Distribución"
+                } else if (list_name === "end_use") {
+                    var key = "Uso final"
+                }
+                columnSet.push(key)
+                th.appendChild(document.createTextNode(key))
+                th.classList.add("rounded")
+                th.classList.add("border-0")
+                tr.appendChild(th)
+                thead.appendChild(tr)
+                thead.classList.add("d-none")
+                table.appendChild(thead)
+                return columnSet
+            }
+
+            let table_container = "table_content-" + list_name
+            var el = document.getElementById(table_container)
+            el.innerHTML = ""
+            el.appendChild(table)
+            const datatablesSimple = document.getElementById(table_name)
+            if (datatablesSimple) {
+                let tables = new DataTable(datatablesSimple, datatable_config)
+            }
+            let jq_table = "#" + table_name
+            var table_handler = $(jq_table).DataTable()
+            $(jq_table + " tbody").on("click", "tr", function () {
+                var td_select = this.childNodes[0]
+                if (td_select.classList.contains("showhr")) {
+                    $(this)
+                        .closest("tr")
+                        .nextUntil("tr:has(.showhr)")
+                        .toggle("slow", function () {
+                        })
+                } else if (td_select.classList.contains("aser")) {
+                    var child = $(this).prevAll("tr:has(.showhr)")[0].innerText
+                    var data = table_handler.row(this).data()
+                    //prettier-ignore
+                    var translate_array = JSON.parse('{{translating_dict | tojson | safe}}')
+                    var row = [Object.keys(translate_array).find((key) => translate_array[key] == data)]
+                    if (row[0] == null) {
+                        row = data
+                    }
+                    create_chart(list_name, child, row)
+                }
+            })
+        }
+
+        var last_indicator = ""
+        var chart_element = ""
+        var keys_list = []
+        var old_dataset = []
+
+        function create_chart(list_name, indicator, key) {
+            var row = key[0]
+            //prettier-ignore
+            var translate_array = JSON.parse('{{translating_dict | tojson | safe}}')
+            var row_table
+            if (row in translate_array) {
+                row_table = translate_array[row]
+            } else {
+                row_table = row
+            }
+
+            var al = Math.floor(Math.random() * 255)
+            var al2 = Math.floor(Math.random() * 255)
+
+            var b_colorslist = [
+                "rgba(" + al + ", 99, 132, 0.7)",
+                "rgba(" + al + ", 162, 235, 0.7)",
+                "rgba(" + al + ", 206, 86, 0.7)",
+                "rgba(" + al + ", 192, 192, 0.7)",
+                "rgba(" + al + ", 102, 255, 0.7)",
+                "rgba(" + al + ", 159, 64, 0.7)",
+            ]
+            var colorslist = [
+                "rgba(" + al + ", 99, 132, 1)",
+                "rgba(" + al + ", 162, 235, 1)",
+                "rgba(" + al + ", 206, 86, 1)",
+                "rgba(" + al + ", 192, 192, 1)",
+                "rgba(" + al + ", 102, 255, 1)",
+                "rgba(" + al + ", 159, 64, 1)",
+            ]
+            /* const table_name = key; */
+            const table_name = indicator
+
+            document.getElementById("chart_title").innerHTML = table_name
+            //prettier-ignore
+            var json_file = JSON.parse('{{data_projections | tojson | safe}}')
+
+            var table = json_file[list_name][table_name]
+
+            var keys = Object.keys(table[0])
+
+            var labels = table.map(function (e) {
+                return e[keys[0]]
+            })
+
+            // labels = labels.slice(0,11);
+
+            var data = table.map(function (e) {
+                return e[row]
+            })
+            length = data.length
+            var array = []
+            for (var j = 0; j < length; j++) {
+                array.push(parseFloat(data[j]))
+            }
+            var unit = ""
+            //prettier-ignore
+            var units = JSON.parse('{{units | tojson | safe}}')
+            if (row_table in units) {
+                unit = units[row_table]
+            }
+            /* Agregada - Capturar graficas actuales > 2 restablece */
+
+            /* Desagregados - else */
+            if (last_indicator == indicator) {
+                if (!keys_list.includes(row_table)) {
+                    keys_list.push(row_table)
+                    const update_dataset = {
+                        label: row_table,
+                        borderColor: colorslist[keys_list.length],
+                        backgroundColor: b_colorslist[keys_list.length],
+                        data: array,
+                        spanGraphs: false,
+                        fill: true,
+                    }
+                    chart_element.data.datasets.push(update_dataset)
+                    chart_element.update()
+                } else {
+                    keys_list = keys_list.filter((data) => data != row_table)
+                    chart_element.data.datasets = chart_element.data.datasets.filter(
+                        (data) => data.label != row_table
+                    )
+                    chart_element.update()
+                }
+            } else {
+                keys_list = [row_table]
+                var mydatasets = [
+                    {
+                        label: row_table,
+                        borderColor: colorslist[0],
+                        backgroundColor: b_colorslist[0],
+                        borderWidth: 2,
+                        data: array,
+                        spanGraphs: false,
+                        fill: true,
+                    },
+                ]
+                let delayed
+                $("#line-chart").remove()
+                $("#graph-container").append('<canvas id="line-chart" width="100%" height="48vh"><canvas>')
+                var config = {
+                    type: "bar",
+                    data: {
+                        labels: labels,
+                        datasets: mydatasets,
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            xAxes: [
+                                {
+                                    stacked: true,
+                                    scaleLabel: {
+                                        display: true,
+                                        labelString: "Año",
+                                    },
+                                },
+                            ],
+                            yAxes: [
+                                {
+                                    stacked: false,
+                                    scaleLabel: {
+                                        display: true,
+                                        labelString: unit,
+                                    },
+                                },
+                            ],
+                        },
+                        title: {
+                            display: false,
+                            text: table_name,
+                        },
+                        legend: {
+                            position: "bottom",
+                        },
+                        animation: {
+                            onComplete: () => {
+                                delayed = true
+                            },
+                            delay: (context) => {
+                                let delay = 0
+                                if (context.type === "data" && context.mode === "default" && !delayed) {
+                                    delay = context.dataIndex * 300 + context.datasetIndex * 100
+                                }
+                                return delay
+                            },
+                        },
+                    },
+                }
+                chart_element = new Chart(document.getElementById("line-chart"), config)
+            }
+            last_indicator = indicator
+        }
+    </script>
+
+    <script type="text/javascript">
+        var list_name = "generation"
+        var key = "Factor de Pérdidas"
+        var contador = 0
+        update_list_project(list_name)
+        var variable_mathjax = true
+    </script>
+
+{% endblock %}

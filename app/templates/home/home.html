@@ -1,0 +1,345 @@
+{% extends 'base.html' %}
+{% import 'module/modals.html' as modals %}
+
+{% block head %}
+    {{ super() }}
+    <!-- Carousel for bootstarp -->
+    <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/carousel/">
+    <!-- Copy into the head of all HTML pages you wish to display the widget -->
+
+    <!-- stonly-widget - copy into the head -->
+    <script>window.STONLY_WID = "557476f0-4f0d-11ed-871a-0a52ff1ec764";</script>
+    <script>
+        !function (s, t, o, n, l, y, w, g) {
+            s.StonlyWidget || ((w = s.StonlyWidget = function () {
+                w._api ? w._api.apply(w, arguments) : w.queue.push(arguments)
+            }).scriptPath = n, w.queue = [], (y = t.createElement(o)).async = !0,
+                (g = new XMLHttpRequest).open("GET", n + "version?v=" + Date.now(), !0), g.onreadystatechange = function () {
+                4 === g.readyState && (y.src = n + "stonly-widget.js?v=" + (200 === g.status ? g.responseText : Date.now()),
+                    (l = t.getElementsByTagName(o)[0]).parentNode.insertBefore(y, l))
+            }, g.send())
+        }(window, document, "script", "https://stonly.com/js/widget/v2/");
+    </script>
+{% endblock %}
+
+{% block title %}
+    {{ super() }}
+    Home
+{% endblock %}
+
+
+{% block navbar %}
+    {% include 'navbar.html' %}
+{% endblock %}
+
+{% block content %}
+    {{ super() }}
+    <main>
+        <section id="header">
+            <div class="d-flex pt-2 justify-content-center px-1">
+                <div class="col-xxl-8 col-md-10 col-sm-12 container-md">
+                    <div class="card border-0 shadow components-section flex-grow-1 ">
+                        <div class="card-body p-0">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div id="myCarousel" class="carousel slide p-0 m-0" data-bs-ride="carousel">
+                                        <div class="carousel-indicators">
+                                            <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="0"
+                                                    class="active" aria-current="true"
+                                                    aria-label="Slide 1"></button>
+                                            <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="1"
+                                                    aria-label="Slide 2"></button>
+                                            <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="2"
+                                                    aria-label="Slide 3"></button>
+                                        </div>
+                                        <div class="carousel-inner">
+                                            <div class="carousel-item active">
+                                                <img class="d-block h-100"
+                                                     src="{{ url_for('static',filename='/images/image12-1.webp') }}"
+                                                     alt="Background image - thermoelectric plant.">
+                                                <div class="container p-0">
+                                                    <div class="carousel-caption text-start">
+                                                        <h1 class="text-white text-center">INTEEGRA</h1>
+                                                        <p class="text-center d-none d-lg-block m-0">Permite gestionar
+                                                            indicadores de eficiencia energética asociados a los
+                                                            procesos de generación, distribución y uso final de la
+                                                            energía eléctrica en Colombia, además de evaluar diferentes
+                                                            estrategias de eficiencia bajo criterios energéticos,
+                                                            económicos y ambientales.<br>Acceda hoy mismo a los
+                                                            distintos servicios que tenemos disponibles para usted.</p>
+                                                        <p class="text-center d-lg-none">Acceda hoy mismo a los
+                                                            distintos servicios que tenemos disponibles para usted.</p>
+                                                        <div class="d-flex justify-content-center justify-content-md-end">
+                                                            <a class="btn btn-lg home-btn"
+                                                               href="{{ url_for('auth.signup') }}">Registrarse</a></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="carousel-item">
+                                                <img class="d-block h-100"
+                                                     src="{{ url_for('static',filename='/images/image1.webp') }}"
+                                                     alt="Background image - Sunset with power lines along.">
+                                                <div class="container">
+                                                    <div class="carousel-caption">
+                                                        <h1 class="text-white">Acerca del proyecto</h1>
+                                                        <p class="text-center d-none d-lg-block m-0">Llevando como
+                                                            titulo <i>"Estrategia para la gestión y utilización de
+                                                                indicadores de eficiencia energética en los procesos de
+                                                                generación distribución y uso final de la energía en
+                                                                Colombia"</i>. El proyecto contó con la participación de
+                                                            la Universidad tecnológica de Pereira y la Universidad del
+                                                            Valle para su desarrollo, todo esto en el marco del programa
+                                                            INTEGRA 2023 del Ministerio de Ciencia Tecnología e
+                                                            Innovación.</p>
+                                                        <p class="d-lg-none">Obtenga más información respecto de la
+                                                            problemática y alcance del proyecto.</p>
+                                                        <div><a class="btn btn-lg home-btn" href="#about">Más
+                                                            información</a></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="carousel-item">
+                                                <img class="d-block h-100"
+                                                     src="{{ url_for('static',filename='/images/image6.webp') }}"
+                                                     alt="Background image - Display with dashboard view.">
+                                                <div class="container">
+                                                    <div class="carousel-caption">
+                                                        <h1 class="text-white d-block">¿Requiere información
+                                                            adicional?</h1>
+                                                        <p class="text-center d-none d-lg-block m-0">Contáctenos para
+                                                            mayor información sobre la plataforma, el proyecto
+                                                            desarrollado y sus participantes o para obtener mayor
+                                                            información respecto del programa INTEEGRA 2023, estaremos
+                                                            contentos de atenderle.</p>
+                                                        <p class="d-lg-none">Comuníquenos sus preguntas e inquietudes a
+                                                            través del formulario de contacto.</p>
+                                                        <div><a class="btn btn-lg home-btn"
+                                                                href="{{ url_for('contact') }}">Contacto</a></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button class="carousel-control-prev d-none d-lg-block" type="button"
+                                                data-bs-target="#myCarousel" data-bs-slide="prev">
+                                            <span class="visually-hidden">Previous</span>
+                                        </button>
+                                        <button class="carousel-control-next d-none d-lg-block" type="button"
+                                                data-bs-target="#myCarousel" data-bs-slide="next">
+                                            <span class="visually-hidden">Next</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card border-0 shadow components-section flex-grow-1 mt-2 px-0 px-md-5 px-lg-2 px-xxl-5">
+                        <div class="card-body p-0">
+                            <div class="container marketing">
+                                <!-- Three columns of text below the carousel -->
+                                <div class="row py-3 d-flex justify-content-center" id="services">
+                                    <h1 class="fw-extrabold text-center">Servicios</h1>
+                                    <div class="col-12 col-lg-4 flex-grow-1 p-2">
+                                        <a class="a-effect-home" href="{{ url_for('dashboard.database') }}">
+                                            <div class="icon-shape icon-shape-primary rounded effect-icon-home">
+                                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"
+                                                     xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M3 12v3c0 1.657 3.134 3 7 3s7-1.343 7-3v-3c0 1.657-3.134 3-7 3s-7-1.343-7-3z"></path>
+                                                    <path d="M3 7v3c0 1.657 3.134 3 7 3s7-1.343 7-3V7c0 1.657-3.134 3-7 3S3 8.657 3 7z"></path>
+                                                    <path d="M17 5c0 1.657-3.134 3-7 3S3 6.657 3 5s3.134-3 7-3 7 1.343 7 3z"></path>
+                                                </svg>
+                                            </div>
+                                            <h2 class="fw-bold h4">Base<br> de datos</h2>
+                                        </a>
+                                        <p>
+                                            <a class="btn home-btn w-75" data-bs-toggle="modal" href="#modal-database"
+                                               role="button" aria-expanded="false"
+                                               aria-controls="modal-database">
+                                                Ver detalles</a>
+                                        </p>
+                                        {{ modals.render_modal('info','database','Base de datos', text_module_db) }}
+                                    </div>
+                                    <div class="col-12 col-lg-4 flex-grow-1 p-2">
+                                        <a class="a-effect-home" href="{{ url_for('dashboard.calc') }}">
+                                            <div class="icon-shape icon-shape-secondary rounded effect-icon-home">
+                                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"
+                                                     xmlns="http://www.w3.org/2000/svg">
+                                                    <path fill-rule="evenodd"
+                                                          d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V4a2 2 0 00-2-2H6zm1 2a1 1 0 000 2h6a1 1 0 100-2H7zm6 7a1 1 0 011 1v3a1 1 0 11-2 0v-3a1 1 0 011-1zm-3 3a1 1 0 100 2h.01a1 1 0 100-2H10zm-4 1a1 1 0 011-1h.01a1 1 0 110 2H7a1 1 0 01-1-1zm1-4a1 1 0 100 2h.01a1 1 0 100-2H7zm2 1a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1zm4-4a1 1 0 100 2h.01a1 1 0 100-2H13zM9 9a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1zM7 8a1 1 0 000 2h.01a1 1 0 000-2H7z"
+                                                          clip-rule="evenodd"></path>
+                                                </svg>
+                                            </div>
+                                            <h2 class="fw-bold h4">Escenario <br> base</h2>
+                                        </a>
+                                        <p>
+                                            <a class="btn home-btn w-75" data-bs-toggle="modal" href="#modal-calc"
+                                               role="button" aria-expanded="false"
+                                               aria-controls="modal-calc">
+                                                Ver detalles</a>
+                                        </p>
+                                        {{ modals.render_modal('info','calc','Escenario base', text_module_calc) }}
+                                    </div>
+                                    <div class="col-12 col-lg-4 flex-grow-1 p-2">
+                                        <a class="a-effect-home" href="{{ url_for('dashboard.analysis') }}">
+                                            <div class="icon-shape icon-shape-primary rounded effect-icon-home">
+                                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"
+                                                     xmlns="http://www.w3.org/2000/svg">
+                                                    <path fill-rule="evenodd"
+                                                          d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z"
+                                                          clip-rule="evenodd"></path>
+                                                </svg>
+                                            </div>
+                                            <h2 class="fw-bold h4">Análisis <br> de Estrategias</h2>
+                                        </a>
+                                        <p>
+                                            <a class="btn home-btn w-75" data-bs-toggle="modal" href="#modal-analysis"
+                                               role="button" aria-expanded="false"
+                                               aria-controls="modal-analysis">
+                                                Ver detalles</a>
+                                        </p>
+                                        {{ modals.render_modal('info','analysis','Análisis de estrategias', text_module_anl) }}
+                                    </div>
+                                </div>
+                                <!-- START THE FEATURETTES -->
+                                <hr class="featurette-divider">
+                                <div class="row py-3 d-flex justify-content-center featurette py-5"
+                                     id="about">
+                                    <h1 class="fw-extrabold text-center pb-2">Acerca del proyecto</h1>
+                                    <div class="col-10 col-md-4 card m-0 login-image home">
+                                        <img class="img-fluid mx-auto"
+                                             src="{{ url_for('static',filename='/images/image7.webp') }}"
+                                             alt="Context image - Image about the project team."
+                                             focusable="false">
+                                    </div>
+                                    <div class="col-12 col-md-8 pt-2 px-3">
+                                        <p class="justified-text fw-normal"><strong
+                                                class="fw-extrabold">Problemática: </strong>Las ineficiencias en los
+                                            procesos de generación, distribución y uso final de la energía eléctrica no
+                                            solo representan pérdidas económicas, sino una mayor contaminación
+                                            atmosférica y producción de gases efecto invernadero, asociados a una mayor
+                                            necesidad de consumo energético para suplir la demanda eléctrica.</p>
+                                        <p class="justified-text fw-normal"><strong
+                                                class="fw-extrabold">Alcance: </strong>El proyecto INTEGRA 2023
+                                            proporciona una herramienta que permite gestionar indicadores de eficiencia
+                                            energética asociados a los procesos de generación, distribución y uso final
+                                            de la energía eléctrica en Colombia, además de evaluar diferentes
+                                            estrategias de eficiencia bajo criterios energéticos, económicos y
+                                            ambientales.</p>
+                                    </div>
+                                </div>
+                                <hr class="featurette-divider">
+                                <div class="row py-5 d-flex justify-content-center featurette"
+                                     id="news">
+                                    <div class="col-12 order-1 m-0">
+                                        <div class="card-body p-0 m-0">
+                                            <div id="myCarousel-news" class="carousel slide p-0 m-0"
+                                                 data-bs-ride="carousel">
+                                                <div class="carousel-inner">
+                                                    <div class="carousel-item news active">
+                                                        <img class="d-block h-100"
+                                                             src="{{ url_for('static',filename='/images/image14.webp') }}"
+                                                             alt="Background image - Linear graph.">
+                                                        <div class="d-flex align-items-center">
+                                                            <div class="carousel-caption">
+                                                                <h1 class="fw-extrabold text-center text-white">
+                                                                    Noticias</h1>
+                                                                <h2 class="text-white h5">Nuevas estrategias disponibles
+                                                                    en la herramienta</h2>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="carousel-item news ">
+                                                        <img class="d-block h-100"
+                                                             src="{{ url_for('static',filename='/images/image16.webp') }}"
+                                                             alt="Background image - Hands holding a plant.">
+                                                        <div class="container">
+                                                            <div class="carousel-caption">
+                                                                <h1 class="fw-extrabold text-center text-white">
+                                                                    Noticias</h1>
+                                                                <h2 class="text-white h5">!El módulo de proyecciones ya
+                                                                    esta aquí!</h2>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="carousel-item news">
+                                                        <img class="d-block h-100"
+                                                             src="{{ url_for('static',filename='/images/image15.webp') }}"
+                                                             alt="Background image - workstation.">
+                                                        <div class="container">
+                                                            <div class="carousel-caption">
+                                                                <h1 class="fw-extrabold text-center text-white">
+                                                                    Noticias</h1>
+                                                                <h2 class="text-white d-block h6">¿Ha encontrado un
+                                                                    fallo al interior de la herramienta? <br>
+                                                                    Comuníquese cuanto antes con nosotros y ayúdenos a
+                                                                    mejorar.</h2>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <button class="carousel-control-prev d-none d-lg-block" type="button"
+                                                        data-bs-target="#myCarousel-news" data-bs-slide="prev">
+                                                    <span class="visually-hidden">Previous</span>
+                                                </button>
+                                                <button class="carousel-control-next d-none d-lg-block" type="button"
+                                                        data-bs-target="#myCarousel-news" data-bs-slide="next">
+                                                    <span class="visually-hidden">Next</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% block footer %}
+                        {% include 'module/footer.html' %}
+                    {% endblock %}
+                    <div>
+                        <div class="card">
+                            <div class="card-body">
+                                <button type="button" class="btn btn-block w-25 p-1" data-bs-toggle="modal" data-bs-target="#modalNotification">
+                                    Citar herramienta
+                                </button>
+                                <!-- Modal Content -->
+                                <div class="modal fade" id="modalNotification" tabindex="-1" role="dialog" aria-labelledby="modalTitleNotify" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <p class="modal-title h4" id="modalTitleNotify">Inteegra</p>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="py-3 text-center">
+                                                    <i class="fa-solid fa-quote-left me-1"></i>
+                                                    <i class="fa-solid fa-quote-right ms-1"></i>
+                                                    <p class="mt-2" id="cite-text">Universidad Tecnológica de Pereira, Universidad del Valle. INTEEGRA: Herramienta para la gestión de indicadores de eficiencia energética en el sector eléctrico colombiano. 2023. http://integra.fernandoleiton.com/home</p>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" id="btn-clipboard" class="btn btn-sm btn-primary w-50" onclick="copy_to_clipboard()">Copiar al portapapeles <i class="fa-regular fa-clipboard mx-1"></i></button>
+                                            </div>
+                                            <script>
+                                                function copy_to_clipboard() {
+                                                    setTimeout(function() {
+                                                        $("#btn-clipboard").html("Copiar al portapapeles <i class='fa-regular fa-clipboard mx-1'></i>").removeClass("btn-success");
+                                                        }, 1000);
+                                                      // Get the text field
+                                                      let copyText = document.getElementById("cite-text");
+
+                                                      // Copy the text inside the text field
+                                                      navigator.clipboard.writeText(copyText.innerText);
+                                                      $("#btn-clipboard").html("Copiado!<i class='fa-solid fa-check ms-2'></i>").addClass("btn-success");
+                                                }
+                                                </script>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+{% endblock %}

@@ -1,0 +1,480 @@
+.outer {
+	height: 100vh;
+	min-width: 20vw;
+	flex: 1;
+}
+
+.progress {
+	display: inline-flex;
+	height: 100%;
+	padding: 2rem;
+	width: 2rem;
+}
+
+.steps .step {
+	height: 100%;
+	margin-bottom: auto;
+}
+
+.steps .step .step-title {
+	font-size: medium;
+	font-weight: bold;
+}
+
+.steps .step:last-of-type .step-title:after {
+	display: none;
+}
+
+.steps .step .step-title:before {
+	content: "";
+	background: #333;
+	padding: 6px;
+	border-radius: 50%;
+	position: absolute;
+	left: -20px;
+	top: 10px;
+	transform: translateX(-50%) translateY(-50%);
+	transition: padding 0.2s ease;
+}
+
+.steps .step .step-title:after {
+	content: "";
+	background: #333;
+	border-radius: 2px;
+	position: absolute;
+	left: -20px;
+	top: 10px;
+	height: 101%;
+	width: 2px;
+	transform: translateX(-50%);
+	transition: height 0.2s ease;
+}
+
+@media (min-width: 576px) {
+	.step-title:after,
+	.step-title:before {
+		display: none;
+	}
+}
+
+@media (min-width: 992px) {
+	.step-title:after,
+	.step-title:before {
+		display: flex;
+	}
+	.step {
+		margin-left: 1.25rem;
+	}
+}
+
+@media (min-width: 1400px) {
+	.step {
+		margin-left: auto;
+	}
+}
+
+.progress > div {
+	display: flex;
+	flex-direction: column;
+	color: #333;
+}
+
+.progress > div.step-left {
+	padding-right: 20px;
+	text-align: right;
+}
+
+.progress > div.step-left div:last-of-type:after {
+	display: none;
+}
+
+.progress > div.step-left div:after {
+	content: "";
+	background: rgba(51, 51, 51, 0.1);
+	border-radius: 2px;
+	position: absolute;
+	right: -20px;
+	top: 10px;
+	height: 101%;
+	width: 1px;
+	transform: translateX(50%);
+}
+
+.progress > div.right {
+	position: absolute;
+	padding-left: 20px;
+}
+
+.progress > div.right div.prev:after {
+	transition: none;
+}
+
+.progress > div.right div.current {
+	color: #333;
+	font-weight: bold;
+}
+
+.progress > div.right div.current:before {
+	background: #333;
+	padding: 10px;
+	transition: all 0.2s 0.15s cubic-bezier(0.175, 0.885, 0.32, 2);
+}
+
+.progress > div.right div.current:after {
+	height: 0%;
+	transition: height 0.2s ease-out;
+}
+
+.progress > div.right div.current ~ div {
+	color: #666;
+}
+
+.progress > div.right div.current ~ div:before {
+	background: #666;
+	padding: 2.5px;
+}
+
+.progress > div.right div.current ~ div:after {
+	height: 0%;
+	transition: none;
+}
+
+.progress > div.right div:before {
+	content: "";
+	background: #333;
+	padding: 5px;
+	border-radius: 50%;
+	position: absolute;
+	left: -20px;
+	top: 10px;
+	transform: translateX(-50%) translateY(-50%);
+	transition: padding 0.2s ease;
+}
+
+.progress > div.right div:after {
+	content: "";
+	background: #333;
+	border-radius: 2px;
+	position: absolute;
+	left: -20px;
+	top: 10px;
+	height: 101%;
+	width: 2px;
+	transform: translateX(-50%);
+	transition: height 0.2s ease;
+}
+
+.progress > div div {
+	flex: 1;
+	position: relative;
+	line-height: 20px;
+	cursor: default;
+	min-height: 30px;
+}
+
+.progress > div div:last-of-type {
+	flex: 0;
+}
+
+.progress.dark {
+	background: #333;
+	display: inline-flex;
+	height: 100%;
+	width: 100%;
+	padding: 5vh 10%;
+}
+
+.progress.dark > div {
+	display: flex;
+	flex-direction: column;
+	color: #ccc;
+}
+
+.progress.dark > div.step-left {
+	padding-right: 20px;
+	text-align: right;
+}
+
+.progress.dark > div.step-left div:last-of-type:after {
+	display: none;
+}
+
+.progress.dark > div.step-left div:after {
+	content: "";
+	background: rgba(211, 211, 211, 0.05);
+	border-radius: 2px;
+	position: absolute;
+	right: -20px;
+	top: 10px;
+	height: 101%;
+	width: 1px;
+	transform: translateX(50%);
+}
+
+.progress.dark > div.right {
+	padding-left: 20px;
+}
+
+.progress.dark > div.right div.prev:after {
+	transition: none;
+}
+
+.progress.dark > div.right div.current {
+	color: white;
+	font-weight: bold;
+}
+
+.progress.dark > div.right div.current:before {
+	background: white;
+	padding: 10px;
+	transition: all 0.2s 0.15s cubic-bezier(0.175, 0.885, 0.32, 2);
+}
+
+.progress.dark > div.right div.current:after {
+	height: 0%;
+	transition: height 0.2s ease-out;
+}
+
+.progress.dark > div.right div.current ~ div {
+	color: #666;
+}
+
+.progress.dark > div.right div.current ~ div:before {
+	background: #666;
+	padding: 2.5px;
+}
+
+.progress.dark > div.right div.current ~ div:after {
+	height: 0%;
+	transition: none;
+}
+
+.progress.dark > div.right div:before {
+	content: "";
+	background: lightgray;
+	padding: 5px;
+	border-radius: 50%;
+	position: absolute;
+	left: -20px;
+	top: 10px;
+	transform: translateX(-50%) translateY(-50%);
+	transition: padding 0.2s ease;
+}
+
+.progress.dark > div.right div:after {
+	content: "";
+	background: lightgray;
+	border-radius: 2px;
+	position: absolute;
+	left: -20px;
+	top: 10px;
+	height: 101%;
+	width: 2px;
+	transform: translateX(-50%);
+	transition: height 0.2s ease;
+}
+
+.progress.dark > div div {
+	flex: 1;
+	position: relative;
+	line-height: 20px;
+	cursor: default;
+	min-height: 30px;
+}
+
+.progress.dark > div div:last-of-type {
+	flex: 0;
+}
+
+.done.current {
+	color: #62af0b !important;
+}
+
+.done.current:before {
+	background: #62af0b !important;
+}
+
+.dark .done.current {
+	color: lightgreen !important;
+}
+
+.dark .done.current:before {
+	background: lightgreen !important;
+}
+
+/* 
+< !-- <div class="progress">
+<div class="right"><div>Descripción</div>
+<div>Visualización</div></div></div>-->
+< !-- <div>
+<div class="progress">
+<div class="step-left">
+<div>Start</div>
+<div></div>
+<div></div>
+<div class="current"></div>
+<div>Exercitation</div>
+<div></div>
+<div></div>
+</div>
+<div class="right">
+<div>Intro</div>
+<div>Ipsum dolor</div>
+<div>Ament</div>
+<div class="current">Consectetur</div>
+<div>Sed eiusmod</div>
+<div>Tempor</div>
+<div class="done">Done</div>
+</div></div>--> */
+
+.checkout-progress {
+	width: 90%;
+	margin: 0px auto;
+	font-size: 1em;
+	position: relative;
+}
+
+@media (max-width: 767px) {
+	.checkout-progress {
+		font-size: 0.5em;
+	}
+}
+
+.checkout-progress:before {
+	content: "";
+	position: absolute;
+	left: 0;
+	top: 50%;
+	height: 5px;
+	width: 100%;
+	background-color: #ccc;
+	transform: translateY(-50%) perspective(1000px);
+}
+
+.checkout-progress:after {
+	content: "";
+	position: absolute;
+	left: 0;
+	top: 50%;
+	height: 5px;
+	width: 100%;
+	background-color: #1f2937;
+	transform: scaleX(0) translateY(-50%) perspective(1000px);
+	transform-origin: left center;
+}
+
+.checkout-progress.stepp-2:after {
+	transform: scaleX(0.25) translateY(-50%) perspective(1000px);
+}
+
+.checkout-progress.stepp-3:after {
+	transform: scaleX(0.5) translateY(-50%) perspective(1000px);
+}
+
+.checkout-progress.stepp-4:after {
+	transform: scaleX(0.75) translateY(-50%) perspective(1000px);
+}
+
+.checkout-progress.stepp-5:after {
+	transform: scaleX(1) translateY(-50%) perspective(1000px);
+}
+
+.checkout-progress.stepp-6:after {
+	transform: scaleX(1) translateY(-50%) perspective(1000px);
+}
+
+.checkout-progress .progress-bar-stepp {
+	width: 100%;
+	display: flex;
+	height: 45px;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.checkout-progress .progress-bar-stepp .stepp {
+	z-index: 2;
+	position: relative;
+}
+
+.checkout-progress .progress-bar-stepp .stepp .stepp-label {
+	position: absolute;
+	top: calc(100% + 5px);
+	left: 50%;
+	transform: translateX(-50%) perspective(1000px);
+	white-space: nowrap;
+	font-size: 0.7em;
+	font-weight: 600;
+	color: #ccc;
+	transition: 0.3s ease;
+}
+
+@media (max-width: 767px) {
+	.checkout-progress .progress-bar-stepp .stepp .stepp-label {
+		top: calc(100% + 15px);
+	}
+}
+
+.checkout-progress .progress-bar-stepp .stepp span {
+	color: #ccc;
+	transition: 0.3s ease;
+	display: block;
+	transform: translate3d(0, 0, 0) scale(1) perspective(1000px);
+}
+
+.checkout-progress .progress-bar-stepp .stepp .fa-check {
+	color: #fff;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transition: transform 0.3s ease;
+	transform: translate3d(-50%, -50%, 0) scale(0) perspective(1000px);
+}
+
+.checkout-progress .progress-bar-stepp .stepp.active span,
+.checkout-progress .progress-bar-stepp .stepp.active .stepp-label {
+	color: #2c3e50;
+}
+
+.checkout-progress .progress-bar-stepp .stepp.valid .fa-check {
+	transform: translate3d(-50%, -50%, 0) scale(1) perspective(1000px);
+}
+
+.checkout-progress .progress-bar-stepp .stepp.valid span {
+	color: #2c3e50;
+	transform: translate3d(0, 0, 0) scale(2) perspective(1000px);
+}
+
+.checkout-progress .progress-bar-stepp .stepp.valid .stepp-label {
+	color: #2c3e50 !important;
+}
+
+.checkout-progress .progress-bar-stepp .stepp:after {
+	content: "";
+	position: absolute;
+	z-index: -1;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%) perspective(1000px);
+	width: 30px;
+	height: 30px;
+	background-color: #fff;
+	border-radius: 50%;
+	border: 3px solid #ccc;
+	transition: 0.5s ease;
+}
+
+@media (max-width: 767px) {
+	.checkout-progress .progress-bar-stepp .stepp:after {
+		width: 40px;
+		height: 40px;
+	}
+}
+
+.checkout-progress .progress-bar-stepp .stepp.active:after {
+	border: 3px solid #2c3e50;
+}
+
+.checkout-progress .progress-bar-stepp .stepp.valid:after {
+	background-color: #2c3e50;
+	border: 3px solid #2c3e50;
+}

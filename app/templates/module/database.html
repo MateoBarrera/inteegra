@@ -1,0 +1,1886 @@
+<!--
+
+=========================================================
+* Volt Free - Bootstrap 5 Dashboard
+=========================================================
+
+* Product Page: https://themesberg.com/product/admin-dashboard/volt-bootstrap-5-dashboard
+* Copyright 2021 Themesberg (https://www.themesberg.com)
+* License (https://themesberg.com/licensing)
+
+* Designed and coded by https://themesberg.com
+
+=========================================================
+
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. Please contact us to request a removal.
+
+-->
+
+{% extends 'base.html' %} {% block head %} {{ super() }}
+    <!-- Datatables CSS -->
+    <link rel="stylesheet" href="//cdn.datatables.net/1.12.0/css/jquery.dataTables.min.css"/>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/progress.css') }}"/>
+    <!-- Copy into the head of all HTML pages you wish to display the widget -->
+
+    <!-- stonly-widget - copy into the head -->
+    <script>
+        window.STONLY_WID = "557476f0-4f0d-11ed-871a-0a52ff1ec764"
+    </script>
+    <script>
+        !(function (s, t, o, n, l, y, w, g) {
+            s.StonlyWidget ||
+            (((w = s.StonlyWidget =
+                function () {
+                    w._api ? w._api.apply(w, arguments) : w.queue.push(arguments)
+                }).scriptPath = n),
+                (w.queue = []),
+                ((y = t.createElement(o)).async = !0),
+                (g = new XMLHttpRequest()).open("GET", n + "version?v=" + Date.now(), !0),
+                (g.onreadystatechange = function () {
+                    //localhost:5000/dashboard/config
+                    http: 4 === g.readyState &&
+                    ((y.src = n + "stonly-widget.js?v=" + (200 === g.status ? g.responseText : Date.now())),
+                        (l = t.getElementsByTagName(o)[0]).parentNode.insertBefore(y, l))
+                }),
+                g.send())
+        })(window, document, "script", "https://stonly.com/js/widget/v2/")
+    </script>
+{% endblock %} {% block title %} {{ super() }} Base de datos {% endblock %} {% block content %} {{ super() }}
+
+    <body onload="ActivateLink('database')">
+    {% block sidebar %} {% include 'module/sidebar.html' %} {% endblock %}
+
+    <main class="content">
+        <div class="d-none d-lg-flex">
+            {% block nav %} {% include 'module/navbar.html' %} {% endblock %}
+        </div>
+
+        <section id="main">
+            <div class="row mt-2">
+                <div class="col-12 d-flex flex-column">
+                    <div
+                            class="card border-0 shadow components-section flex-grow-1 pt-3 px-2 px-md-4 px-xxl-5"
+                    >
+                        <div class="card-body p-2">
+                            <div class="row mt-4 mt-lg-4">
+                                <div class="col-12 px-4 px-md-2">
+                                    <h3 class="fw-extrabold">Bienvenido a la base de datos</h3>
+                                    <p class="mb-0 justified-text">
+                                        En este módulo se recopila la información de las variables y los indicadores de
+                                        eficiencia energética asociados a los procesos de generación, distribución y uso
+                                        final de la energía eléctrica en Colombia, visualizando su tendencia histórica.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="container steps mt-5">
+                                <div class="row step">
+                                    <div class="step-title">Descripción</div>
+                                    <div class="col-12 col-sm-6 col-xl-4 my-4 flex-grow-1">
+                                        <a href="#indicators" onclick="ActiveSection('indicators')">
+                                            <div class="card border-1 shadow card-effect">
+                                                <div class="card-body">
+                                                    <div class="row d-block d-xl-flex align-items-center">
+                                                        <div
+                                                                class="col-12 col-xl-5 text-xl-center mb-3 mb-xl-0 d-flex align-items-center justify-content-xl-center"
+                                                        >
+                                                            <div
+                                                                    class="icon-shape icon-shape-primary rounded me-4 me-sm-0 card-effect-icon"
+                                                            >
+                                                                <svg
+                                                                        class="w-6 h-6"
+                                                                        fill="currentColor"
+                                                                        viewBox="0 0 24 24"
+                                                                        xmlns="http://www.w3.org/2000/svg"
+                                                                >
+                                                                    <path
+                                                                            d="M4 21h15.893c1.103 0 2-.897 2-2V5c0-1.103-.897-2-2-2H4c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2zm0-2v-5h4v5H4zM14 7v5h-4V7h4zM8 7v5H4V7h4zm2 12v-5h4v5h-4zm6 0v-5h3.894v5H16zm3.893-7H16V7h3.893v5z"
+                                                                    ></path>
+                                                                </svg>
+                                                            </div>
+                                                            <div class="d-sm-none">
+                                                                <h3 class="fw-extrabold mb-1">Tabla</h3>
+                                                                <h2 class="h5">de indicadores y variables</h2>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12 col-xl-7 px-xl-0">
+                                                            <div class="d-none d-sm-block">
+                                                                <h3 class="fw-extrabold mb-2">Tabla</h3>
+                                                                <h2 class="h6 text-gray-400 mb-0">de indicadores y
+                                                                    variables</h2>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="row step">
+                                    <div class="step-title">Visualización</div>
+                                    <div class="col-12 col-sm-6 col-xl-4 my-4 flex-grow-1">
+                                        <a href="#base-line" onclick="ActiveSection('base-line')">
+                                            <div class="card border-1 shadow card-effect">
+                                                <div class="card-body">
+                                                    <div class="row d-block d-xl-flex align-items-center">
+                                                        <div
+                                                                class="col-12 col-xl-5 text-xl-center mb-3 mb-xl-0 d-flex align-items-center justify-content-xl-center"
+                                                        >
+                                                            <div
+                                                                    class="icon-shape icon-shape-secondary rounded me-4 me-sm-0 card-effect-icon"
+                                                            >
+                                                                <svg
+                                                                        class="w-6 h-6"
+                                                                        fill="currentColor"
+                                                                        viewBox="0 0 20 20"
+                                                                        xmlns="http://www.w3.org/2000/svg"
+                                                                >
+                                                                    <path
+                                                                            fill-rule="evenodd"
+                                                                            d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z"
+                                                                            clip-rule="evenodd"
+                                                                    ></path>
+                                                                </svg>
+                                                            </div>
+                                                            <div class="d-sm-none">
+                                                                <h3 class="fw-extrabold mb-1">Indicadores</h3>
+                                                                <h2 class="h5">de los procesos</h2>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12 col-xl-7 px-xl-0">
+                                                            <div class="d-none d-sm-block">
+                                                                <h3 class="fw-extrabold mb-2">Indicadores</h3>
+                                                                <h2 class="h6 text-gray-400 mb-0">de los procesos</h2>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                    <div class="col-12 col-sm-6 col-xl-4 my-4 flex-grow-1">
+                                        <a href="#variables" onclick="ActiveSection('variables')">
+                                            <div class="card border-1 shadow card-effect">
+                                                <div class="card-body">
+                                                    <div class="row d-block d-xl-flex align-items-center">
+                                                        <div
+                                                                class="col-12 col-xl-5 text-xl-center mb-3 mb-xl-0 d-flex align-items-center justify-content-xl-center"
+                                                        >
+                                                            <div
+                                                                    class="icon-shape icon-shape-secondary rounded me-4 me-sm-0 card-effect-icon"
+                                                            >
+                                                                <svg
+                                                                        class="w-6 h-6"
+                                                                        fill="currentColor"
+                                                                        viewBox="0 0 20 20"
+                                                                        xmlns="http://www.w3.org/2000/svg"
+                                                                >
+                                                                    <path
+                                                                            fill-rule="evenodd"
+                                                                            d="M4.649 3.084A1 1 0 015.163 4.4 13.95 13.95 0 004 10c0 1.993.416 3.886 1.164 5.6a1 1 0 01-1.832.8A15.95 15.95 0 012 10c0-2.274.475-4.44 1.332-6.4a1 1 0 011.317-.516zM12.96 7a3 3 0 00-2.342 1.126l-.328.41-.111-.279A2 2 0 008.323 7H8a1 1 0 000 2h.323l.532 1.33-1.035 1.295a1 1 0 01-.781.375H7a1 1 0 100 2h.039a3 3 0 002.342-1.126l.328-.41.111.279A2 2 0 0011.677 14H12a1 1 0 100-2h-.323l-.532-1.33 1.035-1.295A1 1 0 0112.961 9H13a1 1 0 100-2h-.039zm1.874-2.6a1 1 0 011.833-.8A15.95 15.95 0 0118 10c0 2.274-.475 4.44-1.332 6.4a1 1 0 11-1.832-.8A13.949 13.949 0 0016 10c0-1.993-.416-3.886-1.165-5.6z"
+                                                                            clip-rule="evenodd"
+                                                                    ></path>
+                                                                </svg>
+                                                            </div>
+                                                            <div class="d-sm-none">
+                                                                <h3 class="fw-extrabold mb-1">Variables</h3>
+                                                                <h2 class="h5">de los procesos</h2>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12 col-xl-7 px-xl-0">
+                                                            <div class="d-none d-sm-block">
+                                                                <h3 class="fw-extrabold mb-2">Variables</h3>
+                                                                <h2 class="h6 text-gray-400 mb-0">de los procesos</h2>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="indicators" hidden>
+            <!-- section header -->
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center">
+                <div class="d-block">
+                    <nav aria-label="breadcrumb" class="d-none d-md-inline-block pt-2">
+                        <ol class="breadcrumb breadcrumb-dark breadcrumb-transparent">
+                            <li class="breadcrumb-item">
+                                <a href="{{ url_for('dashboard.main') }}">
+                                    <svg
+                                            class="icon icon-xxs"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                        <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                                        ></path>
+                                    </svg>
+                                </a>
+                            </li>
+                            <li class="breadcrumb-item">
+                                <a href="#" onclick="ActiveSection('main')">Base de datos</a>
+                            </li>
+                            <li class="breadcrumb-item active" aria-current="page">Descripción</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+            <div class="row mb-2 min-vh-card">
+                <div class="col-12">
+                    <div class="card border-0 shadow h-100">
+                        <div class="card-body px-1 px-md-3 d-flex flex-column">
+                            <div class="row mb-2">
+                                <div class="col-12 col-md-8">
+									<span
+                                            class="icon-shape icon-xs icon-shape-primary rounded me-4 me-sm-0 card-effect-icon"
+                                    >
+										<svg
+                                                class="w-6 h-6"
+                                                fill="currentColor"
+                                                viewBox="0 0 20 20"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                        >
+											<path
+                                                    fill-rule="evenodd"
+                                                    d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z"
+                                                    clip-rule="evenodd"
+                                            ></path>
+										</svg>
+									</span>
+                                    <span class="h2 fw-extrabold">Descripción</span>
+                                    <p class="m-1">
+                                        Descripción de indicadores y variables para la industria eléctrica.
+                                    </p>
+                                </div>
+                                {% if admin_session %}
+                                    <div class="col-0 col-md-4">
+                                        <div class="btn-toolbar d-none d-md-flex justify-content-end">
+                                            <a
+                                                    href="{% if not admin_session %}#TOP{% else %}#DOWM{% endif %}"
+                                                    class="btn btn-sm btn-gray-800 d-inline-flex align-items-center"
+                                            >
+                                                <svg
+                                                        class="icon icon-xs me-2"
+                                                        fill="none"
+                                                        stroke="currentColor"
+                                                        viewBox="0 0 24 24"
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                >
+                                                    <path
+                                                            stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                                                    ></path>
+                                                </svg>
+                                                Nuevo Indicador
+                                            </a>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="row flex-fill px-1">
+                                <div class="card border-1 shadow">
+                                    <div class="card-header p-0">
+                                        <div class="row justify-content-between m-0">
+                                            <!-- Dropdown menu-->
+                                            <div
+                                                    class="m-1 col-xl-4 col-md-12 d-flex align-items-center justify-content-between flex-grow-1"
+                                            >
+                                                <div class="d-block mb-3 mb-sm-0 align-items-center">
+													<span class="sidebar-icon">
+														<svg
+                                                                class="icon-shape icon-xxs"
+                                                                fill="black"
+                                                                viewBox="0 0 720 720"
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                        >
+															<path
+                                                                    d="M88 48C101.3 48 112 58.75 112 72V120C112 133.3 101.3 144 88 144H40C26.75 144 16 133.3 16 120V72C16 58.75 26.75 48 40 48H88zM480 64C497.7 64 512 78.33 512 96C512 113.7 497.7 128 480 128H192C174.3 128 160 113.7 160 96C160 78.33 174.3 64 192 64H480zM480 224C497.7 224 512 238.3 512 256C512 273.7 497.7 288 480 288H192C174.3 288 160 273.7 160 256C160 238.3 174.3 224 192 224H480zM480 384C497.7 384 512 398.3 512 416C512 433.7 497.7 448 480 448H192C174.3 448 160 433.7 160 416C160 398.3 174.3 384 192 384H480zM16 232C16 218.7 26.75 208 40 208H88C101.3 208 112 218.7 112 232V280C112 293.3 101.3 304 88 304H40C26.75 304 16 293.3 16 280V232zM88 368C101.3 368 112 378.7 112 392V440C112 453.3 101.3 464 88 464H40C26.75 464 16 453.3 16 440V392C16 378.7 26.75 368 40 368H88z"
+                                                            />
+														</svg>
+													</span>
+                                                    <span class="fs-5 fw-extrabold mb-2">Listado de Indicadores</span>
+                                                </div>
+                                            </div>
+                                            <div
+                                                    class="m-1 col-xl-4 col-md-12 d-flex align-items-center justify-content-between justify-content-xl-center"
+                                            >
+                                                <span class="h6 fw-bold p-1 m-0">Cadena de valor</span>
+                                                <div class="btn-group p-1">
+                                                    <button
+                                                            id="select-dropdown"
+                                                            type="button"
+                                                            class="btn btn-sm btn-secondary dropdown-toggle dropdown-toggle-split"
+                                                            data-bs-toggle="dropdown"
+                                                            aria-haspopup="true"
+                                                            aria-expanded="false"
+                                                    >
+                                                        <span>Seleccionar</span>
+                                                        <svg
+                                                                class="icon icon-xs"
+                                                                fill="currentColor"
+                                                                viewBox="0 0 20 20"
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                        >
+                                                            <path
+                                                                    fill-rule="evenodd"
+                                                                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                                                    clip-rule="evenodd"
+                                                            ></path>
+                                                        </svg>
+                                                    </button>
+                                                    <div class="dropdown-menu">
+                                                        <a class="dropdown-item" onclick="update_list_ind('generation')"
+                                                        >Generación</a
+                                                        >
+                                                        <a class="dropdown-item"
+                                                           onclick="update_list_ind('distribution')"
+                                                        >Distribución</a
+                                                        >
+                                                        <a class="dropdown-item" onclick="update_list_ind('end_use')"
+                                                        >Uso final</a
+                                                        >
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-body px-1 px-md-3 py-1">
+                                        <div class="row">
+                                            <!-- Section Table -->
+                                            <div class="table-responsive table-info" id="table_content_1"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="variables" hidden>
+            <!-- section header -->
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center">
+                <div class="d-block">
+                    <nav aria-label="breadcrumb" class="d-none d-md-inline-block pt-2">
+                        <ol class="breadcrumb breadcrumb-dark breadcrumb-transparent">
+                            <li class="breadcrumb-item">
+                                <a href="{{ url_for('dashboard.main') }}">
+                                    <svg
+                                            class="icon icon-xxs"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                        <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                                        ></path>
+                                    </svg>
+                                </a>
+                            </li>
+                            <li class="breadcrumb-item">
+                                <a href="#" onclick="ActiveSection('main')">Base de datos</a>
+                            </li>
+                            <li class="breadcrumb-item active" aria-current="page">Variables</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+            <div class="row mb-2 min-vh-card">
+                <div class="col-12">
+                    <div class="card border-0 shadow h-100">
+                        <div class="card-body px-1 px-md-3 d-flex flex-column">
+                            <div class="row mb-2">
+                                <div class="col-12 col-md-8">
+									<span
+                                            class="icon-shape icon-xs icon-shape-secondary rounded me-4 me-sm-0 card-effect-icon"
+                                    >
+										<svg
+                                                class="w-6 h-6"
+                                                fill="currentColor"
+                                                viewBox="0 0 20 20"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                        >
+											<path
+                                                    fill-rule="evenodd"
+                                                    d="M4.649 3.084A1 1 0 015.163 4.4 13.95 13.95 0 004 10c0 1.993.416 3.886 1.164 5.6a1 1 0 01-1.832.8A15.95 15.95 0 012 10c0-2.274.475-4.44 1.332-6.4a1 1 0 011.317-.516zM12.96 7a3 3 0 00-2.342 1.126l-.328.41-.111-.279A2 2 0 008.323 7H8a1 1 0 000 2h.323l.532 1.33-1.035 1.295a1 1 0 01-.781.375H7a1 1 0 100 2h.039a3 3 0 002.342-1.126l.328-.41.111.279A2 2 0 0011.677 14H12a1 1 0 100-2h-.323l-.532-1.33 1.035-1.295A1 1 0 0112.961 9H13a1 1 0 100-2h-.039zm1.874-2.6a1 1 0 011.833-.8A15.95 15.95 0 0118 10c0 2.274-.475 4.44-1.332 6.4a1 1 0 11-1.832-.8A13.949 13.949 0 0016 10c0-1.993-.416-3.886-1.165-5.6z"
+                                                    clip-rule="evenodd"
+                                            ></path>
+										</svg>
+									</span>
+                                    <span class="h2 fw-extrabold">Variables</span>
+                                    <p class="m-1">Variables de proceso para la industria eléctrica.</p>
+                                </div>
+                                {% if admin_session %}
+                                    <div class="col-0 col-md-4">
+                                        <div class="btn-toolbar d-none d-md-flex justify-content-end">
+                                            <a href="#"
+                                               class="btn btn-sm btn-gray-800 d-inline-flex align-items-center">
+                                                <svg
+                                                        class="icon icon-xs me-2"
+                                                        fill="none"
+                                                        stroke="currentColor"
+                                                        viewBox="0 0 24 24"
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                >
+                                                    <path
+                                                            stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                                                    ></path>
+                                                </svg>
+                                                Cargar información
+                                            </a>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="row flex-fill px-1">
+                                <div class="card border-1 shadow">
+                                    <div class="card-header p-0">
+                                        <div class="row justify-content-between m-0">
+                                            <!-- Dropdown menu-->
+                                            <div
+                                                    class="mx-0 my-1 col-xl-4 col-md-12 d-flex align-items-center justify-content-between flex-grow-1"
+                                            >
+                                                <div class="d-block mb-3 mb-sm-0 align-items-center">
+													<span class="sidebar-icon">
+														<svg
+                                                                class="icon-shape icon-xxs"
+                                                                fill="black"
+                                                                viewBox="0 0 720 720"
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                        >
+															<path
+                                                                    d="M88 48C101.3 48 112 58.75 112 72V120C112 133.3 101.3 144 88 144H40C26.75 144 16 133.3 16 120V72C16 58.75 26.75 48 40 48H88zM480 64C497.7 64 512 78.33 512 96C512 113.7 497.7 128 480 128H192C174.3 128 160 113.7 160 96C160 78.33 174.3 64 192 64H480zM480 224C497.7 224 512 238.3 512 256C512 273.7 497.7 288 480 288H192C174.3 288 160 273.7 160 256C160 238.3 174.3 224 192 224H480zM480 384C497.7 384 512 398.3 512 416C512 433.7 497.7 448 480 448H192C174.3 448 160 433.7 160 416C160 398.3 174.3 384 192 384H480zM16 232C16 218.7 26.75 208 40 208H88C101.3 208 112 218.7 112 232V280C112 293.3 101.3 304 88 304H40C26.75 304 16 293.3 16 280V232zM88 368C101.3 368 112 378.7 112 392V440C112 453.3 101.3 464 88 464H40C26.75 464 16 453.3 16 440V392C16 378.7 26.75 368 40 368H88z"
+                                                            />
+														</svg>
+													</span>
+                                                    <span class="fs-5 fw-extrabold mb-2">Listado de Variables</span>
+                                                </div>
+                                            </div>
+                                            <div
+                                                    class="mx-0 my-1 col-xl-4 col-md-12 d-flex align-items-center justify-content-between justify-content-xl-center"
+                                            >
+                                                <span class="h6 fw-bold p-1 m-0">Cadena de Valor</span>
+                                                <div class="btn-group p-1">
+                                                    <button
+                                                            id="select-dropdown-var"
+                                                            type="button"
+                                                            class="btn btn-sm btn-sm btn-secondary dropdown-toggle dropdown-toggle-split"
+                                                            data-bs-toggle="dropdown"
+                                                            aria-haspopup="true"
+                                                            aria-expanded="false"
+                                                    >
+                                                        <span>Seleccionar</span>
+                                                        <svg
+                                                                class="icon icon-xs"
+                                                                fill="currentColor"
+                                                                viewBox="0 0 20 20"
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                        >
+                                                            <path
+                                                                    fill-rule="evenodd"
+                                                                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                                                    clip-rule="evenodd"
+                                                            ></path>
+                                                        </svg>
+                                                    </button>
+                                                    <div class="dropdown-menu">
+                                                        <a class="dropdown-item" onclick="update_list('generation')"
+                                                        >Generación</a
+                                                        >
+                                                        <a class="dropdown-item" onclick="update_list('distribution')"
+                                                        >Distribución</a
+                                                        >
+                                                        <a class="dropdown-item" onclick="update_list('end_use')">Uso
+                                                            final</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-body px-1 px-md-3 py-1">
+                                        <!-- Graph Section -->
+                                        <div class="row">
+                                            <div class="col-12 col-xl-3 mb-1 px-0 d-flex align-self-stretch flex-fill">
+                                                <div class="card border-0 flex-fill">
+                                                    <div class="card-body align-self-stretch p-2">
+                                                        <!-- Section Table -->
+                                                        <div class="table-responsive info-table"
+                                                             id="table_content_2"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-12 col-xl-9 mb-1 px-0 d-flex align-self-stretch">
+                                                <div class="card border-0 flex-fill">
+                                                    <div class="card-body p-1 flex-fill">
+                                                        <!-- Graph Section -->
+                                                        <div class="d-block mt-5" id="graph-container">
+                                                            <canvas id="line-chart" width="100%" height="50vh"></canvas>
+                                                        </div>
+                                                        <div id="button-graph-line-chart"
+                                                             class="d-flex d-none align-center justify-content-end">
+                                                            <button type="button" class="btn btn-primary px-1 py-0"
+                                                                    onclick="download_line_chart()">
+                                                                <span>
+                                                                <svg class="icon icon-xs"
+                                                                     fill="currentColor"
+                                                                     xmlns="http://www.w3.org/2000/svg" width="16"
+                                                                     height="16" viewBox="0 0 24 24" fill="white">
+                                                                    <path d="m12 16 4-5h-3V4h-2v7H8z"></path>
+                                                                    <path d="M20 18H4v-7H2v7c0 1.103.897 2 2 2h16c1.103 0 2-.897 2-2v-7h-2v7z"></path>
+                                                                </svg>
+                                                                </span>
+                                                                <span class="small">
+                                                                    Guardar .png
+                                                                </span>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="base-line" hidden>
+            <!-- section header -->
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center">
+                <div class="d-block">
+                    <nav aria-label="breadcrumb" class="d-none d-md-inline-block pt-2">
+                        <ol class="breadcrumb breadcrumb-dark breadcrumb-transparent">
+                            <li class="breadcrumb-item">
+                                <a href="{{ url_for('dashboard.main') }}">
+                                    <svg
+                                            class="icon icon-xxs"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                        <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                                        ></path>
+                                    </svg>
+                                </a>
+                            </li>
+                            <li class="breadcrumb-item">
+                                <a href="#" onclick="ActiveSection('main')">Base de datos</a>
+                            </li>
+                            <li class="breadcrumb-item active" aria-current="page">Indicadores</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+            <div class="row mb-2 min-vh-card">
+                <div class="col-12">
+                    <div class="card border-0 shadow h-100">
+                        <div class="card-body px-1 px-md-3 d-flex flex-column">
+                            <div class="row mb-2">
+                                <div class="col-12">
+									<span
+                                            class="icon-shape icon-xs icon-shape-primary rounded me-4 me-sm-0 card-effect-icon"
+                                    >
+										<svg
+                                                class="w-6 h-6"
+                                                fill="currentColor"
+                                                viewBox="0 0 20 20"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                        >
+											<path
+                                                    d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"
+                                            ></path>
+										</svg>
+									</span>
+                                    <span class="h2 fw-extrabold">Indicadores</span>
+                                    <p class="m-1">Tándem de indicadores para la industria eléctrica.</p>
+                                </div>
+                            </div>
+                            <div class="row flex-fill px-1">
+                                <div class="card border-1 shadow">
+                                    <div class="card-header p-0">
+                                        <div class="row justify-content-between m-0">
+                                            <!-- Dropdown menu-->
+                                            <div
+                                                    class="mx-0 my-1 col-xl-4 col-md-12 d-flex align-items-center justify-content-between flex-grow-1"
+                                            >
+                                                <div class="d-block mb-3 mb-sm-0 align-items-center">
+													<span class="sidebar-icon">
+														<svg
+                                                                class="icon-shape icon-xxs"
+                                                                fill="black"
+                                                                viewBox="0 0 720 720"
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                        >
+															<path
+                                                                    d="M88 48C101.3 48 112 58.75 112 72V120C112 133.3 101.3 144 88 144H40C26.75 144 16 133.3 16 120V72C16 58.75 26.75 48 40 48H88zM480 64C497.7 64 512 78.33 512 96C512 113.7 497.7 128 480 128H192C174.3 128 160 113.7 160 96C160 78.33 174.3 64 192 64H480zM480 224C497.7 224 512 238.3 512 256C512 273.7 497.7 288 480 288H192C174.3 288 160 273.7 160 256C160 238.3 174.3 224 192 224H480zM480 384C497.7 384 512 398.3 512 416C512 433.7 497.7 448 480 448H192C174.3 448 160 433.7 160 416C160 398.3 174.3 384 192 384H480zM16 232C16 218.7 26.75 208 40 208H88C101.3 208 112 218.7 112 232V280C112 293.3 101.3 304 88 304H40C26.75 304 16 293.3 16 280V232zM88 368C101.3 368 112 378.7 112 392V440C112 453.3 101.3 464 88 464H40C26.75 464 16 453.3 16 440V392C16 378.7 26.75 368 40 368H88z"
+                                                            />
+														</svg>
+													</span>
+                                                    <span class="fs-5 fw-extrabold mb-2"
+                                                    >Indicadores de eficiencia energética</span
+                                                    >
+                                                </div>
+                                            </div>
+                                            <div
+                                                    class="mx-0 my-1 col-xl-4 col-md-12 d-flex align-items-center justify-content-between justify-content-xl-center"
+                                            >
+                                                <span class="h6 fw-bold p-1 m-0">Nivel de desagregación</span>
+                                                <div class="btn-group p-1">
+                                                    <button
+                                                            id="select-dropdown-linea"
+                                                            type="button"
+                                                            class="btn btn-sm btn-sm btn-secondary dropdown-toggle dropdown-toggle-split"
+                                                            data-bs-toggle="dropdown"
+                                                            aria-haspopup="true"
+                                                            aria-expanded="false"
+                                                    >
+                                                        <span>Seleccionar</span>
+                                                        <svg
+                                                                class="icon icon-xs"
+                                                                fill="currentColor"
+                                                                viewBox="0 0 20 20"
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                        >
+                                                            <path
+                                                                    fill-rule="evenodd"
+                                                                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                                                    clip-rule="evenodd"
+                                                            ></path>
+                                                        </svg>
+                                                    </button>
+                                                    <div class="dropdown-menu">
+                                                        <a
+                                                                class="dropdown-item"
+                                                                onclick="update_list_agregados('Agregados')"
+                                                                href="#"
+                                                        >Agregados</a
+                                                        >
+                                                        <a
+                                                                class="dropdown-item"
+                                                                onclick="update_list_desagregados('generation')"
+                                                                href="#"
+                                                        >Desagregados</a
+                                                        >
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div
+                                                    class="mx-0 my-1 col-xl-4 col-md-12 d-flex align-items-center justify-content-between justify-content-xl-center"
+                                            >
+                                                <span class="h6 fw-bold p-1 m-0">Cadena de Valor</span>
+                                                <div class="btn-group p-1">
+                                                    <button
+                                                            type="button"
+                                                            id="cadena_valor"
+                                                            class="btn btn-sm btn-sm btn-secondary dropdown-toggle dropdown-toggle-split"
+                                                            data-bs-toggle="dropdown"
+                                                            aria-haspopup="true"
+                                                            aria-expanded="false"
+                                                    >
+                                                        <span>Seleccionar</span>
+                                                        <svg
+                                                                class="icon icon-xs"
+                                                                fill="currentColor"
+                                                                viewBox="0 0 20 20"
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                        >
+                                                            <path
+                                                                    fill-rule="evenodd"
+                                                                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                                                    clip-rule="evenodd"
+                                                            ></path>
+                                                        </svg>
+                                                    </button>
+                                                    <div class="dropdown-menu">
+                                                        <a
+                                                                class="dropdown-item"
+                                                                onclick="update_list_ind_linea_base('generation')"
+                                                        >Generación</a
+                                                        >
+                                                        <a
+                                                                class="dropdown-item"
+                                                                onclick="update_list_ind_linea_base('distribution')"
+                                                        >Distribución</a
+                                                        >
+                                                        <a class="dropdown-item"
+                                                           onclick="update_list_ind_linea_base('end_use')"
+                                                        >Uso final</a
+                                                        >
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-body px-1 px-md-3 py-1">
+                                        <!-- Graph Section -->
+                                        <div class="row">
+                                            <div class="col-12 col-xl-3 mb-1 px-0 d-flex align-self-stretch flex-fill">
+                                                <div class="card border-0 flex-fill">
+                                                    <div class="card-body align-self-stretch p-2">
+                                                        <!-- Section Table -->
+                                                        <div class="table-responsive info-table"
+                                                             id="table_content_linea_base"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-12 col-xl-9 mb-1 px-0 d-flex align-self-stretch">
+                                                <div class="card border-0 flex-fill">
+                                                    <div class="card-body p-1 flex-fill">
+                                                        <!-- Graph Section -->
+                                                        <div class="mt-5" id="graph-container_linea_base">
+                                                            <canvas
+                                                                    id="line-chart_linea_base"
+                                                                    width="100%"
+                                                                    height="50vh"
+                                                            ></canvas>
+                                                        </div>
+                                                        <div id="button-graph-line-chart_linea_base"
+                                                             class="d-flex d-none align-center justify-content-end">
+                                                            <button type="button" class="btn btn-primary px-1 py-0"
+                                                                    onclick="download_line_chart_linea_base()">
+                                                                <span>
+                                                                <svg class="icon icon-xs"
+                                                                     fill="currentColor"
+                                                                     xmlns="http://www.w3.org/2000/svg" width="16"
+                                                                     height="16" viewBox="0 0 24 24" fill="white">
+                                                                    <path d="m12 16 4-5h-3V4h-2v7H8z"></path>
+                                                                    <path d="M20 18H4v-7H2v7c0 1.103.897 2 2 2h16c1.103 0 2-.897 2-2v-7h-2v7z"></path>
+                                                                </svg>
+                                                                </span>
+                                                                <span class="small">
+                                                                    Guardar .png
+                                                                </span>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        {% block footer %} {% include 'module/footer.html' %} {% endblock %}
+    </main>
+    </body>
+{% endblock %} {% block scripts %} {{ super() }}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+    <script
+            src="https://cdn.jsdelivr.net/npm/simple-datatables@latest"
+            crossorigin="anonymous"
+    ></script>
+    <script charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/datatables.net-colreorder/1.5.6/dataTables.colReorder.min.js"
+            integrity="sha512-BA+XWPyIsXxbBMmGU7Acq8vBGWAFldhFLOkoU4dL+B6Fs16RnhCC9ff+vy5GzmB783tyuzYs42QGHRbV73e1ug=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"
+    ></script>
+    <script
+            id="MathJax-script"
+            async
+            src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+    ></script>
+
+    <script type="text/javascript">
+        MathJax = {
+            tex: {
+                inlineMath: [
+                    ["$", "$"],
+                    ["\\(", "\\)"],
+                ],
+            },
+        }
+    </script>
+
+    <!-- Indicators Datatable.js handler -->
+    <!-- Generic display constructor for tables :| -->
+    <script type="text/javascript">
+        var _table_ = document.createElement("table"),
+            _tr_ = document.createElement("tr"),
+            _th_ = document.createElement("th"),
+            _td_ = document.createElement("td"),
+            _thead_ = document.createElement("thead"),
+            _tbody_ = document.createElement("tbody"),
+            _i_ = document.createElement("i"),
+            _a_ = document.createElement("a"),
+            _ul_ = document.createElement("ul"),
+            _p_ = document.createElement("p")
+
+        function update_list_ind(list_name) {
+            SetSelectName("select-dropdown", list_name)
+            // prettier-ignore
+            var json_file = JSON.parse('{{data_indicators | tojson | safe}}')
+            var keys_list = Object.keys(json_file[list_name])
+            var keys_list_2 = []
+            var keys_list_3 = []
+            var json_table = {}
+            var json_datos = []
+            var json_aux_ind = []
+            var json_aux_des = []
+            var json_desagregacion = []
+
+            keys_list.forEach(function (item, index) {
+                // var name = item;
+                if (item === "Desagregacion") {
+                    json_aux_des = json_file[list_name][item]
+                } else {
+                    json_aux_ind = json_file[list_name][item]
+                }
+            })
+
+            keys_list_2 = Object.keys(json_aux_ind)
+            keys_list_2.forEach(function (item2, index) {
+                keys_list_3 = Object.keys(json_aux_des)
+                keys_list_3.forEach(function (item3, index) {
+                    if (
+                        json_aux_ind[item2]["INDICADOR_ID"] === json_aux_des[item3]["REL_VARIABLES_DESAGREGACION"]
+                    ) {
+                        json_desagregacion.push(json_aux_des[item3]["DESAGREGACION_NOMBRE"])
+                    }
+                })
+
+                json_datos.push(json_aux_ind[item2]["DESCRIPCION"])
+                json_datos.push(json_aux_ind[item2]["FORMULA_RELACIONES"])
+                json_datos.push(json_desagregacion)
+                json_datos.push(json_aux_ind[item2]["VARIABLES"])
+                var indicador_nombre = json_aux_ind[item2]["INDICADOR_AGREGADO"]
+                json_table[indicador_nombre] = json_datos
+                json_desagregacion = []
+                json_datos = []
+            })
+            loadTable_variables_ind(list_name, json_table)
+        }
+
+        function loadTable_variables_ind(list_name, json_new) {
+            var list_names = Object.keys(json_new)
+            var table = _table_.cloneNode(false)
+            var tbody = _tbody_.cloneNode(false),
+                columns = addAllColumnHeaders_ind(list_name)
+
+            list_names.forEach(function (items, index) {
+                var tr = _tr_.cloneNode(false)
+                var td = _td_.cloneNode(false)
+                var a = _a_.cloneNode(false)
+                a.appendChild(document.createTextNode(items || ""))
+                td.classList.add("fw-extrabold")
+                td.classList.add("showhr")
+                var i = _i_.cloneNode(false)
+                i.classList.add("fa-solid")
+                /* i.classList.add('fa-angle-right') */
+                i.classList.add("fa-caret-right")
+                i.classList.add("pe-1")
+
+                td.appendChild(i)
+                td.appendChild(a)
+                tr.appendChild(td)
+                tbody.appendChild(tr)
+
+                var keys_list = json_new[items]
+                // prettier-ignore
+                var translate_array = JSON.parse('{{translating_dict | tojson | safe}}')
+                var titles = ["Descripción:", "Formula:", "_", "Variables:"]
+                var tr = _tr_.cloneNode(false)
+                var td = _td_.cloneNode(false)
+                var description_html = _ul_.cloneNode(false)
+                keys_list.forEach(function (item, index) {
+                    if (index == 2) {
+                        item.forEach(function (subitem) {
+                            var description
+                            if (subitem in translate_array) {
+                                description = translate_array[subitem]
+                            } else {
+                                description = subitem
+                            }
+                            description_html.innerHTML += "<li>" + description + "</li>"
+                        })
+                        return
+                    }
+
+                    if (index == 3) {
+                        item = item.replace(/-/gi, "<br>")
+                    }
+
+                    var p = _p_.cloneNode(false)
+                    p.innerHTML =
+                        '<small class="fw-extrabold">' +
+                        titles[index] +
+                        '</small><br><div class="px-1 px-lg-4 text-wrap justified-text">' +
+                        item +
+                        "</div>"
+                    p.classList.add("row")
+                    td.appendChild(p)
+                })
+                var p = _p_.cloneNode(false)
+                p.innerHTML =
+                    '<small class="fw-extrabold">Desagregación:</small><br><div class="px-1 px-lg-4">' +
+                    description_html.innerHTML +
+                    "</div>"
+                td.appendChild(p)
+
+                td.classList.add("aser")
+                td.classList.add("font-small")
+                td.classList.add("fw-normal")
+                td.classList.add("px-2")
+                td.classList.add("px-lg-4")
+                tr.appendChild(td)
+                tr.style.display = "none"
+                tbody.appendChild(tr)
+            })
+
+            table.appendChild(tbody)
+            table.id = "table_indicators"
+            table.classList.add("table")
+            table.classList.add("table-centered")
+            table.classList.add("table-nowrap")
+            table.classList.add("rounded")
+            table.classList.add("mb-0")
+            table.classList.add("border-0")
+            table.classList.add("dt-responsive")
+
+            function addAllColumnHeaders_ind(list_name) {
+                var columnSet = [],
+                    thead = _thead_.cloneNode(false)
+                tr = _tr_.cloneNode(false)
+                var th = _th_.cloneNode(false)
+                if (list_name === "generation") {
+                    var key = "Generación"
+                } else if (list_name === "distribution") {
+                    var key = "Distribución"
+                } else if (list_name === "end_use") {
+                    var key = "Uso final"
+                }
+                columnSet.push(key)
+                th.appendChild(document.createTextNode(key))
+                th.classList.add("rounded")
+                th.classList.add("border-0")
+                tr.appendChild(th)
+                thead.appendChild(tr)
+                thead.classList.add("thead-light")
+                table.appendChild(thead)
+                return columnSet
+            }
+
+            var el = document.getElementById("table_content_1")
+            el.innerHTML = ""
+            el.appendChild(table)
+            const datatablesSimple = document.getElementById("table_indicators")
+            if (datatablesSimple) {
+                let tables = new DataTable(datatablesSimple, datatable_config)
+            }
+
+            var table_handler = $("#table_indicators").DataTable()
+            if (contador == 0) {
+                // fue necesario agregar el contador para que la primera interaccion con math funcione sin promesas, porque daba error.
+                contador = contador + 1
+                $("#table_indicators tbody").on("click", "tr", function () {
+                    var td_select = this.childNodes[0]
+                    if (td_select.classList.contains("showhr")) {
+                        $(this)
+                            .closest("tr")
+                            .nextUntil("tr:has(.showhr)")
+                            .toggle("slow", function () {
+                            })
+                    } else if (td_select.classList.contains("aser")) {
+                        var child = $(this).prevAll("tr:has(.showhr)")[0].innerText
+                        data = table_handler.row(this).data()
+                        // prettier-ignore
+                        var translate_array = JSON.parse('{{translating_dict | tojson | safe}}')
+                        var row = [Object.keys(translate_array).find((key) => translate_array[key] == data)]
+                        if (row[0] == null) {
+                            row = data
+                        }
+                        //create_chart_indic(list_name, child, row);
+                    }
+                })
+            } else {
+                MathJax.typesetPromise()
+                    .then(() => {
+                        $("#table_indicators tbody").on("click", "tr", function () {
+                            var td_select = this.childNodes[0]
+                            if (td_select.classList.contains("showhr")) {
+                                $(this)
+                                    .closest("tr")
+                                    .nextUntil("tr:has(.showhr)")
+                                    .toggle("slow", function () {
+                                    })
+                            } else if (td_select.classList.contains("aser")) {
+                                var child = $(this).prevAll("tr:has(.showhr)")[0].innerText
+                                var data = table_handler.row(this).data()
+                                // prettier-ignore
+                                var translate_array = JSON.parse('{{translating_dict | tojson | safe}}')
+                                var row = [Object.keys(translate_array).find((key) => translate_array[key] == data)]
+                                if (row[0] == null) {
+                                    row = data
+                                }
+                                //create_chart_indic(list_name, child, row);
+                            }
+                        })
+                        MathJax.typesetPromise()
+                    })
+                    .catch((err) => console.log(err.message))
+            }
+        }
+
+        /* $(document).ready(function() {
+          $('#table_indicators').dataTable( {
+              colReorder: {
+                  order: [ 0, 3, 4, 2, 1]
+              }
+          } );
+      } ); */
+    </script>
+
+    <script type="text/javascript">
+        //  Variables Chart.js handler
+        //  Generic display constructor for variable tables in Json format :)
+
+        function update_list(list_name) {
+            SetSelectName("select-dropdown-var", list_name)
+            // prettier-ignore
+            var json_file = JSON.parse('{{data | tojson | safe}}')
+            var keys_list = Object.keys(json_file[list_name])
+
+            if (list_name == "end_use") {
+                keys_list = keys_list.filter(function (key_l) {
+                    return key_l !== "PIB en USD"
+                })
+                keys_list = keys_list.filter(function (key_l) {
+                    return key_l !== "PIB"
+                })
+            }
+
+            var keys_list_2 = []
+            var json_new = {}
+            keys_list.forEach(function (item, index) {
+                var name = item
+                var json_aux = json_file[list_name][item]
+                //saco la linea 0 donde estan los titulos
+                keys_list_2 = Object.keys(json_aux[0])
+                keys_list_2.shift()
+                json_new[item] = keys_list_2
+            })
+
+            loadTable_variables(list_name, json_new)
+        }
+
+        // Variables Datatable.js handler
+        // Callback for combobox on variable view :)
+        function loadTable_variables(list_name, json_new) {
+            var list_names = Object.keys(json_new)
+            var table = _table_.cloneNode(false)
+            var tbody = _tbody_.cloneNode(false),
+                columns = addAllColumnHeaders(list_name)
+            list_names.forEach(function (items, index) {
+                var tr = _tr_.cloneNode(false)
+                var td = _td_.cloneNode(false)
+                var a = _a_.cloneNode(false)
+                a.appendChild(document.createTextNode(items || ""))
+                td.classList.add("fw-extrabold")
+                td.classList.add("showhr")
+                var i = _i_.cloneNode(false)
+                i.classList.add("fa-solid")
+                /* i.classList.add('fa-angle-right') */
+                i.classList.add("fa-caret-down")
+                i.classList.add("pe-1")
+
+                td.appendChild(i)
+                td.appendChild(a)
+                tr.appendChild(td)
+                tbody.appendChild(tr)
+                var keys_list = json_new[items]
+                // prettier-ignore
+                var translate_array = JSON.parse('{{translating_dict | tojson | safe}}')
+                keys_list.forEach(function (item, index) {
+                    var tr = _tr_.cloneNode(false)
+                    var td = _td_.cloneNode(false)
+                    var cell_value
+                    if (item in translate_array) {
+                        cell_value = translate_array[item]
+                    } else {
+                        cell_value = item
+                    }
+                    //cell_value = cell_value.replace("CO2eq","$CO_2eq$");
+                    td.appendChild(document.createTextNode(cell_value || ""))
+                    td.classList.add("aser")
+                    td.classList.add("fw-normal")
+                    td.classList.add("font-small")
+                    tr.appendChild(td)
+                    tr.style.display = "none"
+                    tbody.appendChild(tr)
+                })
+            })
+
+            table.appendChild(tbody)
+            table.id = "table_variables"
+            table.classList.add("table")
+            table.classList.add("table-centered")
+            table.classList.add("table-wrap")
+            table.classList.add("rounded")
+            table.classList.add("mb-0")
+            table.classList.add("border-0")
+            table.classList.add("dt-responsive")
+
+            function addAllColumnHeaders(list_name) {
+                var columnSet = [],
+                    thead = _thead_.cloneNode(false)
+                tr = _tr_.cloneNode(false)
+                var th = _th_.cloneNode(false)
+                if (list_name === "generation") {
+                    var key = "Generación"
+                } else if (list_name === "distribution") {
+                    var key = "Distribución"
+                } else if (list_name === "end_use") {
+                    var key = "Uso final"
+                }
+                columnSet.push(key)
+                th.appendChild(document.createTextNode(key))
+                th.classList.add("rounded")
+                th.classList.add("border-0")
+                tr.appendChild(th)
+                thead.appendChild(tr)
+                thead.classList.add("thead-light")
+                table.appendChild(thead)
+                return columnSet
+            }
+
+            var el = document.getElementById("table_content_2")
+            el.innerHTML = ""
+            el.appendChild(table)
+            const datatablesSimple = document.getElementById("table_variables")
+            if (datatablesSimple) {
+                let tables = new DataTable(datatablesSimple, datatable_config)
+            }
+
+            var table_handler = $("#table_variables").DataTable()
+            if (variable_mathjax) {
+                variable_mathjax = false
+                $("#table_variables tbody").on("click", "tr", function () {
+                    var td_select = this.childNodes[0]
+                    if (td_select.classList.contains("showhr")) {
+                        $(this)
+                            .closest("tr")
+                            .nextUntil("tr:has(.showhr)")
+                            .toggle("slow", function () {
+                            })
+                        $(".aser.bg-gray-200").removeClass("bg-gray-200")
+
+                    } else if (td_select.classList.contains("aser")) {
+                        var child = $(this).prevAll("tr:has(.showhr)")[0].innerText
+
+                        td_select.classList.toggle("bg-gray-200")
+                        var data = table_handler.row(this).data()
+                        // prettier-ignore
+                        var translate_array = JSON.parse('{{translating_dict | tojson | safe}}')
+                        var row = [Object.keys(translate_array).find((key) => translate_array[key] == data)]
+                        if (row[0] == null) {
+                            row = data
+                        }
+                        create_chart(list_name, child, row)
+                    }
+                })
+            } else {
+                MathJax.typesetPromise()
+                    .then(() => {
+                        $("#table_variables tbody").on("click", "tr", function () {
+                            var td_select = this.childNodes[0]
+                            if (td_select.classList.contains("showhr")) {
+                                $(this)
+                                    .closest("tr")
+                                    .nextUntil("tr:has(.showhr)")
+                                    .toggle("slow", function () {
+                                    })
+                                $(".aser.bg-gray-200").removeClass("bg-gray-200")
+                            } else if (td_select.classList.contains("aser")) {
+                                var child = $(this).prevAll("tr:has(.showhr)")[0].innerText
+                                td_select.classList.toggle("bg-gray-200")
+                                var data = table_handler.row(this).data()
+                                // prettier-ignore
+                                var translate_array = JSON.parse('{{translating_dict | tojson | safe}}')
+                                var row = [Object.keys(translate_array).find((key) => translate_array[key] == data)]
+                                if (row[0] == null) {
+                                    row = data
+                                }
+                                create_chart(list_name, child, row)
+                            }
+                        })
+                        MathJax.typesetPromise()
+                    })
+                    .catch((err) => console.log(err.message))
+            }
+        }
+
+        var last_indicator = ""
+        var chart_element = ""
+        var keys_list = []
+        var old_dataset = []
+
+        function create_chart(list_name, indicator, key) {
+            var row1 = key[0]
+
+            var row = row1.replace("$CO_2eq$", "CO2eq")
+            // prettier-ignore
+            var translate_array = JSON.parse('{{translating_dict | tojson | safe}}')
+            var row_table
+            if (row in translate_array) {
+                row_table = translate_array[row]
+            } else {
+                row_table = row
+            }
+
+            var al = Math.floor(Math.random() * 255)
+            var al2 = Math.floor(Math.random() * 255)
+            var b_colorslist = [
+                "rgba(" + al + ", 99, 132, 0.7)",
+                "rgba(" + al + ", 162, 235, 0.7)",
+                "rgba(" + al + ", 206, 86, 0.7)",
+                "rgba(" + al + ", 192, 192, 0.7)",
+                "rgba(" + al + ", 102, 255, 0.7)",
+                "rgba(" + al + ", 159, 64, 0.7)",
+            ]
+            var colorslist = [
+                "rgba(" + al + ", 99, 132, 1)",
+                "rgba(" + al + ", 162, 235, 1)",
+                "rgba(" + al + ", 206, 86, 1)",
+                "rgba(" + al + ", 192, 192, 1)",
+                "rgba(" + al + ", 102, 255, 1)",
+                "rgba(" + al + ", 159, 64, 1)",
+            ]
+            /* const table_name = key; */
+            const table_name = indicator
+            // prettier-ignore
+            var json_file = JSON.parse('{{data | tojson | safe}}')
+            var table = json_file[list_name][table_name]
+            var keys = Object.keys(table[0])
+            var labels = table.map(function (e) {
+                return e[keys[0]]
+            })
+            labels = labels.slice(0, 12)
+            var data = table.map(function (e) {
+                return e[row].replace(",", ".")
+            })
+            length = data.length
+            var array = []
+            for (var j = 0; j < length; j++) {
+                if (
+                    row == "Poblacion_Total" ||
+                    row == "P_Urbano" ||
+                    row == "P_Rural" ||
+                    row == "V_Rural" ||
+                    row == "V_Urbano" ||
+                    row == "Vivienda_Total"
+                ) {
+                    array.push((parseFloat(data[j]) / 1000000).toFixed(3))
+                } else {
+                    array.push(parseFloat(data[j]).toFixed(3))
+                }
+            }
+            var unit = ""
+            // prettier-ignore
+            var units = JSON.parse('{{units | tojson | safe}}')
+            if (indicator in units) {
+                unit = units[indicator]
+                if (unit == "Porcentaje %") {
+                    array = array.map(function (x) {
+                        let y = x * 100
+                        return parseFloat(y).toFixed(3)
+                    })
+                }
+            }
+            /* Agregada - Capturar graficas actuales > 2 restablece */
+
+            /* Desagregados - else */
+            if (last_indicator == indicator) {
+                if (!keys_list.includes(row_table)) {
+                    keys_list.push(row_table)
+                    const update_dataset = {
+                        label: row_table,
+                        borderColor: colorslist[keys_list.length],
+                        backgroundColor: b_colorslist[keys_list.length],
+                        borderWidth: 2,
+                        data: array,
+                        spanGraphs: false,
+                        fill: true,
+                    }
+                    chart_element.data.datasets.push(update_dataset)
+                    chart_element.update()
+                } else {
+                    keys_list = keys_list.filter((data) => data != row_table)
+                    chart_element.data.datasets = chart_element.data.datasets.filter(
+                        (data) => data.label != row_table
+                    )
+                    $(".bg-gray-200").removeClass(".bg-gray-200");
+                    chart_element.update()
+                }
+            } else {
+                $(".bg-gray-200").removeClass(".bg-gray-200");
+                keys_list = [row_table]
+                var mydatasets = [
+                    {
+                        label: row_table,
+                        borderColor: colorslist[0],
+                        backgroundColor: b_colorslist[0],
+                        borderWidth: 2,
+                        data: array,
+                        spanGraphs: false,
+                        fill: true,
+                    },
+                ]
+                let delayed
+                $("#line-chart").remove()
+                $("#graph-container").append('<canvas id="line-chart" width="100%" height="50vh"><canvas>')
+                var config = {
+                    type: "bar",
+                    data: {
+                        labels: labels,
+                        datasets: mydatasets,
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            xAxes: [
+                                {
+                                    stacked: false,
+                                    scaleLabel: {
+                                        display: true,
+                                        labelString: "Año",
+                                    },
+                                },
+                            ],
+                            yAxes: [
+                                {
+                                    stacked: false,
+                                    scaleLabel: {
+                                        display: true,
+                                        labelString: unit,
+                                    },
+                                    ticks: {
+                                        suggestedMin: 0,
+                                    },
+                                },
+                            ],
+                        },
+                        title: {
+                            display: true,
+                            text: table_name,
+                            fontSize: 22,
+                            padding: 15,
+                        },
+                        legend: {
+                            position: "bottom",
+                        },
+                        animation: {
+                            onComplete: () => {
+                                delayed = true
+                            },
+                            delay: (context) => {
+                                let delay = 0
+                                if (context.type === "data" && context.mode === "default" && !delayed) {
+                                    delay = context.dataIndex * 300 + context.datasetIndex * 100
+                                }
+                                return delay
+                            },
+                        },
+                    },
+                }
+                chart_element = new Chart(document.getElementById("line-chart"), config)
+                document.getElementById("button-graph-line-chart").classList.remove("d-none");
+            }
+            last_indicator = indicator
+        }
+
+        function download_line_chart() {
+            var image_data = chart_element.toBase64Image();
+            const linkSource = "data:image/jpg" + image_data;
+            const downloadLink = document.createElement("a");
+            downloadLink.href = linkSource;
+            downloadLink.download = 'Grafica_Variables.png';
+            downloadLink.click();
+        }
+    </script>
+
+    <script type="text/javascript">
+        function update_list_ind_linea_base(list_name) {
+            SetSelectName("cadena_valor", list_name)
+            document.getElementById("cadena_valor").disabled = false
+            // prettier-ignore
+            var json_file = JSON.parse('{{data_indicators | tojson | safe}}')
+            var keys_list = Object.keys(json_file[list_name])
+            var keys_list_2 = []
+            var keys_list_3 = []
+            var json_table = {}
+            var json_aux_ind
+            var json_aux_des
+            var json_desagregacion = []
+            var json_desagregacion_completo = []
+
+            keys_list.forEach(function (item, index) {
+                var name = item
+                if (item === "Desagregacion") {
+                    json_aux_des = json_file[list_name][item]
+                } else {
+                    json_aux_ind = json_file[list_name][item]
+                }
+            })
+
+            keys_list_2 = Object.keys(json_aux_ind)
+            keys_list_2.forEach(function (item2, index) {
+                keys_list_3 = Object.keys(json_aux_des)
+                keys_list_3.forEach(function (item3, index) {
+                    if (
+                        json_aux_ind[item2]["INDICADOR_ID"] === json_aux_des[item3]["REL_VARIABLES_DESAGREGACION"]
+                    ) {
+                        json_desagregacion.push(json_aux_des[item3]["DESAGREGACION_NOMBRE"])
+                        json_desagregacion_completo.push(json_desagregacion)
+                        json_desagregacion = []
+                    }
+                })
+                var indicador_nombre = json_aux_ind[item2]["INDICADOR_AGREGADO"]
+                json_table[indicador_nombre] = json_desagregacion_completo
+                json_desagregacion_completo = []
+            })
+            loadTable_variables_linea_base(list_name, json_table)
+        }
+
+        function update_list_desagregados(list_name) {
+            SetSelectName("select-dropdown-linea", "desagregados")
+            update_list_ind_linea_base(list_name)
+        }
+
+        function update_list_agregados(list_name) {
+            SetSelectName("select-dropdown-linea", list_name)
+            document.getElementById("cadena_valor").disabled = true
+            // prettier-ignore
+            var json_file = JSON.parse('{{data_total_indicators | tojson | safe}}')
+            var keys_list_2 = []
+            var json_table = {}
+            limite_graficas = true
+            var keys_list = Object.keys(json_file)
+            keys_list.forEach(function (item, index) {
+                var json_aux = json_file[item]
+                keys_list_2 = Object.keys(json_aux)
+                json_table[item] = keys_list_2
+            })
+            loadTable_variables_linea_base(list_name, json_table)
+        }
+
+        function loadTable_variables_linea_base(list_name, json_new) {
+            var list_names = Object.keys(json_new)
+            var table = _table_.cloneNode(false)
+            var tbody = _tbody_.cloneNode(false),
+                columns = addAllColumnHeaders(list_name)
+            list_names.forEach(function (items, index) {
+                var tr = _tr_.cloneNode(false)
+                var td = _td_.cloneNode(false)
+                var a = _a_.cloneNode(false)
+                a.appendChild(document.createTextNode(items || ""))
+                td.classList.add("fw-extrabold")
+                td.classList.add("showhr")
+                var i = _i_.cloneNode(false)
+                i.classList.add("fa-solid")
+                //i.classList.add('fa-angle-right')
+                i.classList.add("fa-caret-down")
+                i.classList.add("pe-1")
+
+                td.appendChild(i)
+                td.appendChild(a)
+                tr.appendChild(td)
+                tbody.appendChild(tr)
+                var keys_list = json_new[items]
+                // prettier-ignore
+                var translate_array = JSON.parse('{{translating_dict | tojson | safe}}')
+                keys_list.forEach(function (item, index) {
+                    var tr = _tr_.cloneNode(false)
+                    var td = _td_.cloneNode(false)
+                    var cell_value
+                    if (item in translate_array) {
+                        cell_value = translate_array[item]
+                    } else {
+                        cell_value = item
+                    }
+                    td.appendChild(document.createTextNode(cell_value || ""))
+                    td.classList.add("aser")
+                    td.classList.add("fw-normal")
+                    td.classList.add("font-small")
+                    tr.appendChild(td)
+                    tr.style.display = "none"
+                    tbody.appendChild(tr)
+                })
+            })
+
+            table.appendChild(tbody)
+            table.id = "table_variables_linea_base"
+            table.classList.add("table")
+            table.classList.add("table-centered")
+            table.classList.add("table-wrap")
+            table.classList.add("rounded")
+            table.classList.add("mb-0")
+            table.classList.add("border-0")
+            table.classList.add("dt-responsive")
+
+            function addAllColumnHeaders(list_name) {
+                var columnSet = [],
+                    thead = _thead_.cloneNode(false)
+                tr = _tr_.cloneNode(false)
+                var th = _th_.cloneNode(false)
+                if (list_name === "generation") {
+                    var key = "Generación"
+                } else if (list_name === "distribution") {
+                    var key = "Distribución"
+                } else if (list_name === "end_use") {
+                    var key = "Uso final"
+                } else if (list_name === "Agregados") {
+                    var key = "Agregados"
+                }
+                columnSet.push(key)
+                th.appendChild(document.createTextNode(key))
+                th.classList.add("rounded")
+                th.classList.add("border-0")
+                tr.appendChild(th)
+                thead.appendChild(tr)
+                thead.classList.add("thead-light")
+                table.appendChild(thead)
+                return columnSet
+            }
+
+            var el = document.getElementById("table_content_linea_base")
+            el.innerHTML = ""
+            el.appendChild(table)
+            const datatablesSimple = document.getElementById("table_variables_linea_base")
+            if (datatablesSimple) {
+                let tables = new DataTable(datatablesSimple, datatable_config)
+            }
+
+            var table_handler = $("#table_variables_linea_base").DataTable()
+            if (contador_linea_base == 0) {
+                // fue necesario agregar el contador para que la primera interaccion con math funcione sin promesas, porque daba error.
+                contador_linea_base = contador_linea_base + 1
+                $("#table_variables_linea_base tbody").on("click", "tr", function () {
+                    var td_select = this.childNodes[0]
+                    if (td_select.classList.contains("showhr")) {
+                        $(this)
+                            .closest("tr")
+                            .nextUntil("tr:has(.showhr)")
+                            .toggle("slow", function () {
+                            })
+                        $(".aser.bg-gray-200").removeClass("bg-gray-200")
+                    } else if (td_select.classList.contains("aser")) {
+                        td_select.classList.toggle("bg-gray-200")
+                        var child = $(this).prevAll("tr:has(.showhr)")[0].innerText
+                        var data = table_handler.row(this).data()
+                        // prettier-ignore
+                        var translate_array = JSON.parse('{{translating_dict | tojson | safe}}')
+                        var row = [Object.keys(translate_array).find((key) => translate_array[key] == data)]
+                        if (row[0] == null) {
+                            row = data
+                        }
+                        create_chart_indic(list_name, child, row)
+                    }
+                })
+            } else {
+                MathJax.typesetPromise()
+                    .then(() => {
+                        $("#table_variables_linea_base tbody").on("click", "tr", function () {
+                            var td_select = this.childNodes[0]
+                            if (td_select.classList.contains("showhr")) {
+                                $(this)
+                                    .closest("tr")
+                                    .nextUntil("tr:has(.showhr)")
+                                    .toggle("slow", function () {
+                                    })
+                                $(".aser.bg-gray-200").removeClass("bg-gray-200")
+                            } else if (td_select.classList.contains("aser")) {
+                                td_select.classList.toggle("bg-gray-200")
+                                var child = $(this).prevAll("tr:has(.showhr)")[0].innerText
+                                var data = table_handler.row(this).data()
+                                // prettier-ignore
+                                var translate_array = JSON.parse('{{translating_dict | tojson | safe}}')
+                                var row = [Object.keys(translate_array).find((key) => translate_array[key] == data)]
+                                if (row[0] == null) {
+                                    row = data
+                                }
+                                create_chart_indic(list_name, child, row)
+                            }
+                        })
+                        MathJax.typesetPromise()
+                    })
+                    .catch((err) => console.log(err.message))
+            }
+        }
+
+        function create_chart_indic(list_name, indicator2, key) {
+            var row1 = key[0]
+            var row2 = row1.replace("$CO_2eq$", "CO2eq")
+            var row = row2.replace(/ /gi, "_")
+            //hubo necesidad de quitar los saltos de linea que se crean cuando se hace el replace para matjax
+            var indicador3 = indicator2.replace(/\n/gi, "")
+            indicator = indicador3
+            var al = Math.floor(Math.random() * 255)
+            var al2 = Math.floor(Math.random() * 255)
+            var b_colorslist = [
+                "rgba(" + al + ", " + al2 + ", 132, 0.7)",
+                "rgba(" + al + ", " + al2 + ", 235, 0.7)",
+                "rgba(" + al + ", " + al2 + ", 86, 0.7)",
+                "rgba(" + al + ", " + al2 + ", 192, 0.7)",
+                "rgba(" + al + ", " + al2 + ", 255, 0.7)",
+                "rgba(" + al + ", " + al2 + ", 64, 0.7)",
+            ]
+            var colorslist = [
+                "rgba(" + al + ", " + al2 + ", 132, 1)",
+                "rgba(" + al + ", " + al2 + ", 235, 1)",
+                "rgba(" + al + ", " + al2 + ", 86, 1)",
+                "rgba(" + al + ", " + al2 + ", 192, 1)",
+                "rgba(" + al + ", " + al2 + ", 255, 1)",
+                "rgba(" + al + ", " + al2 + ", 64, 1)",
+            ]
+            /* const table_name = key; */
+            const table_name = indicator
+            if (list_name == "Agregados") {
+                // prettier-ignore
+                var json_file = JSON.parse('{{data_total_indicators | tojson | safe}}')
+                var table = json_file[indicator][row1]
+            } else {
+                // prettier-ignore
+                var json_file = JSON.parse('{{data_indicators | tojson | safe}}')
+                var table = json_file[list_name]["Data"]
+            }
+            var keys = Object.keys(table[0])
+            var labels = table.map(function (e) {
+                return e[keys[0]]
+            })
+
+            if (list_name == "Agregados") {
+                var data = table.map(function (e) {
+                    return e[row2]
+                })
+            } else {
+                var data = table.map(function (e) {
+                    return e[row]
+                })
+            }
+
+            length = data.length
+            var array = []
+            for (var j = 0; j < length; j++) {
+                array.push(parseFloat(data[j]).toFixed(3))
+            }
+            var unit = ""
+            // prettier-ignore
+            var units = JSON.parse('{{units | tojson | safe}}')
+
+            if (list_name == "Agregados") {
+                if (row1 in units) {
+                    unit = units[row1]
+                    if (
+                        unit == "Porcentaje %" &&
+                        (row1 == "Índice Anual Acumulado de Discontinuidad - IAAD" ||
+                            row1 == "Factor de pérdidas en distribución (SOLO ADD)" ||
+                            row1 == "Eficiencia de la generación eléctrica")
+                    ) {
+                        array = array.map(function (x) {
+                            let y = x * 100
+                            return parseFloat(y.toFixed(3))
+                        })
+                    }
+                }
+            } else {
+                if (indicator in units) {
+                    unit = units[indicator]
+                    /*if (unit=='Porcentaje %'){
+              array = array.map(function(x) { return x * 100; });;
+            }*/
+                }
+            }
+
+            if (
+                (last_indicator == indicator || (list_name == "Agregados" && last_indicator != "")) &&
+                !limite_graficas
+            ) {
+                if (!keys_list.includes(row2)) {
+                    keys_list.push(row2)
+                    var update_dataset = {}
+                    if (list_name == "Agregados") {
+                        update_dataset = {
+                            label: row2,
+                            borderColor: colorslist[keys_list.length],
+                            backgroundColor: b_colorslist[keys_list.length],
+                            borderWidth: 2,
+                            data: array,
+                            spanGraphs: false,
+                            fill: true,
+                            yAxisID: "y1",
+                        }
+
+                        chart_element.options.scales.yAxes.push({
+                            stacked: false,
+                            scaleLabel: {
+                                display: true,
+                                labelString: unit,
+                            },
+                            id: "y1",
+                            position: "right",
+                        })
+                        limite_graficas = true
+                    } else {
+                        update_dataset = {
+                            label: row2,
+                            borderColor: colorslist[keys_list.length],
+                            backgroundColor: b_colorslist[keys_list.length],
+                            borderWidth: 2,
+                            data: array,
+                            spanGraphs: false,
+                            fill: true,
+                        }
+                    }
+                    chart_element.data.datasets.push(update_dataset)
+                    chart_element.update()
+                } else {
+                    $(".bg-gray-200").removeClass(".bg-gray-200");
+                    keys_list = keys_list.filter((data) => data != row2)
+                    chart_element.data.datasets = chart_element.data.datasets.filter(
+                        (data) => data.label != row2
+                    )
+                    chart_element.update()
+                }
+            } else {
+                $(".bg-gray-200").removeClass(".bg-gray-200");
+                keys_list = [row2]
+                var mydatasets = [
+                    {
+                        label: row2,
+                        borderColor: colorslist[0],
+                        backgroundColor: b_colorslist[0],
+                        borderWidth: 2,
+                        data: array,
+                        spanGraphs: false,
+                        fill: true,
+                        yAxisID: "y",
+                    },
+                ]
+
+                let delayed
+                $("#line-chart_linea_base").remove()
+                $("#graph-container_linea_base").append(
+                    '<canvas id="line-chart_linea_base" width="100%" height="50vh"><canvas>'
+                )
+                var config = {
+                    type: "bar",
+                    data: {
+                        labels: labels,
+                        datasets: mydatasets,
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            xAxes: [
+                                {
+                                    stacked: false,
+                                    scaleLabel: {
+                                        display: true,
+                                        labelString: "Año",
+                                    },
+                                },
+                            ],
+                            yAxes: [
+                                {
+                                    stacked: false,
+                                    scaleLabel: {
+                                        display: true,
+                                        labelString: unit,
+                                    },
+                                    id: "y",
+                                    ticks: {
+                                        suggestedMin: 0,
+                                    },
+                                },
+                            ],
+                        },
+                        title: {
+                            display: true,
+                            text: table_name,
+                            fontSize: 24,
+                            padding: 15,
+                        },
+                        legend: {
+                            position: "bottom",
+                        },
+                        animation: {
+                            onComplete: () => {
+                                delayed = true
+                            },
+                            delay: (context) => {
+                                let delay = 0
+                                if (context.type === "data" && context.mode === "default" && !delayed) {
+                                    delay = context.dataIndex * 300 + context.datasetIndex * 100
+                                }
+                                return delay
+                            },
+                        },
+                    },
+                }
+                chart_element = new Chart(document.getElementById("line-chart_linea_base"), config)
+                document.getElementById("button-graph-line-chart_linea_base").classList.remove("d-none");
+                limite_graficas = false
+            }
+            last_indicator = indicator
+        }
+
+        function download_line_chart_linea_base() {
+            var image_data = chart_element.toBase64Image();
+            const linkSource = "data:image/jpg" + image_data;
+            const downloadLink = document.createElement("a");
+            downloadLink.href = linkSource;
+            downloadLink.download = 'Grafica_Indicadores.png';
+            downloadLink.click();
+        }
+    </script>
+
+    <script type="text/javascript">
+        var list_name = "generation"
+        var key = "Factor de Pérdidas"
+        var variable_mathjax = true
+        update_list(list_name)
+        var contador = 0
+        var contador_linea_base = 0
+        update_list_ind(list_name)
+        update_list_ind_linea_base(list_name)
+        /* create_chart(list_name, key); */
+    </script>
+
+{% endblock %}

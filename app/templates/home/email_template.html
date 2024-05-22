@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+
+{% block head %}
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.1/css/bootstrap.min.css"
+          integrity="sha512-Ez0cGzNzHR1tYAv56860NLspgUGuQw16GiOOp/I2LuTmpSK9xDXlgJz3XN4cnpXWDmkNBKXR/VDMTCnAaEooxA=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <style>
+        body {
+            background: #f2f4f6;
+        }
+
+        #card-email {
+            border-radius: 0.6rem;
+        }
+
+        .list-group-item {
+            border: none !important;
+        }
+    </style>
+
+{% endblock %}
+
+{% block body %}
+    <div class="row justify-content-center mt-4">
+        <div class="col-12 col-xl-9">
+            <div id="card-email" class="card shadow-sm border-1 p-4 p-md-5 position-relative bg-white">
+                <div class="d-flex align-items-center pb-md-5 mb-3 mb-md-4 border-bottom border-1">
+                    <span><img
+                            class="image-md"
+                            src="https://raw.githubusercontent.com/alexpinchao/INTEGRA2023_PRBA/75637c83d03466f03fed9bc2e363e8dbf71a5b73/app/static/images/Inteegra_2-min.svg"
+                            height="80"
+                            width="240"
+                            alt="Integra logo"></span>
+                </div>
+                <div class="mb-4 d-flex align-items-center justify-content-center"><h1
+                        class="h1 mb-0 font-weight-bolder">Nuevo
+                    mensaje</h1></div>
+                <div class="row justify-content-between mb-4 mb-md-5">
+                    <div class="col-sm"><h5>Información del usuario:</h5>
+                        <div>
+                            <ul class="list-group simple-list">
+                                <li class="list-group-item fw-normal">{{ name }}</li>
+                                <li class="list-group-item fw-normal">{{ organization }}</li>
+                                <li class="list-group-item fw-normal">{{ identifier }} {{ number }}</li>
+                                <li class="list-group-item fw-normal"><a class="fw-bold text-primary"
+                                                                         href="mailto:{{ mail }}?subject=Integra">{{ mail }}</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-sm col-lg-4">
+                        <dl class="row text-sm-right">
+                            <dt class="col-6"><strong>Generado en:</strong></dt>
+                            <dd class="col-3 badge badge-inline bg-success rounded-pill">{{ type_contact }}</dd>
+                            <dt class="col-6"><strong>Fecha:</strong></dt>
+                            <dd class="col-6">{{ date }}</dd>
+                            <dt class="col-6"><strong>Hora:</strong></dt>
+                            <dd class="col-6">{{ hour }}</dd>
+                        </dl>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 fw-extrabold">
+                        <h5>Mensaje</h5>
+                    </div>
+                    <div class="col-12">
+                        <div>
+                            {{ message }}
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <p class="fs-6 text-center">Generado automáticamente por <a class="fw-extrabold"
+                                                                        href="http://integra.fernandoleiton.com/">Inteegra</a>
+            </p>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,206 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>app.auth.views &#8212; Inteegra v1.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css" />
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for app.auth.views</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">render_template</span><span class="p">,</span> <span class="n">redirect</span><span class="p">,</span> <span class="n">flash</span><span class="p">,</span> <span class="n">url_for</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">current_app</span> <span class="k">as</span> <span class="n">app</span>
+<span class="kn">from</span> <span class="nn">app.forms</span> <span class="kn">import</span> <span class="n">LoginForm</span><span class="p">,</span> <span class="n">SignupForm</span><span class="p">,</span> <span class="n">RecoveryForm</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">auth</span>
+<span class="kn">from</span> <span class="nn">app.models</span> <span class="kn">import</span> <span class="n">UserData</span><span class="p">,</span> <span class="n">UserModel</span>
+<span class="kn">from</span> <span class="nn">flask_login</span> <span class="kn">import</span> <span class="n">login_required</span><span class="p">,</span> <span class="n">login_user</span><span class="p">,</span> <span class="n">logout_user</span>
+<span class="kn">from</span> <span class="nn">werkzeug.security</span> <span class="kn">import</span> <span class="n">generate_password_hash</span><span class="p">,</span> <span class="n">check_password_hash</span>
+<span class="kn">import</span> <span class="nn">secure</span>
+
+<span class="n">secure_headers</span> <span class="o">=</span> <span class="n">secure</span><span class="o">.</span><span class="n">Secure</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="set_secure_headers"><a class="viewcode-back" href="../../../app.auth.html#app.auth.views.set_secure_headers">[docs]</a><span class="nd">@auth</span><span class="o">.</span><span class="n">after_request</span>
+<span class="k">def</span> <span class="nf">set_secure_headers</span><span class="p">(</span><span class="n">response</span><span class="p">):</span>
+    <span class="n">secure_headers</span><span class="o">.</span><span class="n">framework</span><span class="o">.</span><span class="n">flask</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">response</span></div>
+
+
+<div class="viewcode-block" id="login"><a class="viewcode-back" href="../../../app.auth.html#app.auth.views.login">[docs]</a><span class="nd">@auth</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/login&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">login</span><span class="p">():</span>
+    <span class="c1"># return redirect(url_for(&#39;dashboard.main&#39;))</span>
+    <span class="n">login_form</span> <span class="o">=</span> <span class="n">LoginForm</span><span class="p">()</span>
+    <span class="n">val_name</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">val_cont</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">context</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;login_form&#39;</span><span class="p">:</span> <span class="n">login_form</span><span class="p">,</span>
+        <span class="s1">&#39;val_name&#39;</span><span class="p">:</span> <span class="n">val_name</span><span class="p">,</span>
+        <span class="s1">&#39;val_cont&#39;</span><span class="p">:</span> <span class="n">val_cont</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="n">login_form</span><span class="o">.</span><span class="n">validate_on_submit</span><span class="p">():</span>
+        <span class="n">username</span> <span class="o">=</span> <span class="n">login_form</span><span class="o">.</span><span class="n">username</span><span class="o">.</span><span class="n">data</span>
+        <span class="n">password</span> <span class="o">=</span> <span class="n">login_form</span><span class="o">.</span><span class="n">password</span><span class="o">.</span><span class="n">data</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">db_object</span><span class="o">.</span><span class="n">get_user</span><span class="p">(</span><span class="n">username</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">user</span><span class="p">:</span>
+            <span class="n">user</span> <span class="o">=</span> <span class="n">user</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">password_from_db</span> <span class="o">=</span> <span class="n">user</span><span class="p">[</span><span class="s1">&#39;password&#39;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">check_password_hash</span><span class="p">(</span><span class="n">password_from_db</span><span class="p">,</span> <span class="n">password</span><span class="p">):</span>
+                <span class="n">user_data_db</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">db_object</span><span class="o">.</span><span class="n">get_user_data</span><span class="p">(</span><span class="n">user</span><span class="p">[</span><span class="s1">&#39;idlogin&#39;</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">user_data_db</span><span class="p">[</span><span class="s1">&#39;validated&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;False&#39;</span><span class="p">:</span>
+                    <span class="n">flash</span><span class="p">(</span><span class="s1">&#39;Su usuario aun no ha sido validado en el sistema&#39;</span><span class="p">)</span>
+                    <span class="n">flash</span><span class="p">(</span><span class="s1">&#39;El proceso de validación se efectuara por parte de un administrador de INTEEGRA&#39;</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;home&#39;</span><span class="p">))</span>
+                <span class="n">user_data</span> <span class="o">=</span> <span class="n">UserData</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span> <span class="n">username</span><span class="p">)</span>
+                <span class="n">user</span> <span class="o">=</span> <span class="n">UserModel</span><span class="p">(</span><span class="n">user_data</span><span class="p">)</span>
+                <span class="n">login_user</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+                <span class="n">flash</span><span class="p">(</span><span class="s1">&#39;Bienvenido de nuevo &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">user_data_db</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="n">session</span><span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">username</span>
+                <span class="n">session</span><span class="p">[</span><span class="s1">&#39;admin_session&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;dashboard.main&#39;</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">context</span><span class="p">[</span><span class="s1">&#39;val_cont&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="n">flash</span><span class="p">(</span><span class="s1">&#39;La información no coincide&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">flash</span><span class="p">(</span><span class="s1">&#39;El usuario es incorrecto&#39;</span><span class="p">)</span>
+            <span class="n">context</span><span class="p">[</span><span class="s1">&#39;val_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;auth/login.html&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">context</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="signup"><a class="viewcode-back" href="../../../app.auth.html#app.auth.views.signup">[docs]</a><span class="nd">@auth</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;signup&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">signup</span><span class="p">():</span>
+    <span class="n">signup_form</span> <span class="o">=</span> <span class="n">SignupForm</span><span class="p">()</span>
+    <span class="n">context</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;signup_form&#39;</span><span class="p">:</span> <span class="n">signup_form</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="n">signup_form</span><span class="o">.</span><span class="n">validate_on_submit</span><span class="p">():</span>
+        <span class="n">username</span> <span class="o">=</span> <span class="n">signup_form</span><span class="o">.</span><span class="n">username</span><span class="o">.</span><span class="n">data</span>
+        <span class="n">password</span> <span class="o">=</span> <span class="n">signup_form</span><span class="o">.</span><span class="n">password</span><span class="o">.</span><span class="n">data</span>
+        <span class="n">users_db</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">db_object</span><span class="o">.</span><span class="n">get_user</span><span class="p">(</span><span class="n">username</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">users_db</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;aqui va&#39;</span><span class="p">)</span>
+            <span class="n">password_hash</span> <span class="o">=</span> <span class="n">generate_password_hash</span><span class="p">(</span><span class="n">password</span><span class="p">)</span>
+            <span class="n">user_new</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">db_object</span><span class="o">.</span><span class="n">set_user</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">password_hash</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">user_new</span><span class="p">:</span>
+                <span class="n">user_new</span> <span class="o">=</span> <span class="n">user_new</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;////////////////////////////&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">user_new</span><span class="p">)</span>
+                <span class="n">app</span><span class="o">.</span><span class="n">db_object</span><span class="o">.</span><span class="n">set_user_data</span><span class="p">(</span>
+                    <span class="n">user_new</span><span class="p">[</span><span class="s1">&#39;idlogin&#39;</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="n">username</span><span class="p">,</span> <span class="n">organization</span><span class="o">=</span><span class="s2">&quot;Univalle&quot;</span><span class="p">)</span>
+                <span class="n">user_data</span> <span class="o">=</span> <span class="n">UserData</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">password_hash</span><span class="p">,</span> <span class="n">username</span><span class="p">)</span>
+                <span class="n">user</span> <span class="o">=</span> <span class="n">UserModel</span><span class="p">(</span><span class="n">user_data</span><span class="p">)</span>
+                <span class="n">login_user</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+                <span class="n">flash</span><span class="p">(</span><span class="s1">&#39;Bienvenido!&#39;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;dashboard.main&#39;</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">flash</span><span class="p">(</span><span class="s1">&#39;El usuario ya existe.&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;auth/signup.html&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">context</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="recovery"><a class="viewcode-back" href="../../../app.auth.html#app.auth.views.recovery">[docs]</a><span class="nd">@auth</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;account-recovery&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">recovery</span><span class="p">():</span>
+    <span class="n">recovery_form</span> <span class="o">=</span> <span class="n">RecoveryForm</span><span class="p">()</span>
+    <span class="n">context</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;recovery_form&#39;</span><span class="p">:</span> <span class="n">recovery_form</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;auth/account_recovery.html&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">context</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="logout"><a class="viewcode-back" href="../../../app.auth.html#app.auth.views.logout">[docs]</a><span class="nd">@auth</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;logout&#39;</span><span class="p">)</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">logout</span><span class="p">():</span>
+    <span class="n">logout_user</span><span class="p">()</span>
+    <span class="n">flash</span><span class="p">(</span><span class="s1">&#39;Regresa Pronto.&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;auth.login&#39;</span><span class="p">))</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">Inteegra</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../app.html">app package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  <li><a href="../../app.html">app</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023, Mateo Barrera.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 6.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

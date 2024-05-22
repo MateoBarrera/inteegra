@@ -1,0 +1,65 @@
+{% import 'module/modals.html' as modals %}
+
+<div class="theme-settings card bg-gray-800 pt-2 collapse" id="theme-settings">
+    <div class="card-body bg-gray-800 text-white pt-4">
+        <button type="button" class="btn-close theme-settings-close bg-white" aria-label="Close"
+                data-bs-toggle="collapse"
+                href="#theme-settings" role="button" aria-expanded="true" aria-controls="theme-settings"></button>
+        <div class="d-flex align-items-center mb-3">
+            <p class="m-0 mb-1 me-4 fs-5">Cookies
+                <svg class="icon icon-xs ms-2" fill="currentColor" viewBox="0 0 512 512"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd"
+                          d="M256.8 22.1L213.9 16 81.7 86.7 16 222.1 42 370.4 149.8 475l148.3 21 132.3-70.7L496 289.9l-6.1-34.7c-61.5-6.7-109.9-57.1-113.7-119.5C313.8 132 263.5 83.6 256.8 22.1zM208 208c-17.7 0-32-14.3-32-32s14.3-32 32-32s32 14.3 32 32s-14.3 32-32 32zm0 128c0 17.7-14.3 32-32 32s-32-14.3-32-32s14.3-32 32-32s32 14.3 32 32zm160 0c-17.7 0-32-14.3-32-32s14.3-32 32-32s32 14.3 32 32s-14.3 32-32 32z">
+                    </path>
+                </svg>
+            </p>
+        </div>
+        <p class="text-gray-300 text-center">Este sitio utiliza cookies para <br> mejorar la experiencia del
+            usuario.<br>Ver <a class="text-decoration-underline" data-bs-toggle="modal"
+                               href="#modal-policy-terms"
+                               role="button"
+                               aria-expanded="false"
+                               aria-controls="modal-policy-terms">política de privacidad.</a>
+        </p>
+        <button type="button" id="cookies-accept" href="#" onclick="fn_cookies(true)"
+                class="btn btn-success d-inline-flex align-items-center justify-content-center mb-3 w-100">
+            Aceptar cookies
+        </button>
+        <!--     <button type="button" id="cookies-deny" href="#" onclick = "fn_cookies(false)" class="btn btn-secondary d-inline-flex align-items-center justify-content-center mb-3 w-100">
+              Rechazar
+            </button> -->
+    </div>
+</div>
+{{ modals.render_modal('policy','policy-terms','Politica de tratamiento de datos', "_") }}
+<div class="card theme-settings bg-gray-800 theme-settings-expand" id="theme-settings-expand">
+    <div class="card-body bg-gray-800 text-white rounded-top p-3 py-2">
+    <span class="fw-bold d-inline-flex align-items-center h6">
+      Cookies
+      <svg class="icon icon-xs ms-2" fill="currentColor" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd"
+              d="M256.8 22.1L213.9 16 81.7 86.7 16 222.1 42 370.4 149.8 475l148.3 21 132.3-70.7L496 289.9l-6.1-34.7c-61.5-6.7-109.9-57.1-113.7-119.5C313.8 132 263.5 83.6 256.8 22.1zM208 208c-17.7 0-32-14.3-32-32s14.3-32 32-32s32 14.3 32 32s-14.3 32-32 32zm0 128c0 17.7-14.3 32-32 32s-32-14.3-32-32s14.3-32 32-32s32 14.3 32 32zm160 0c-17.7 0-32-14.3-32-32s14.3-32 32-32s32 14.3 32 32s-14.3 32-32 32z">
+        </path>
+      </svg>
+    </span>
+    </div>
+</div>
+<!-- <div id="cookie-consent-container">
+  <div class="toast bg-dark text-white w-100 mw-100" role="alert">
+    <div class="toast-body p-4 d-flex flex-column">
+      <h4>Cookie Warning</h4>
+      <p>
+        This website stores data such as cookies to enable site functionality including analytics and personalization.
+        By using this website, you automatically accept that we use cookies.
+      </p>
+      <div class="ml-auto">
+        <button type="button" class="btn btn-outline-light mr-3" id="btnDeny">
+          Deny
+        </button>
+        <button type="button" class="btn btn-light" id="btnAccept">
+          Accept
+        </button>
+      </div>
+    </div>
+  </div>
+</div> -->

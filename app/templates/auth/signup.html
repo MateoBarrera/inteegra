@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+{% import 'module/modals.html' as modals %}
+
+{% block title %}
+    {{ super() }}
+    Signup
+{% endblock %}
+
+{% block content %}
+
+    <section class="login-section d-flex p-0 m-0" id="signup">
+        <div class="row pt-2 justify-content-center w-100 px-0 mx-0">
+            <div class="col-xxl-6 col-md-8 col-12 d-flex flex-column m-0">
+                <p class="text-center pt-1 pt-md-3">
+                    <a href="{{ url_for('home') }}"
+                       class="d-flex align-items-center justify-content-center">
+                        <svg class="icon icon-xxs me-2" fill="currentColor"
+                             viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd"
+                                  d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z"
+                                  clip-rule="evenodd"></path>
+                        </svg>
+                        Regresar al inicio
+                    </a>
+                </p>
+                <div class="card border-0 shadow components-section flex-grow-1 mt-2">
+                    <div class="card-body p-0">
+                        <div class="row d-flex justify-content-center p-0 m-0">
+                            <div class="col-10 col-md-6 login-image d-none d-md-block p-0">
+                                <img src="{{ url_for('static',filename='/images/image8.webp') }}"
+                                     alt="Contextual image - termal and photovoltaic plant.">
+                            </div>
+                            <div class="col-10 col-md-6 login-form px-2 px-md-3 px-lg-4 px-xxl-5 align-self-center">
+                                <h3 class="my-2 pt-1 fw-extrabold">Registrarse</h3>
+                                <form class="form" role="form" action="{{ url_for('auth.signup') }}" method="POST">
+                                    {{ signup_form.csrf_token() }}
+                                    <div class="row d-xl-flex">
+                                        <div class="col-6 form-group pe-1">
+                                            {{ signup_form.first_name.label(class_="my-0 fw-extrabold") }}
+                                            <div class="input-group">
+                                                  <span class="input-group-text p-1" id="basic-addon1">
+                                                    <svg class="icon icon-xxs text-gray-600" fill="currentColor"
+                                                         viewBox="0 0 20 20"
+                                                         xmlns="http://www.w3.org/2000/svg">
+                                                      <path fill-rule="evenodd"
+                                                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z"
+                                                            clip-rule="evenodd"></path>
+                                                    </svg>
+                                                  </span>
+                                                {{ signup_form.first_name(class_="form-control py-1") }}
+                                            </div>
+                                        </div>
+                                        <div class="col-6 form-group ps-1">
+                                            {{ signup_form.last_name.label(class_="my-0 fw-extrabold") }}
+                                            <div class="input-group">
+                                                  <span class="input-group-text p-1" id="basic-addon1">
+                                                    <svg class="icon icon-xxs text-gray-600" fill="currentColor"
+                                                         viewBox="0 0 20 20"
+                                                         xmlns="http://www.w3.org/2000/svg">
+                                                    <path fill-rule="evenodd"
+                                                          d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z"
+                                                          clip-rule="evenodd"></path>
+                                                    </svg>
+                                                  </span>
+                                                {{ signup_form.last_name(class_="form-control py-1") }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        {{ signup_form.username.label(class_="my-0 fw-extrabold") }}
+                                        <div class="input-group">
+                                            <span class="input-group-text p-1" id="basic-addon1">
+                                              <svg class="icon icon-xxs text-gray-600" fill="currentColor"
+                                                   viewBox="0 0 20 20"
+                                                   xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path>
+                                                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
+                                              </svg>
+                                            </span>
+                                            {{ signup_form.username(class_="form-control py-1", placeholder_="usuario@empresa.com") }}
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        {{ signup_form.password.label(class_="my-0 fw-extrabold") }}
+                                        <div class="input-group">
+                                            <span class="input-group-text p-1" id="basic-addon1">
+                                              <svg class="icon icon-xxs text-gray-600" fill="currentColor"
+                                                   viewBox="0 0 20 20"
+                                                   xmlns="http://www.w3.org/2000/svg">
+                                                <path fill-rule="evenodd"
+                                                      d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                                                      clip-rule="evenodd">
+                                                </path>
+                                              </svg>
+                                            </span>
+                                            {{ signup_form.password(class_="form-control py-1", placeholder_="*********") }}
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        {{ signup_form.password_confirm.label(class_="my-0 fw-extrabold") }}
+                                        <div class="input-group">
+                                            <span class="input-group-text p-1" id="basic-addon1">
+                                              <svg class="icon icon-xxs text-gray-600" fill="currentColor"
+                                                   viewBox="0 0 20 20"
+                                                   xmlns="http://www.w3.org/2000/svg">
+                                                <path fill-rule="evenodd"
+                                                      d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                                                      clip-rule="evenodd">
+                                                </path>
+                                              </svg>
+                                            </span>
+                                            {{ signup_form.password_confirm(class_="form-control py-1", placeholder_="*********") }}
+                                        </div>
+                                    </div>
+                                    <div class="form-group py-1">
+                                        {{ signup_form.terms(class_="checkbox") }} <small>Autorizo <a class="fw-bold"
+                                                                                                      data-bs-toggle="modal"
+                                                                                                      href="#modal-policy-terms"
+                                                                                                      role="button"
+                                                                                                      aria-expanded="false"
+                                                                                                      aria-controls="modal-policy-terms">
+                                        política de
+                                        tratamiento de datos *</a></small>
+                                    </div>
+                                    {{ modals.render_modal('policy','policy-terms','Política de tratamiento de datos', "_") }}
+                                    <div class="form-group p-0 text-center">
+                                        {{ signup_form.submit(class_="button btn login-btn mt-1") }}
+                                    </div>
+                                </form>
+                                <hr class="featurette-divider my-2">
+                                <a class="fw-extrabold pb-2 justify-content-center d-flex"
+                                   href="{{ url_for('auth.login') }}">Iniciar sesión</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% block footer %}
+                    {% include 'module/footer.html' %}
+                {% endblock %}
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block scripts %}
+    <!-- Core -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="{{ url_for('static',filename='js/popper.min.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"></script>
+    {% for message in get_flashed_messages() %}
+        <script>
+            function load() {
+                setTimeout(function () {
+                    $('#liveToast').fadeOut('fast');
+                }, 3000)
+            }
+
+            window.onload = load;
+        </script>
+    {% endfor %}
+{% endblock %}

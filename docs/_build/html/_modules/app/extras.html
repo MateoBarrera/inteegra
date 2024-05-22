@@ -1,0 +1,284 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>app.extras &#8212; Inteegra v1.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for app.extras</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;_summary_</span>
+<span class="sd">        INTEGRA 2023 Platform Server extras File</span>
+
+<span class="sd">        This file is part of the INTEGRA 2023 platform flask server.</span>
+<span class="sd">        This contains the extra functions required to calculate energy efficiency indicators</span>
+<span class="sd">        using the variables associated with the system.</span>
+
+<span class="sd">    @Author: Alex Pinchao</span>
+<span class="sd">    @Date: 18-10-2022</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">current_app</span> <span class="k">as</span> <span class="n">app</span>
+
+
+<div class="viewcode-block" id="return_indicators_calculation"><a class="viewcode-back" href="../../app.html#app.extras.return_indicators_calculation">[docs]</a><span class="k">def</span> <span class="nf">return_indicators_calculation</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;generates a dictionary that contains the energy indicators</span>
+<span class="sd">    taken into account by the platform between the years 2010 and 2020.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict_total_indicadores: dictionary of energy indicators</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data</span><span class="p">,</span> <span class="n">translating_dict</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">db_object</span><span class="o">.</span><span class="n">get_distribution</span><span class="p">()</span>
+    <span class="n">array_default</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">array_default1</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">1000</span><span class="p">]</span>
+    <span class="n">array_default</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">array_default1</span><span class="p">)</span>
+    <span class="n">array_default</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">array_default1</span><span class="p">)</span>
+
+    <span class="n">data_generation_total_generation</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;generation&quot;</span><span class="p">][</span><span class="s2">&quot;Generación eléctrica por fuente primaria&quot;</span><span class="p">]</span>
+    <span class="n">data_generation_consumo</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;generation&quot;</span><span class="p">][</span><span class="s2">&quot;Consumo de fuentes primarias por tipo de central eléctrica&quot;</span><span class="p">]</span>
+    <span class="n">data_generation_emisiones_total</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;generation&quot;</span><span class="p">][</span><span class="s2">&quot;Emisiones de CO2 equivalentes&quot;</span><span class="p">]</span>
+    <span class="n">data_generation_emisiones_SIN</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;generation&quot;</span><span class="p">][</span><span class="s2">&quot;Emisiones de CO2 equivalentes&quot;</span><span class="p">]</span>
+
+    <span class="n">data_distribution_factor_perdidas</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;distribution&quot;</span><span class="p">][</span><span class="s2">&quot;Factor de Pérdidas&quot;</span><span class="p">]</span>
+    <span class="n">data_distribution_costo_perdidas</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;distribution&quot;</span><span class="p">][</span><span class="s2">&quot;Costo de Pérdidas&quot;</span><span class="p">]</span>
+    <span class="n">data_distribution_iaad</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;distribution&quot;</span><span class="p">][</span><span class="s2">&quot;IAAD&quot;</span><span class="p">]</span>
+    <span class="n">data_distribution_saidi_table</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;distribution&quot;</span><span class="p">][</span><span class="s2">&quot;Saidi&quot;</span><span class="p">]</span>
+    <span class="n">data_distribution_saifi_table</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;distribution&quot;</span><span class="p">][</span><span class="s2">&quot;Saifi&quot;</span><span class="p">]</span>
+
+    <span class="n">data_end_use_pib</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;end_use&quot;</span><span class="p">][</span><span class="s2">&quot;PIB en USD&quot;</span><span class="p">]</span>
+    <span class="n">data_end_use_population</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;end_use&quot;</span><span class="p">][</span><span class="s2">&quot;Población&quot;</span><span class="p">]</span>
+    <span class="n">data_end_use_total_consumption</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;end_use&quot;</span><span class="p">][</span><span class="s2">&quot;Uso final de la energía&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">loopData</span><span class="p">(</span><span class="n">loop_data</span><span class="p">,</span> <span class="n">variable</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;function that returns a dictionary with year and the value of the</span>
+<span class="sd">        variable of interest for the calculation of the indicator.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            loop_data (array): array data</span>
+<span class="sd">            variable (string): name of variable of interest to search</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            anio (array): current year</span>
+<span class="sd">            varible_return (array) : variable value</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">anio</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">varible_return</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">loop_data</span><span class="p">:</span>
+            <span class="n">anio</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">n</span><span class="p">[</span><span class="s2">&quot;Año&quot;</span><span class="p">])</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">varible_return</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">12</span><span class="p">):</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="n">n</span><span class="p">[</span><span class="n">variable</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="p">)</span>
+                <span class="n">y</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+                <span class="n">varible_return</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">anio</span><span class="p">,</span> <span class="n">varible_return</span>
+
+    <span class="k">def</span> <span class="nf">prepareData</span><span class="p">(</span><span class="n">data_input_1</span><span class="p">,</span> <span class="n">data_input_2</span><span class="p">,</span> <span class="n">nombre</span><span class="p">,</span> <span class="n">tipo</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;function that returns a dictionary with year and calculation of the value of the indicator</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data_input_1 (array): variable data 1</span>
+<span class="sd">            data_input_2 (array): variable data 2</span>
+<span class="sd">            nombre (string): indicator name</span>
+<span class="sd">            tipo (number): type of operation</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            salida (array): array containing the value of the indicator between the years 2010 to 2020</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">input_1</span> <span class="o">=</span> <span class="n">data_input_1</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">anio_input_1</span> <span class="o">=</span> <span class="n">data_input_1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">input_2</span> <span class="o">=</span> <span class="n">data_input_2</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">anio_input_2</span> <span class="o">=</span> <span class="n">data_input_2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_1</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_2</span><span class="p">):</span>
+            <span class="n">j</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_1</span><span class="p">)</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">salida</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">j</span><span class="p">:</span>
+                <span class="n">salida_dict</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="k">if</span> <span class="n">tipo</span> <span class="o">==</span> <span class="s2">&quot;1&quot;</span><span class="p">:</span>
+                    <span class="n">salida_dict</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;Año&quot;</span><span class="p">:</span> <span class="n">anio_input_1</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">nombre</span><span class="p">:</span> <span class="p">(</span><span class="n">input_1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="n">input_2</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">})</span>
+                    <span class="n">salida</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">salida_dict</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">tipo</span> <span class="o">==</span> <span class="s2">&quot;2&quot;</span><span class="p">:</span>
+                    <span class="n">salida_dict</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;Año&quot;</span><span class="p">:</span> <span class="n">anio_input_1</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">nombre</span><span class="p">:</span> <span class="p">(</span><span class="n">input_1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="n">input_2</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">})</span>
+                    <span class="n">salida</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">salida_dict</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">tipo</span> <span class="o">==</span> <span class="s2">&quot;3&quot;</span><span class="p">:</span>
+                    <span class="n">salida_dict</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;Año&quot;</span><span class="p">:</span> <span class="n">anio_input_1</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">nombre</span><span class="p">:</span> <span class="n">input_1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="n">input_2</span><span class="p">[</span><span class="n">i</span><span class="p">]})</span>
+                    <span class="n">salida</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">salida_dict</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">tipo</span> <span class="o">==</span> <span class="s2">&quot;4&quot;</span><span class="p">:</span>
+                    <span class="n">salida_dict</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;Año&quot;</span><span class="p">:</span> <span class="n">anio_input_1</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">nombre</span><span class="p">:</span> <span class="n">input_1</span><span class="p">[</span><span class="n">i</span><span class="p">]})</span>
+                    <span class="n">salida</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">salida_dict</span><span class="p">)</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">return</span> <span class="n">salida</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+
+    <span class="k">def</span> <span class="nf">prepareDataTwo</span><span class="p">(</span><span class="n">data_input_1</span><span class="p">,</span> <span class="n">nombre_variable</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;function that returns a dictionary with year and total of the input array</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data_input_1 (array): array input</span>
+<span class="sd">            nombre_variable (string): variable name</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            variable_return (array): array containing the value of the indicator between the years 2010 to 2020</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">varible_return</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">data_input_1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">varible_return</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">12</span><span class="p">:</span>
+                <span class="n">salida_dict</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="n">salida_dict</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;Año&quot;</span><span class="p">:</span> <span class="n">n</span><span class="p">[</span><span class="s2">&quot;Año&quot;</span><span class="p">],</span> <span class="n">nombre_variable</span><span class="p">:</span> <span class="n">n</span><span class="p">[</span><span class="s2">&quot;Total&quot;</span><span class="p">]})</span>
+                <span class="n">varible_return</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">salida_dict</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">varible_return</span>
+
+    <span class="n">generation_total_generation</span> <span class="o">=</span> <span class="n">loopData</span><span class="p">(</span><span class="n">data_generation_total_generation</span><span class="p">,</span> <span class="s2">&quot;Generacion_Total&quot;</span><span class="p">)</span>
+    <span class="n">generation_consumo</span> <span class="o">=</span> <span class="n">loopData</span><span class="p">(</span><span class="n">data_generation_consumo</span><span class="p">,</span> <span class="s2">&quot;Consumo_Total&quot;</span><span class="p">)</span>
+    <span class="n">generation_emisiones_total</span> <span class="o">=</span> <span class="n">loopData</span><span class="p">(</span><span class="n">data_generation_emisiones_total</span><span class="p">,</span> <span class="s2">&quot;EmisionCO2_Total&quot;</span><span class="p">)</span>
+    <span class="n">generation_emisiones_SIN</span> <span class="o">=</span> <span class="n">loopData</span><span class="p">(</span><span class="n">data_generation_emisiones_SIN</span><span class="p">,</span> <span class="s2">&quot;EmisionCO2_SIN_Total&quot;</span><span class="p">)</span>
+
+    <span class="n">data_distribution_saidi</span> <span class="o">=</span> <span class="n">loopData</span><span class="p">(</span><span class="n">data_distribution_saidi_table</span><span class="p">,</span> <span class="s2">&quot;Saidi&quot;</span><span class="p">)</span>
+    <span class="n">data_distribution_saifi</span> <span class="o">=</span> <span class="n">loopData</span><span class="p">(</span><span class="n">data_distribution_saifi_table</span><span class="p">,</span> <span class="s2">&quot;Saifi&quot;</span><span class="p">)</span>
+
+    <span class="n">end_use_pib</span> <span class="o">=</span> <span class="n">loopData</span><span class="p">(</span><span class="n">data_end_use_pib</span><span class="p">,</span> <span class="s2">&quot;PIBUSD_Total&quot;</span><span class="p">)</span>
+    <span class="n">end_use_population</span> <span class="o">=</span> <span class="n">loopData</span><span class="p">(</span><span class="n">data_end_use_population</span><span class="p">,</span> <span class="s2">&quot;Poblacion_Total&quot;</span><span class="p">)</span>
+    <span class="n">end_use_total_consumption</span> <span class="o">=</span> <span class="n">loopData</span><span class="p">(</span><span class="n">data_end_use_total_consumption</span><span class="p">,</span> <span class="s2">&quot;ConsumoFinal_Total&quot;</span><span class="p">)</span>
+
+    <span class="c1"># carga de indicadores en la generacion</span>
+    <span class="n">eficienc_gen_electrica</span> <span class="o">=</span> <span class="n">prepareData</span><span class="p">(</span><span class="n">generation_total_generation</span><span class="p">,</span> <span class="n">generation_consumo</span><span class="p">,</span>
+                                         <span class="s2">&quot;Eficiencia de la generación eléctrica&quot;</span><span class="p">,</span> <span class="s2">&quot;3&quot;</span><span class="p">)</span>
+    <span class="n">intens_energ_gen</span> <span class="o">=</span> <span class="n">prepareData</span><span class="p">(</span><span class="n">generation_consumo</span><span class="p">,</span> <span class="n">end_use_pib</span><span class="p">,</span>
+                                   <span class="s2">&quot;Intensidad energética primaria de la generación eléctrica&quot;</span><span class="p">,</span> <span class="s2">&quot;2&quot;</span><span class="p">)</span>
+    <span class="n">inten_emision_gen_electrica</span> <span class="o">=</span> <span class="n">prepareData</span><span class="p">(</span><span class="n">generation_emisiones_SIN</span><span class="p">,</span> <span class="n">end_use_pib</span><span class="p">,</span>
+                                              <span class="s2">&quot;Intensidad de emisión de la generación eléctrica&quot;</span><span class="p">,</span> <span class="s2">&quot;3&quot;</span><span class="p">)</span>
+    <span class="c1"># emisiones_co2_sin_total = prepareData(generation_emisiones_SIN, array_default,&quot;Emisiones de CO2eq de la generación eléctrica SIN&quot;, &quot;3&quot;)</span>
+    <span class="n">emisiones_co2_total</span> <span class="o">=</span> <span class="n">prepareData</span><span class="p">(</span><span class="n">generation_emisiones_total</span><span class="p">,</span> <span class="n">array_default</span><span class="p">,</span>
+                                      <span class="s2">&quot;Emisiones de CO2eq de la generación eléctrica Total&quot;</span><span class="p">,</span> <span class="s2">&quot;3&quot;</span><span class="p">)</span>
+
+    <span class="n">dict_generacion</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">dict_generacion</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;Eficiencia de la generación eléctrica&quot;</span><span class="p">:</span> <span class="n">eficienc_gen_electrica</span><span class="p">})</span>
+    <span class="n">dict_generacion</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;Intensidad energética primaria de la generación eléctrica&quot;</span><span class="p">:</span> <span class="n">intens_energ_gen</span><span class="p">})</span>
+    <span class="n">dict_generacion</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;Intensidad de emisión de la generación eléctrica&quot;</span><span class="p">:</span> <span class="n">inten_emision_gen_electrica</span><span class="p">})</span>
+    <span class="c1"># dict_generacion.update({&quot;Emisiones de CO2eq de la generación eléctrica SIN&quot;:emisiones_co2_sin_total})</span>
+    <span class="n">dict_generacion</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;Emisiones de $CO_2eq$ de la generación eléctrica Total&quot;</span><span class="p">:</span> <span class="n">emisiones_co2_total</span><span class="p">})</span>
+
+    <span class="c1"># carga de indicadores en la distribucion</span>
+    <span class="n">distribution_factor_perdida</span> <span class="o">=</span> <span class="n">prepareDataTwo</span><span class="p">(</span><span class="n">data_distribution_factor_perdidas</span><span class="p">,</span>
+                                                 <span class="s2">&quot;Factor de pérdidas en distribución (SOLO ADD)&quot;</span><span class="p">)</span>
+    <span class="n">distribution_costo_perdidas</span> <span class="o">=</span> <span class="n">prepareDataTwo</span><span class="p">(</span><span class="n">data_distribution_costo_perdidas</span><span class="p">,</span>
+                                                 <span class="s2">&quot;Costo de pérdidas equivalentes en distribución (SOLO ADD)&quot;</span><span class="p">)</span>
+    <span class="n">distribution_iaad</span> <span class="o">=</span> <span class="n">prepareDataTwo</span><span class="p">(</span><span class="n">data_distribution_iaad</span><span class="p">,</span> <span class="s2">&quot;Índice Anual Acumulado de Discontinuidad - IAAD&quot;</span><span class="p">)</span>
+
+    <span class="n">distribution_saidi</span> <span class="o">=</span> <span class="n">prepareData</span><span class="p">(</span><span class="n">data_distribution_saidi</span><span class="p">,</span> <span class="n">array_default</span><span class="p">,</span> <span class="s2">&quot;Saidi&quot;</span><span class="p">,</span> <span class="s2">&quot;4&quot;</span><span class="p">)</span>
+    <span class="n">distribution_saifi</span> <span class="o">=</span> <span class="n">prepareData</span><span class="p">(</span><span class="n">data_distribution_saifi</span><span class="p">,</span> <span class="n">array_default</span><span class="p">,</span> <span class="s2">&quot;Saifi&quot;</span><span class="p">,</span> <span class="s2">&quot;4&quot;</span><span class="p">)</span>
+
+    <span class="n">dict_distribuciones</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">dict_distribuciones</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;Factor de pérdidas en distribución (SOLO ADD)&quot;</span><span class="p">:</span> <span class="n">distribution_factor_perdida</span><span class="p">})</span>
+    <span class="n">dict_distribuciones</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+        <span class="p">{</span><span class="s2">&quot;Costo de pérdidas equivalentes en distribución (SOLO ADD)&quot;</span><span class="p">:</span> <span class="n">distribution_costo_perdidas</span><span class="p">})</span>
+    <span class="n">dict_distribuciones</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;Índice Anual Acumulado de Discontinuidad - IAAD&quot;</span><span class="p">:</span> <span class="n">distribution_iaad</span><span class="p">})</span>
+    <span class="n">dict_distribuciones</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;Saidi&quot;</span><span class="p">:</span> <span class="n">distribution_saidi</span><span class="p">})</span>
+    <span class="n">dict_distribuciones</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;Saifi&quot;</span><span class="p">:</span> <span class="n">distribution_saifi</span><span class="p">})</span>
+
+    <span class="c1"># carga de indicadores en la uso final</span>
+    <span class="n">consumo_per_capita</span> <span class="o">=</span> <span class="n">prepareData</span><span class="p">(</span><span class="n">end_use_total_consumption</span><span class="p">,</span> <span class="n">end_use_population</span><span class="p">,</span> <span class="s2">&quot;Consumo per cápita&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">)</span>
+    <span class="n">int_ener_uso_final</span> <span class="o">=</span> <span class="n">prepareData</span><span class="p">(</span><span class="n">end_use_total_consumption</span><span class="p">,</span> <span class="n">end_use_pib</span><span class="p">,</span>
+                                     <span class="s2">&quot;Intensidad energética del uso final de la energía eléctrica&quot;</span><span class="p">,</span> <span class="s2">&quot;2&quot;</span><span class="p">)</span>
+
+    <span class="n">dict_uso_final</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">dict_uso_final</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;Consumo per cápita&quot;</span><span class="p">:</span> <span class="n">consumo_per_capita</span><span class="p">})</span>
+    <span class="n">dict_uso_final</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;Intensidad energética del uso final de la energía eléctrica&quot;</span><span class="p">:</span> <span class="n">int_ener_uso_final</span><span class="p">})</span>
+
+    <span class="n">dict_total_indicadores</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">dict_total_indicadores</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;Generación&quot;</span><span class="p">:</span> <span class="n">dict_generacion</span><span class="p">})</span>
+    <span class="n">dict_total_indicadores</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;Distribución&quot;</span><span class="p">:</span> <span class="n">dict_distribuciones</span><span class="p">})</span>
+    <span class="n">dict_total_indicadores</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;Uso final&quot;</span><span class="p">:</span> <span class="n">dict_uso_final</span><span class="p">})</span>
+    <span class="c1">#print(&quot;dict_total_indicadores&quot;)</span>
+    <span class="c1">#print(dict_total_indicadores)</span>
+    <span class="k">return</span> <span class="n">dict_total_indicadores</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">Inteegra</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../app.html">app package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  <li><a href="../app.html">app</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023, Mateo Barrera.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 6.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

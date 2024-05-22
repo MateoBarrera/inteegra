@@ -1,0 +1,237 @@
+{% macro template_parent_strategies() %}
+<div class="col-12">
+	<div class="card border-0 shadow h-100">
+		<div class="card-body px-1 px-md-3 d-flex flex-column">
+			<div class="row mb-2">
+				<div class="col-12">
+					<span
+						class="icon-shape icon-xxs icon-shape-primary rounded me-4 me-sm-0 card-effect-icon"
+					>
+						<svg
+							class="w-6 h-6"
+							fill="currentColor"
+							viewBox="0 0 20 20"
+							xmlns="http://www.w3.org/2000/svg"
+						>
+							<path
+								d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"
+							></path>
+						</svg>
+					</span>
+					<span class="h4 fw-extrabold"
+						><i class="fa-solid fa-sliders-simple"></i>Estrategias de
+						<span id="process">ejemplo</span></span
+					>
+				</div>
+			</div>
+			<div class="accordion accordion-flush" id="accordion-strategies">
+				<div hidden>
+					<div class="accordion-item" id="accordion-item-model-id">
+						<h2 class="accordion-header" id="heading-model-id">
+							<button
+								class="accordion-button"
+								type="button"
+								data-bs-toggle="collapse"
+								data-bs-target="#collapse-model-id"
+								aria-expanded="true"
+								aria-controls="collapse-model-id"
+							>
+								<strong class="fs-5 fw-bolder"><span id="model-name">modelo ejemplo</span></strong>
+							</button>
+						</h2>
+						<div
+							id="collapse-model-id"
+							class="accordion-collapse collapse show"
+							aria-labelledby="heading-model-id"
+							data-bs-parent="#accordion-strategies"
+						>
+							<div class="accordion-body p-0">
+								<div class="accordion accordion-flush" id="strategies-model-id">
+									<div hidden>{{ template_strategy() }}</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div hidden>
+	<div id="strategy-variable-aux-example" class="row d-flex align-items-center py-1">
+		<div class="from-group">
+			<div class="form-check">
+				<input class="form-check-input" type="checkbox" id="variable-aux-checker" />
+				<label class="form-check-label h6" for="defaultCheck10" id="variable-aux-name-strategy">
+					Variable auxiliar
+				</label>
+			</div>
+		</div>
+		<div class="mb-3">
+			<div class="form-group">
+				<input
+					class="form-control form-control-sm"
+					id="aux-input-strategy"
+					disabled
+					type="number"
+					min="0"
+					max="100"
+					value="33"
+					step="0.1"
+				/>
+				<small class="text-gray-500 mx-2" id="range-aux-info-strategy">
+					strategy.lower_value - strategy.upper_value; strategy.unit
+				</small>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% endmacro %} {% macro template_strategy() %}
+<div class="accordion-item mb-1" id="strategy-item-example">
+	<h2 class="accordion-header rounded bg-gray-100" id="heading-strategy-example">
+		<button
+			class="accordion-button collapsed p-2"
+			type="button"
+			data-bs-toggle="collapse"
+			data-bs-target="#collapse-strategy-example"
+			aria-expanded="false"
+			aria-controls="collapse-strategy-example"
+		>
+			<span id="strategy-example-name">Estrategia de ejemplo</span>
+		</button>
+	</h2>
+	<div
+		id="collapse-strategy-example"
+		class="accordion-collapse collapse"
+		aria-labelledby="collapse-strategy-example"
+		data-bs-parent="#strategies-{{model}}"
+	>
+		<div class="accordion-body border-0 shadow rounded-bottom group-form-range">
+			<div class="row d-flex align-items-center py-1">
+				<div class="col-12 h6" id="strategy-name-variable">strategy.variable</div>
+				<div class="col-4 justify-content-center d-flex">
+					<div class="icon-shape icon-shape-tertiary rounded">
+						<svg
+							class="w-6 h-6"
+							fill="currentColor"
+							xmlns="http://www.w3.org/2000/svg"
+							width="24"
+							height="24"
+							viewBox="0 0 24 24"
+						>
+							<path
+								d="M7.5 14.5c-1.58 0-2.903 1.06-3.337 2.5H2v2h2.163c.434 1.44 1.757 2.5 3.337 2.5s2.903-1.06 3.337-2.5H22v-2H10.837c-.434-1.44-1.757-2.5-3.337-2.5zm0 5c-.827 0-1.5-.673-1.5-1.5s.673-1.5 1.5-1.5S9 17.173 9 18s-.673 1.5-1.5 1.5zm9-11c-1.58 0-2.903 1.06-3.337 2.5H2v2h11.163c.434 1.44 1.757 2.5 3.337 2.5s2.903-1.06 3.337-2.5H22v-2h-2.163c-.434-1.44-1.757-2.5-3.337-2.5zm0 5c-.827 0-1.5-.673-1.5-1.5s.673-1.5 1.5-1.5 1.5.673 1.5 1.5-.673 1.5-1.5 1.5z"
+							></path>
+							<path
+								d="M12.837 5C12.403 3.56 11.08 2.5 9.5 2.5S6.597 3.56 6.163 5H2v2h4.163C6.597 8.44 7.92 9.5 9.5 9.5s2.903-1.06 3.337-2.5h9.288V5h-9.288zM9.5 7.5C8.673 7.5 8 6.827 8 6s.673-1.5 1.5-1.5S11 5.173 11 6s-.673 1.5-1.5 1.5z"
+							></path>
+						</svg>
+					</div>
+				</div>
+				<div class="col-8 justify-content-center d-flex">
+					<div class="d-block">
+						<h2 class="h6 text-gray-400 mb-o"><small>Nuevo valor</small></h2>
+						<h3 class="fw-extrabold mb-2">
+							<span id="strategy-example-current-value" class="">xx</span>
+							<span id="strategy-example-unit">Unidades de ejemplo</span>
+						</h3>
+						<small class="text-gray-500">
+							<span>
+								<svg
+									class="icon icon-xs text-gray-500"
+									fill="currentColor"
+									viewBox="0 0 20 20"
+									xmlns="http://www.w3.org/2000/svg"
+								>
+									<path
+										fill-rule="evenodd"
+										d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 0l-2 2a1 1 0 101.414 1.414L8 10.414l1.293 1.293a1 1 0 001.414 0l4-4z"
+										clip-rule="evenodd"
+									></path>
+								</svg>
+							</span>
+							<span id="strategy-bau-info">strategy.value strategy.unit año strategy.year </span>
+						</small>
+					</div>
+				</div>
+				<div class="col-12">
+					<input
+						type="range"
+						class="form-range mx-2"
+						data-slider-min="0"
+						data-slider-max="100"
+						data-slider-value="20"
+						data-slider-id="range-strategy-example"
+						data-slider-tooltip="always"
+					/>
+					<small class="text-gray-500" id="strategy-range-info">
+						strategy.lower_value - strategy.upper_value; strategy.unit
+					</small>
+				</div>
+			</div>
+			<div id="aux_var_section"></div>
+		</div>
+	</div>
+</div>
+{% endmacro %} {% macro progress_bar() %}
+<div class="col-12 col-md-5">
+	<span class="icon-shape icon-xs icon-shape-primary rounded me-4 me-sm-0 card-effect-icon">
+		<svg class="w-6 h-6" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+			<path
+				d="M17.867 2.504c-.355-.624-1.381-.623-1.736 0l-3.999 7A1 1 0 0 0 13 11h8a1.001 1.001 0 0 0 .868-1.496l-4.001-7zM3 22h7a1 1 0 0 0 1-1v-7a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1zm14.5-9c-2.481 0-4.5 2.019-4.5 4.5s2.019 4.5 4.5 4.5 4.5-2.019 4.5-4.5-2.019-4.5-4.5-4.5z"
+			></path>
+		</svg>
+	</span>
+	<span class="h3 fw-extrabold">Construcción de escenario</span>
+	<div class="row mx-0 my-1">
+		<div class="col-6 fw-extrabold mb-1 small">
+			Escenario:
+			<span class="fw-bold" id="scenario-name-macro"  style="color:rgb(16, 235, 242);">Nombre escenario</span>
+		</div>
+		<div class="col-6 fw-extrabold mb-1 small">
+			Proceso: <span class="fw-bold" id="scenario-process-macro" style="color:rgb(16, 235, 242);">Proceso</span>
+		</div>
+		<div class="col-3 fw-extrabold mb-1 small">
+			Año: <span class="fw-bold" id="scenario-anio-macro" style="color:rgb(16, 235, 242);">Año</span>
+		</div>
+	</div>
+</div>
+<div class="col-12 col-md-7">
+	<span>
+		<div class="row">
+			<div class="col-12">
+				<div class="stepp-1 checkout-progress" data-current-step="1">
+					<div class="progress-bar-stepp">
+						<div class="stepp stepp-1 active">
+							<span> 1</span>
+							<div class="fa fa-check opaque"></div>
+							<div class="stepp-label">Inicio</div>
+						</div>
+						<div class="stepp stepp-2">
+							<span> 2</span>
+							<div class="fa fa-check opaque"></div>
+							<div class="stepp-label">Selección</div>
+						</div>
+						<div class="stepp stepp-3">
+							<span> 3</span>
+							<div class="fa fa-check opaque"></div>
+							<div class="stepp-label">Ajustes</div>
+						</div>
+						<div class="stepp stepp-4">
+							<span> 4</span>
+							<div class="fa fa-check opaque"></div>
+							<div class="stepp-label">Visualización</div>
+						</div>
+						<div class="stepp stepp-5">
+							<span> 5</span>
+							<div class="fa fa-check opaque"></div>
+							<div class="stepp-label">Clasificación</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</span>
+</div>
+{% endmacro %}

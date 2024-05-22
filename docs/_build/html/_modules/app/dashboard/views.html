@@ -1,0 +1,1170 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>app.dashboard.views &#8212; Inteegra v1.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css" />
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for app.dashboard.views</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">render_template</span><span class="p">,</span>
+    <span class="n">redirect</span><span class="p">,</span>
+    <span class="n">flash</span><span class="p">,</span>
+    <span class="n">url_for</span><span class="p">,</span>
+    <span class="n">session</span><span class="p">,</span>
+    <span class="n">request</span><span class="p">,</span>
+    <span class="n">current_app</span> <span class="k">as</span> <span class="n">app</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">dashboard</span>
+<span class="kn">from</span> <span class="nn">app.extras</span> <span class="kn">import</span> <span class="n">return_indicators_calculation</span>
+<span class="kn">from</span> <span class="nn">app.models</span> <span class="kn">import</span> <span class="n">UserData</span><span class="p">,</span> <span class="n">UserModel</span>
+<span class="kn">from</span> <span class="nn">flask_login</span> <span class="kn">import</span> <span class="n">login_required</span><span class="p">,</span> <span class="n">login_user</span><span class="p">,</span> <span class="n">logout_user</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">scikitmcda.topsis</span> <span class="kn">import</span> <span class="n">TOPSIS</span>
+<span class="kn">from</span> <span class="nn">scikitmcda.constants</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">MAX</span><span class="p">,</span>
+    <span class="n">MIN</span><span class="p">,</span>
+    <span class="n">LinearMinMax_</span><span class="p">,</span>
+    <span class="n">LinearMax_</span><span class="p">,</span>
+    <span class="n">LinearSum_</span><span class="p">,</span>
+    <span class="n">Vector_</span><span class="p">,</span>
+    <span class="n">EnhancedAccuracy_</span><span class="p">,</span>
+    <span class="n">Logarithmic_</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># ONLY TEST</span>
+<span class="n">value</span> <span class="o">=</span> <span class="mi">60</span>
+
+<span class="n">strategies_definition</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;generation&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;process&quot;</span><span class="p">:</span> <span class="s2">&quot;Generación&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;models&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;d001&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Estrategias de expansión&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;descripcion&quot;</span><span class="p">:</span> <span class="s2">&quot;Son aquellas asociadas al cambio en la generación eléctrica debido a la variación de la capacidad instalada en las plantas eléctricas&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;strategies&quot;</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="c1"># STRATEGY TEST #</span>
+                    <span class="c1"># {</span>
+                    <span class="c1">#     &quot;id&quot;: &quot;x099&quot;,</span>
+                    <span class="c1">#     &quot;name&quot;: &quot;Test variables auxiliares&quot;,</span>
+                    <span class="c1">#     &quot;description&quot;: &quot;N/A&quot;,</span>
+                    <span class="c1">#     &quot;variable&quot;: &quot;Variable primaria&quot;,</span>
+                    <span class="c1">#     &quot;upper_value&quot;: 100,</span>
+                    <span class="c1">#     &quot;lower_value&quot;: 0,</span>
+                    <span class="c1">#     &quot;value&quot;: 50,</span>
+                    <span class="c1">#     &quot;year&quot;: 2025,</span>
+                    <span class="c1">#     &quot;unit&quot;: &quot;%&quot;,</span>
+                    <span class="c1">#     &quot;variable_aux&quot;: &quot;Variable test&quot;,</span>
+                    <span class="c1">#     &quot;upper_value_aux&quot;: 100,</span>
+                    <span class="c1">#     &quot;lower_value_aux&quot;: 0,</span>
+                    <span class="c1">#     &quot;value_aux&quot;: 39,</span>
+                    <span class="c1">#     &quot;year_aux&quot;: 2025,</span>
+                    <span class="c1">#     &quot;unit_aux&quot;: &quot;%&quot;,</span>
+                    <span class="c1">#     &quot;fp&quot;: 35.2576182447618 / 100,</span>
+                    <span class="c1">#     &quot;id_relation&quot;: &quot;r001&quot;,</span>
+                    <span class="c1"># },</span>
+                    <span class="c1"># END STRATEGY TEST #</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;x001&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Generación eléctrica a partir de plantas térmicas&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;N/A&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;variable&quot;</span><span class="p">:</span> <span class="s2">&quot;Capacidad Instalada&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;upper_value&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+                        <span class="s2">&quot;lower_value&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+                        <span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2025</span><span class="p">,</span>
+                        <span class="s2">&quot;unit&quot;</span><span class="p">:</span> <span class="s2">&quot;GW&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;fp&quot;</span><span class="p">:</span> <span class="mf">35.2576182447618</span> <span class="o">/</span> <span class="mi">100</span><span class="p">,</span>
+                        <span class="s2">&quot;id_relation&quot;</span><span class="p">:</span> <span class="s2">&quot;r001&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;generacion_historica&quot;</span><span class="p">:</span> <span class="mi">12268</span><span class="p">,</span> <span class="c1"># generacion historica de 2021, se usa como base para los calculos</span>
+                        <span class="s2">&quot;values_CI&quot;</span><span class="p">:</span> <span class="p">[</span> <span class="c1"># valor por defecto para la capacidad instalada se toma desde informe (escenario de actualizacion) [2022 ...2030]</span>
+                            <span class="mf">5.74083</span><span class="p">,</span>
+                            <span class="mi">6</span><span class="p">,</span>
+                            <span class="mi">6</span><span class="p">,</span>
+                            <span class="mi">6</span><span class="p">,</span>
+                            <span class="mi">6</span><span class="p">,</span>
+                            <span class="mi">6</span><span class="p">,</span>
+                            <span class="mi">6</span><span class="p">,</span>
+                            <span class="mi">6</span><span class="p">,</span>
+                            <span class="mi">6</span><span class="p">,</span>
+                        <span class="p">],</span>
+                    <span class="p">},</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;x002&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Generación eléctrica a partir de plantas hidráulicas&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;N/A&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;variable&quot;</span><span class="p">:</span> <span class="s2">&quot;Capacidad Instalada&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;upper_value&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+                        <span class="s2">&quot;lower_value&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span>
+                        <span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2025</span><span class="p">,</span>
+                        <span class="s2">&quot;unit&quot;</span><span class="p">:</span> <span class="s2">&quot;GW&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;fp&quot;</span><span class="p">:</span> <span class="mf">51.4937014</span> <span class="o">/</span> <span class="mi">100</span><span class="p">,</span>
+                        <span class="s2">&quot;id_relation&quot;</span><span class="p">:</span> <span class="s2">&quot;r002&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;generacion_historica&quot;</span><span class="p">:</span> <span class="mf">58118.491688874</span><span class="p">,</span>
+                        <span class="s2">&quot;values_CI&quot;</span><span class="p">:</span> <span class="p">[</span>
+                            <span class="mf">11.944792</span><span class="p">,</span>
+                            <span class="mi">13</span><span class="p">,</span>
+                            <span class="mi">15</span><span class="p">,</span>
+                            <span class="mi">15</span><span class="p">,</span>
+                            <span class="mi">15</span><span class="p">,</span>
+                            <span class="mi">15</span><span class="p">,</span>
+                            <span class="mi">15</span><span class="p">,</span>
+                            <span class="mi">15</span><span class="p">,</span>
+                            <span class="mi">15</span><span class="p">,</span>
+                        <span class="p">],</span>
+                    <span class="p">},</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;x003&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Generación eléctrica a partir de plantas de Auto y Cogeneración&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;N/A&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;variable&quot;</span><span class="p">:</span> <span class="s2">&quot;Capacidad Instalada&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;upper_value&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+                        <span class="s2">&quot;lower_value&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+                        <span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2025</span><span class="p">,</span>
+                        <span class="s2">&quot;unit&quot;</span><span class="p">:</span> <span class="s2">&quot;GW&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;fp&quot;</span><span class="p">:</span> <span class="mf">91.3033263</span> <span class="o">/</span> <span class="mi">100</span><span class="p">,</span>
+                        <span class="s2">&quot;id_relation&quot;</span><span class="p">:</span> <span class="s2">&quot;r003&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;generacion_historica&quot;</span><span class="p">:</span> <span class="mf">5254.93081734859</span><span class="p">,</span>
+                        <span class="s2">&quot;values_CI&quot;</span><span class="p">:</span> <span class="p">[</span>
+                            <span class="mf">1.329</span><span class="p">,</span>
+                            <span class="mf">1.361</span><span class="p">,</span>
+                            <span class="mf">1.396</span><span class="p">,</span>
+                            <span class="mf">1.429</span><span class="p">,</span>
+                            <span class="mf">1.467</span><span class="p">,</span>
+                            <span class="mf">1.502</span><span class="p">,</span>
+                            <span class="mf">1.54</span><span class="p">,</span>
+                            <span class="mf">1.577</span><span class="p">,</span>
+                            <span class="mf">1.614</span><span class="p">,</span>
+                        <span class="p">],</span>
+                    <span class="p">},</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;x004&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Generación eléctrica a partir de plantas eólicas&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;N/A&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;variable&quot;</span><span class="p">:</span> <span class="s2">&quot;Capacidad Instalada&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;upper_value&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+                        <span class="s2">&quot;lower_value&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+                        <span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2025</span><span class="p">,</span>
+                        <span class="s2">&quot;unit&quot;</span><span class="p">:</span> <span class="s2">&quot;GW&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;fp&quot;</span><span class="p">:</span> <span class="mf">34.7849019</span> <span class="o">/</span> <span class="mi">100</span><span class="p">,</span>
+                        <span class="s2">&quot;id_relation&quot;</span><span class="p">:</span> <span class="s2">&quot;r004&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;generacion_historica&quot;</span><span class="p">:</span> <span class="mf">60.46</span><span class="p">,</span>
+                        <span class="s2">&quot;values_CI&quot;</span><span class="p">:</span> <span class="p">[</span>
+                            <span class="mf">0.01842</span><span class="p">,</span>
+                            <span class="mi">2</span><span class="p">,</span>
+                            <span class="mi">2</span><span class="p">,</span>
+                            <span class="mi">2</span><span class="p">,</span>
+                            <span class="mi">2</span><span class="p">,</span>
+                            <span class="mi">2</span><span class="p">,</span>
+                            <span class="mi">3</span><span class="p">,</span>
+                            <span class="mi">3</span><span class="p">,</span>
+                            <span class="mi">3</span><span class="p">,</span>
+                        <span class="p">],</span>
+                    <span class="p">},</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;x005&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Generación eléctrica a partir de plantas solares&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;N/A&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;variable&quot;</span><span class="p">:</span> <span class="s2">&quot;Capacidad Instalada&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;upper_value&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+                        <span class="s2">&quot;lower_value&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                        <span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2025</span><span class="p">,</span>
+                        <span class="s2">&quot;unit&quot;</span><span class="p">:</span> <span class="s2">&quot;GW&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;fp&quot;</span><span class="p">:</span> <span class="mf">36.8224441</span> <span class="o">/</span> <span class="mi">100</span><span class="p">,</span>
+                        <span class="s2">&quot;id_relation&quot;</span><span class="p">:</span> <span class="s2">&quot;r005&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;generacion_historica&quot;</span><span class="p">:</span> <span class="mf">323.02</span><span class="p">,</span>
+                        <span class="s2">&quot;values_CI&quot;</span><span class="p">:</span> <span class="p">[</span>
+                            <span class="mf">0.290114</span><span class="p">,</span>
+                            <span class="mi">1</span><span class="p">,</span>
+                            <span class="mi">1</span><span class="p">,</span>
+                            <span class="mi">1</span><span class="p">,</span>
+                            <span class="mi">1</span><span class="p">,</span>
+                            <span class="mi">1</span><span class="p">,</span>
+                            <span class="mi">1</span><span class="p">,</span>
+                            <span class="mi">1</span><span class="p">,</span>
+                            <span class="mi">1</span><span class="p">,</span>
+                        <span class="p">],</span>
+                    <span class="p">},</span>
+                <span class="p">],</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;d002&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Estrategias de actualización&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;descripcion&quot;</span><span class="p">:</span> <span class="s2">&quot;Son aquellas que buscan reducir el consumo de fuentes primarias en las plantas de generación eléctrica, mediante una mejora en la eficiencia de las tecnologías empleadas a través de un recambio tecnológico. Cada estrategia considera la generación eléctrica modelada en las estrategias de expansión&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;strategies&quot;</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;y001&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Mejoras de eficiencia en plantas térmicas&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;N/A&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;variable&quot;</span><span class="p">:</span> <span class="s2">&quot;Eficiencia deseada&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;upper_value&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+                        <span class="s2">&quot;lower_value&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">56</span><span class="p">,</span>
+                        <span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2025</span><span class="p">,</span>
+                        <span class="s2">&quot;unit&quot;</span><span class="p">:</span> <span class="s2">&quot;%&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;n_LB&quot;</span><span class="p">:</span> <span class="mf">37.1999989362893</span> <span class="o">/</span> <span class="mi">100</span><span class="p">,</span>
+                        <span class="s2">&quot;efi_deseada_base&quot;</span><span class="p">:</span> <span class="p">[</span>   <span class="c1">#eficiencia deseada tomada de informe, usando como base el escenario de actializacion y un valor deseado</span>
+                            <span class="mf">39.29</span><span class="p">,</span>              <span class="c1">#de 56% al año 2030</span>
+                            <span class="mf">41.38</span><span class="p">,</span>
+                            <span class="mf">43.47</span><span class="p">,</span>
+                            <span class="mf">45.56</span><span class="p">,</span>
+                            <span class="mf">47.64</span><span class="p">,</span>
+                            <span class="mf">49.73</span><span class="p">,</span>
+                            <span class="mf">51.82</span><span class="p">,</span>
+                            <span class="mf">53.91</span><span class="p">,</span>
+                            <span class="mf">56.00</span><span class="p">,</span>
+                        <span class="p">],</span>
+                        <span class="s2">&quot;values_BAU&quot;</span><span class="p">:</span> <span class="p">[</span> <span class="c1"># valores de salida de la generacion para cada planta dada por el escenario de actualizacion</span>
+                            <span class="mf">17730.94</span><span class="p">,</span>   <span class="c1"># viene desde el informe ... solo se usa si la planta no ha sido seleccionada en la estrategia</span>
+                            <span class="mf">19359.14</span><span class="p">,</span>   <span class="c1"># de eapansion de otro modo los valores se toma de la salida de la est. de expansion por cada planta</span>
+                            <span class="mf">19359.14</span><span class="p">,</span>
+                            <span class="mf">19359.14</span><span class="p">,</span>
+                            <span class="mf">19359.14</span><span class="p">,</span>
+                            <span class="mf">19359.14</span><span class="p">,</span>
+                            <span class="mf">19359.14</span><span class="p">,</span>
+                            <span class="mf">19359.14</span><span class="p">,</span>
+                            <span class="mf">19359.14</span><span class="p">,</span>
+                        <span class="p">],</span>
+                        <span class="s2">&quot;id_relation&quot;</span><span class="p">:</span> <span class="s2">&quot;r001&quot;</span><span class="p">,</span>
+                    <span class="p">},</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;y002&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Mejoras de eficiencia en plantas hidráulicas&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;N/A&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;variable&quot;</span><span class="p">:</span> <span class="s2">&quot;Eficiencia deseada&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;upper_value&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+                        <span class="s2">&quot;lower_value&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">90</span><span class="p">,</span>
+                        <span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2025</span><span class="p">,</span>
+                        <span class="s2">&quot;unit&quot;</span><span class="p">:</span> <span class="s2">&quot;%&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;n_LB&quot;</span><span class="p">:</span> <span class="mf">88.0834783514384</span> <span class="o">/</span> <span class="mi">100</span><span class="p">,</span>
+                        <span class="s2">&quot;efi_deseada_base&quot;</span><span class="p">:</span> <span class="p">[</span>   <span class="c1">#eficiencia deseada tomada de informe, usando como base el escenario de actializacion y un valor deseado de 90% al año 2030</span>
+                            <span class="mf">88.30</span><span class="p">,</span>
+                            <span class="mf">88.51</span><span class="p">,</span>
+                            <span class="mf">88.72</span><span class="p">,</span>
+                            <span class="mf">88.94</span><span class="p">,</span>
+                            <span class="mf">89.15</span><span class="p">,</span>
+                            <span class="mf">89.36</span><span class="p">,</span>
+                            <span class="mf">89.57</span><span class="p">,</span>
+                            <span class="mf">89.79</span><span class="p">,</span>
+                            <span class="mf">90.00</span><span class="p">,</span>
+                        <span class="p">],</span>
+                        <span class="s2">&quot;values_BAU&quot;</span><span class="p">:</span> <span class="p">[</span>
+                            <span class="mf">53881.14</span><span class="p">,</span>
+                            <span class="mf">58641.03</span><span class="p">,</span>
+                            <span class="mf">67662.72</span><span class="p">,</span>
+                            <span class="mf">67662.72</span><span class="p">,</span>
+                            <span class="mf">67662.72</span><span class="p">,</span>
+                            <span class="mf">67662.72</span><span class="p">,</span>
+                            <span class="mf">67662.72</span><span class="p">,</span>
+                            <span class="mf">67662.72</span><span class="p">,</span>
+                            <span class="mf">67662.72</span><span class="p">,</span>
+                        <span class="p">],</span>
+                        <span class="s2">&quot;id_relation&quot;</span><span class="p">:</span> <span class="s2">&quot;r002&quot;</span><span class="p">,</span>
+                    <span class="p">},</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;y003&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Mejoras de eficiencia en plantas de Auto y Cogeneración&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;N/A&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;variable&quot;</span><span class="p">:</span> <span class="s2">&quot;Eficiencia deseada&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;upper_value&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+                        <span class="s2">&quot;lower_value&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">47</span><span class="p">,</span>
+                        <span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2025</span><span class="p">,</span>
+                        <span class="s2">&quot;unit&quot;</span><span class="p">:</span> <span class="s2">&quot;%&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;n_LB&quot;</span><span class="p">:</span> <span class="mf">36.3372271796145</span> <span class="o">/</span> <span class="mi">100</span><span class="p">,</span>
+                        <span class="s2">&quot;efi_deseada_base&quot;</span><span class="p">:</span> <span class="p">[</span>   <span class="c1">#eficiencia deseada tomada de informe, usando como base el escenario de actializacion y un valor deseado de 47% al año 2030</span>
+                            <span class="mf">37.52</span><span class="p">,</span>
+                            <span class="mf">38.71</span><span class="p">,</span>
+                            <span class="mf">39.89</span><span class="p">,</span>
+                            <span class="mf">41.08</span><span class="p">,</span>
+                            <span class="mf">42.26</span><span class="p">,</span>
+                            <span class="mf">43.45</span><span class="p">,</span>
+                            <span class="mf">44.63</span><span class="p">,</span>
+                            <span class="mf">45.82</span><span class="p">,</span>
+                            <span class="mf">47.00</span><span class="p">,</span>
+                        <span class="p">],</span>
+                        <span class="s2">&quot;values_BAU&quot;</span><span class="p">:</span> <span class="p">[</span>
+                            <span class="mf">10629.57</span><span class="p">,</span>
+                            <span class="mf">10885.51</span><span class="p">,</span>
+                            <span class="mf">11165.45</span><span class="p">,</span>
+                            <span class="mf">11429.39</span><span class="p">,</span>
+                            <span class="mf">11733.32</span><span class="p">,</span>
+                            <span class="mf">12013.25</span><span class="p">,</span>
+                            <span class="mf">12317.18</span><span class="p">,</span>
+                            <span class="mf">12613.12</span><span class="p">,</span>
+                            <span class="mf">12909.05</span><span class="p">,</span>
+                        <span class="p">],</span>
+                        <span class="s2">&quot;id_relation&quot;</span><span class="p">:</span> <span class="s2">&quot;r003&quot;</span><span class="p">,</span>
+                    <span class="p">},</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;y004&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Mejoras de eficiencia en plantas eólicas&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;N/A&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;variable&quot;</span><span class="p">:</span> <span class="s2">&quot;Eficiencia deseada&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;upper_value&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+                        <span class="s2">&quot;lower_value&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">55</span><span class="p">,</span>
+                        <span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2025</span><span class="p">,</span>
+                        <span class="s2">&quot;unit&quot;</span><span class="p">:</span> <span class="s2">&quot;%&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;n_LB&quot;</span><span class="p">:</span> <span class="mf">53.725</span> <span class="o">/</span> <span class="mi">100</span><span class="p">,</span>
+                        <span class="s2">&quot;efi_deseada_base&quot;</span><span class="p">:</span> <span class="p">[</span>   <span class="c1">#eficiencia deseada tomada de informe, usando como base el escenario de actializacion y un valor deseado de 56% al año 2030</span>
+                            <span class="mf">53.98</span><span class="p">,</span>
+                            <span class="mf">54.23</span><span class="p">,</span>
+                            <span class="mf">54.48</span><span class="p">,</span>
+                            <span class="mf">54.74</span><span class="p">,</span>
+                            <span class="mf">54.99</span><span class="p">,</span>
+                            <span class="mf">55.24</span><span class="p">,</span>
+                            <span class="mf">55.49</span><span class="p">,</span>
+                            <span class="mf">55.75</span><span class="p">,</span>
+                            <span class="mf">56.00</span><span class="p">,</span>
+                        <span class="p">],</span>
+                        <span class="s2">&quot;values_BAU&quot;</span><span class="p">:</span> <span class="p">[</span>
+                            <span class="mf">56.13</span><span class="p">,</span>
+                            <span class="mf">6094.31</span><span class="p">,</span>
+                            <span class="mf">6094.31</span><span class="p">,</span>
+                            <span class="mf">6094.31</span><span class="p">,</span>
+                            <span class="mf">6094.31</span><span class="p">,</span>
+                            <span class="mf">6094.31</span><span class="p">,</span>
+                            <span class="mf">9141.47</span><span class="p">,</span>
+                            <span class="mf">9141.47</span><span class="p">,</span>
+                            <span class="mf">9141.47</span><span class="p">,</span>
+                        <span class="p">],</span>
+                        <span class="s2">&quot;id_relation&quot;</span><span class="p">:</span> <span class="s2">&quot;r004&quot;</span><span class="p">,</span>
+                    <span class="p">},</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;y005&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Mejoras de eficiencia en plantas solares&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;N/A&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;variable&quot;</span><span class="p">:</span> <span class="s2">&quot;Eficiencia deseada&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;upper_value&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+                        <span class="s2">&quot;lower_value&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">22</span><span class="p">,</span>
+                        <span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2025</span><span class="p">,</span>
+                        <span class="s2">&quot;unit&quot;</span><span class="p">:</span> <span class="s2">&quot;%&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;n_LB&quot;</span><span class="p">:</span> <span class="mf">20.8268</span> <span class="o">/</span> <span class="mi">100</span><span class="p">,</span>
+                        <span class="s2">&quot;efi_deseada_base&quot;</span><span class="p">:</span> <span class="p">[</span>   <span class="c1">#eficiencia deseada tomada de informe, usando como base el escenario de actializacion y un valor deseado de 22% al año 2030</span>
+                            <span class="mf">20.96</span><span class="p">,</span>
+                            <span class="mf">21.09</span><span class="p">,</span>
+                            <span class="mf">21.22</span><span class="p">,</span>
+                            <span class="mf">21.35</span><span class="p">,</span>
+                            <span class="mf">21.48</span><span class="p">,</span>
+                            <span class="mf">21.61</span><span class="p">,</span>
+                            <span class="mf">21.74</span><span class="p">,</span>
+                            <span class="mf">21.87</span><span class="p">,</span>
+                            <span class="mf">22.00</span><span class="p">,</span>
+                        <span class="p">],</span>
+                        <span class="s2">&quot;values_BAU&quot;</span><span class="p">:</span> <span class="p">[</span>
+                            <span class="mf">935.81</span><span class="p">,</span>
+                            <span class="mf">3225.65</span><span class="p">,</span>
+                            <span class="mf">3225.65</span><span class="p">,</span>
+                            <span class="mf">3225.65</span><span class="p">,</span>
+                            <span class="mf">3225.65</span><span class="p">,</span>
+                            <span class="mf">3225.65</span><span class="p">,</span>
+                            <span class="mf">3225.65</span><span class="p">,</span>
+                            <span class="mf">3225.65</span><span class="p">,</span>
+                            <span class="mf">3225.65</span><span class="p">,</span>
+                        <span class="p">],</span>
+                        <span class="s2">&quot;id_relation&quot;</span><span class="p">:</span> <span class="s2">&quot;r005&quot;</span><span class="p">,</span>
+                    <span class="p">},</span>
+                <span class="p">],</span>
+            <span class="p">},</span>
+        <span class="p">],</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;distribution&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;process&quot;</span><span class="p">:</span> <span class="s2">&quot;Distribución&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;models&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;z001&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Digitalización y gestión de la medida&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;descripcion&quot;</span><span class="p">:</span> <span class="s2">&quot;Digitalización y gestión de la medida es bbbbbbbbbbb&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;strategies&quot;</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;w001&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;AMI para la identificación de pérdidas no técnicas(Lineal)&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;N/A&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;variable&quot;</span><span class="p">:</span> <span class="s2">&quot;Porcentaje de incorporación AMI&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;upper_value&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+                        <span class="s2">&quot;lower_value&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span>
+                        <span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2025</span><span class="p">,</span>
+                        <span class="s2">&quot;unit&quot;</span><span class="p">:</span> <span class="s2">&quot;%&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;variable_aux&quot;</span><span class="p">:</span> <span class="s2">&quot;Reducción final&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;upper_value_aux&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+                        <span class="s2">&quot;lower_value_aux&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s2">&quot;value_aux&quot;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span>
+                        <span class="s2">&quot;year_aux&quot;</span><span class="p">:</span> <span class="mi">2025</span><span class="p">,</span>
+                        <span class="s2">&quot;unit_aux&quot;</span><span class="p">:</span> <span class="s2">&quot;%&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;ami_bau&quot;</span><span class="p">:</span> <span class="mf">0.127553083836326</span><span class="p">,</span> <span class="c1"># valor por defecto par el año 2021, se toma como inicio de la ecuacion ya que es recursiva</span>
+                        <span class="s2">&quot;final_reduction_bau&quot;</span><span class="p">:</span> <span class="mf">0.11774817604788</span><span class="p">,</span> <span class="c1"># valor por defecto para el 2021,</span>
+                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                    <span class="p">},</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;w002&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;AMI para la identificación de pérdidas no técnicas(Progresivo)&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;N/A&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;variable&quot;</span><span class="p">:</span> <span class="s2">&quot;Porcentaje de incorporación AMI&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;upper_value&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+                        <span class="s2">&quot;lower_value&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">85</span><span class="p">,</span>
+                        <span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2025</span><span class="p">,</span>
+                        <span class="s2">&quot;unit&quot;</span><span class="p">:</span> <span class="s2">&quot;%&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;variable_aux&quot;</span><span class="p">:</span> <span class="s2">&quot;Reducción final&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;upper_value_aux&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+                        <span class="s2">&quot;lower_value_aux&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s2">&quot;value_aux&quot;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span>
+                        <span class="s2">&quot;year_aux&quot;</span><span class="p">:</span> <span class="mi">2025</span><span class="p">,</span>
+                        <span class="s2">&quot;unit_aux&quot;</span><span class="p">:</span> <span class="s2">&quot;%&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;ami_bau&quot;</span><span class="p">:</span> <span class="mf">0.127553083836326</span><span class="p">,</span> <span class="c1"># valor por defecto par el año 2021, se toma como inicio de la ecuacion ya que es recursiva</span>
+                        <span class="s2">&quot;final_reduction_bau&quot;</span><span class="p">:</span> <span class="mf">0.11774817604788</span><span class="p">,</span> <span class="c1"># valor por defecto para el 2021</span>
+                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+                    <span class="p">},</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;w003&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Adopción de Sistemas Avanzados de Gestión de la Distribución&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;N/A&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;variable&quot;</span><span class="p">:</span> <span class="s2">&quot;Porcentaje de incorporación AMI&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;upper_value&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+                        <span class="s2">&quot;lower_value&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">70</span><span class="p">,</span>
+                        <span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2025</span><span class="p">,</span>
+                        <span class="s2">&quot;unit&quot;</span><span class="p">:</span> <span class="s2">&quot;%&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;variable_aux&quot;</span><span class="p">:</span> <span class="s2">&quot;Reducción final&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;upper_value_aux&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+                        <span class="s2">&quot;lower_value_aux&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s2">&quot;value_aux&quot;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span>
+                        <span class="s2">&quot;year_aux&quot;</span><span class="p">:</span> <span class="mi">2025</span><span class="p">,</span>
+                        <span class="s2">&quot;unit_aux&quot;</span><span class="p">:</span> <span class="s2">&quot;%&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;ami_bau&quot;</span><span class="p">:</span> <span class="mf">0.127553083836326</span><span class="p">,</span> <span class="c1"># valor por defecto par el año 2021, se toma como inicio de la ecuacion ya que es recursiva</span>
+                        <span class="s2">&quot;final_reduction_bau&quot;</span><span class="p">:</span> <span class="mf">0.11774817604788</span><span class="p">,</span> <span class="c1"># valor por defecto para el 2021</span>
+                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+                    <span class="p">},</span>
+                <span class="p">],</span>
+            <span class="p">},</span>
+        <span class="p">],</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;end_use&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;process&quot;</span><span class="p">:</span> <span class="s2">&quot;Uso final&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;models&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;u001&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Estrategias de electrificación en el transporte&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;descripcion&quot;</span><span class="p">:</span> <span class="s2">&quot;Son estrategias de descarbonización que buscan incluir el uso de vehículos eléctricos en las diferentes categorías del parque automotor colombiano, calculando el consumo eléctrico necesario para suplir esta demanda&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;strategies&quot;</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;e001&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Electrificación del transporte masivo microbuses&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;N/A&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;variable&quot;</span><span class="p">:</span> <span class="s2">&quot;Número de vehículos eléctricos&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;upper_value&quot;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
+                        <span class="s2">&quot;lower_value&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="c1"># valor por defecto de numero de vehiculos, su valor se reemplaza ...</span>
+                        <span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2025</span><span class="p">,</span> <span class="c1"># con el valor de arr_value_aux dependiendo del año</span>
+                        <span class="s2">&quot;unit&quot;</span><span class="p">:</span> <span class="s2">&quot;Vehículos&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;variable_aux&quot;</span><span class="p">:</span> <span class="s2">&quot;Rendimiento del motor&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;upper_value_aux&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+                        <span class="s2">&quot;lower_value_aux&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s2">&quot;value_aux&quot;</span><span class="p">:</span> <span class="mf">1.298610908</span><span class="p">,</span> <span class="c1"># valor por defecto para rendimiento del motor constante para años [2022 ...2030] en kwh</span>
+                        <span class="s2">&quot;rm_Km_Lge&quot;</span><span class="p">:</span> <span class="mf">7.2</span><span class="p">,</span> <span class="c1"># valor por defecto para rendimiento del motor constante para años [2022 ...2030] en KM/Lge</span>
+                        <span class="s2">&quot;year_aux&quot;</span><span class="p">:</span> <span class="mi">2025</span><span class="p">,</span>
+                        <span class="s2">&quot;unit_aux&quot;</span><span class="p">:</span> <span class="s2">&quot;kWh/km&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;avkt&quot;</span><span class="p">:</span> <span class="mi">45000</span><span class="p">,</span> <span class="c1"># valor por defecto para promedio de vkt constante para años [2022 ...2030]</span>
+                        <span class="s2">&quot;id_tipo_vehiculo&quot;</span><span class="p">:</span> <span class="s2">&quot;ve001&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;num_vehic_elect&quot;</span><span class="p">:</span> <span class="p">[</span>
+                            <span class="mf">25.70104</span><span class="p">,</span>
+                            <span class="mf">36.01845</span><span class="p">,</span>
+                            <span class="mf">51.0354</span><span class="p">,</span>
+                            <span class="mf">72.6075</span><span class="p">,</span>
+                            <span class="mf">103.65226</span><span class="p">,</span>
+                            <span class="mf">147.76132</span><span class="p">,</span>
+                            <span class="mf">209.49465</span><span class="p">,</span>
+                            <span class="mf">293.2314</span><span class="p">,</span>
+                            <span class="mf">428.69568</span><span class="p">,</span>
+                        <span class="p">],</span>
+                        <span class="s2">&quot;incremto_n_vehiculos&quot;</span><span class="p">:</span> <span class="p">[</span>  <span class="c1">#valor en porcentaje ya que es un imcrento</span>
+                            <span class="mf">0.241186004</span><span class="p">,</span>
+                            <span class="mf">0.401439397</span><span class="p">,</span>
+                            <span class="mf">0.416923827</span><span class="p">,</span>
+                            <span class="mf">0.422688957</span><span class="p">,</span>
+                            <span class="mf">0.427569604</span><span class="p">,</span>
+                            <span class="mf">0.425548464</span><span class="p">,</span>
+                            <span class="mf">0.417790867</span><span class="p">,</span>
+                            <span class="mf">0.399708298</span><span class="p">,</span>
+                            <span class="mf">0.46197058</span><span class="p">,</span>
+                        <span class="p">],</span>
+                    <span class="p">},</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;e002&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Electrificación del transporte masivo buses&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;N/A&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;variable&quot;</span><span class="p">:</span> <span class="s2">&quot;Número de vehículos eléctricos&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;upper_value&quot;</span><span class="p">:</span> <span class="mi">10000</span><span class="p">,</span>
+                        <span class="s2">&quot;lower_value&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                        <span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2025</span><span class="p">,</span>
+                        <span class="s2">&quot;unit&quot;</span><span class="p">:</span> <span class="s2">&quot;Vehículos&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;variable_aux&quot;</span><span class="p">:</span> <span class="s2">&quot;Rendimiento del motor&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;upper_value_aux&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+                        <span class="s2">&quot;lower_value_aux&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s2">&quot;value_aux&quot;</span><span class="p">:</span> <span class="mf">2.800007904</span><span class="p">,</span>
+                        <span class="s2">&quot;rm_Km_Lge&quot;</span><span class="p">:</span> <span class="mf">3.33</span><span class="p">,</span>
+                        <span class="s2">&quot;year_aux&quot;</span><span class="p">:</span> <span class="mi">2025</span><span class="p">,</span>
+                        <span class="s2">&quot;unit_aux&quot;</span><span class="p">:</span> <span class="s2">&quot;kWh/km&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;avkt&quot;</span><span class="p">:</span> <span class="mi">74750</span><span class="p">,</span>
+                        <span class="s2">&quot;id_tipo_vehiculo&quot;</span><span class="p">:</span> <span class="s2">&quot;ve002&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;num_vehic_elect&quot;</span><span class="p">:</span> <span class="p">[</span>
+                            <span class="mf">34.13536</span><span class="p">,</span>
+                            <span class="mf">47.83727</span><span class="p">,</span>
+                            <span class="mf">67.7196</span><span class="p">,</span>
+                            <span class="mf">96.35822</span><span class="p">,</span>
+                            <span class="mf">137.4296</span><span class="p">,</span>
+                            <span class="mf">195.92559</span><span class="p">,</span>
+                            <span class="mf">277.6292</span><span class="p">,</span>
+                            <span class="mf">388.6672</span><span class="p">,</span>
+                            <span class="mf">567.15204</span><span class="p">,</span>
+                        <span class="p">],</span>
+                        <span class="s2">&quot;incremto_n_vehiculos&quot;</span><span class="p">:</span> <span class="p">[</span>  <span class="c1">#valor en porcentaje ya que es un imcrento</span>
+                            <span class="mf">0.240481986</span><span class="p">,</span>
+                            <span class="mf">0.401399311</span><span class="p">,</span>
+                            <span class="mf">0.415624261</span><span class="p">,</span>
+                            <span class="mf">0.422900017</span><span class="p">,</span>
+                            <span class="mf">0.426236392</span><span class="p">,</span>
+                            <span class="mf">0.425643311</span><span class="p">,</span>
+                            <span class="mf">0.417013469</span><span class="p">,</span>
+                            <span class="mf">0.399950726</span><span class="p">,</span>
+                            <span class="mf">0.4592228</span><span class="p">,</span>
+                        <span class="p">],</span>
+                    <span class="p">},</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;e003&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Electrificación del transporte ligero automóviles y camperos&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;N/A&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;variable&quot;</span><span class="p">:</span> <span class="s2">&quot;Número de vehículos eléctricos&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;upper_value&quot;</span><span class="p">:</span> <span class="mi">100000</span><span class="p">,</span>
+                        <span class="s2">&quot;lower_value&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+                        <span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2025</span><span class="p">,</span>
+                        <span class="s2">&quot;unit&quot;</span><span class="p">:</span> <span class="s2">&quot;Vehículos&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;variable_aux&quot;</span><span class="p">:</span> <span class="s2">&quot;Rendimiento del motor&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;upper_value_aux&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+                        <span class="s2">&quot;lower_value_aux&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s2">&quot;value_aux&quot;</span><span class="p">:</span> <span class="mf">0.159385065</span><span class="p">,</span>
+                        <span class="s2">&quot;rm_Km_Lge&quot;</span><span class="p">:</span> <span class="mf">58.5</span><span class="p">,</span>
+                        <span class="s2">&quot;year_aux&quot;</span><span class="p">:</span> <span class="mi">2025</span><span class="p">,</span>
+                        <span class="s2">&quot;unit_aux&quot;</span><span class="p">:</span> <span class="s2">&quot;kWh/km&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;avkt&quot;</span><span class="p">:</span> <span class="mi">13206</span><span class="p">,</span>
+                        <span class="s2">&quot;id_tipo_vehiculo&quot;</span><span class="p">:</span> <span class="s2">&quot;ve001&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;num_vehic_elect&quot;</span><span class="p">:</span> <span class="p">[</span>
+                            <span class="mf">7104.90914</span><span class="p">,</span>
+                            <span class="mf">11479.8671</span><span class="p">,</span>
+                            <span class="mf">16586.80318</span><span class="p">,</span>
+                            <span class="mf">21314.35332</span><span class="p">,</span>
+                            <span class="mf">24967.7838</span><span class="p">,</span>
+                            <span class="mf">27510.2951</span><span class="p">,</span>
+                            <span class="mf">29248.6113</span><span class="p">,</span>
+                            <span class="mf">30480.6834</span><span class="p">,</span>
+                            <span class="mf">36507.28406</span><span class="p">,</span>
+                        <span class="p">],</span>
+                        <span class="s2">&quot;incremto_n_vehiculos&quot;</span><span class="p">:</span> <span class="p">[</span>  <span class="c1">#valor en porcentaje ya que es un imcrento</span>
+                            <span class="mf">0.586899899</span><span class="p">,</span>
+                            <span class="mf">0.615765504</span><span class="p">,</span>
+                            <span class="mf">0.444860209</span><span class="p">,</span>
+                            <span class="mf">0.285018764</span><span class="p">,</span>
+                            <span class="mf">0.171407053</span><span class="p">,</span>
+                            <span class="mf">0.101831677</span><span class="p">,</span>
+                            <span class="mf">0.063187843</span><span class="p">,</span>
+                            <span class="mf">0.042124123</span><span class="p">,</span>
+                            <span class="mf">0.197718686</span><span class="p">,</span>
+                        <span class="p">],</span>
+                    <span class="p">},</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;e004&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Electrificación del transporte ligero motos&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;N/A&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;variable&quot;</span><span class="p">:</span> <span class="s2">&quot;Número de vehículos eléctricos&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;upper_value&quot;</span><span class="p">:</span> <span class="mi">100000</span><span class="p">,</span>
+                        <span class="s2">&quot;lower_value&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+                        <span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2025</span><span class="p">,</span>
+                        <span class="s2">&quot;unit&quot;</span><span class="p">:</span> <span class="s2">&quot;Vehículos&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;variable_aux&quot;</span><span class="p">:</span> <span class="s2">&quot;Rendimiento del motor&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;upper_value_aux&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+                        <span class="s2">&quot;lower_value_aux&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s2">&quot;value_aux&quot;</span><span class="p">:</span> <span class="mf">0.032487897</span><span class="p">,</span>
+                        <span class="s2">&quot;rm_Km_Lge&quot;</span><span class="p">:</span> <span class="mi">287</span><span class="p">,</span>
+                        <span class="s2">&quot;year_aux&quot;</span><span class="p">:</span> <span class="mi">2025</span><span class="p">,</span>
+                        <span class="s2">&quot;unit_aux&quot;</span><span class="p">:</span> <span class="s2">&quot;kWh/km&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;avkt&quot;</span><span class="p">:</span> <span class="mi">22301</span><span class="p">,</span>
+                        <span class="s2">&quot;id_tipo_vehiculo&quot;</span><span class="p">:</span> <span class="s2">&quot;ve001&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;num_vehic_elect&quot;</span><span class="p">:</span> <span class="p">[</span>
+                            <span class="mf">4153.5912</span><span class="p">,</span>
+                            <span class="mf">6662.08416</span><span class="p">,</span>
+                            <span class="mf">10510.80681</span><span class="p">,</span>
+                            <span class="mf">16124.22939</span><span class="p">,</span>
+                            <span class="mf">23828.71116</span><span class="p">,</span>
+                            <span class="mf">33644.63676</span><span class="p">,</span>
+                            <span class="mf">45221.15754</span><span class="p">,</span>
+                            <span class="mf">57908.4616</span><span class="p">,</span>
+                            <span class="mf">82721.80874</span><span class="p">,</span>
+                        <span class="p">],</span>
+                        <span class="s2">&quot;incremto_n_vehiculos&quot;</span><span class="p">:</span> <span class="p">[</span>  <span class="c1">#valor en porcentaje ya que es un imcrento</span>
+                            <span class="mf">0.495554159</span><span class="p">,</span>
+                            <span class="mf">0.603933521</span><span class="p">,</span>
+                            <span class="mf">0.577705498</span><span class="p">,</span>
+                            <span class="mf">0.534062007</span><span class="p">,</span>
+                            <span class="mf">0.477820154</span><span class="p">,</span>
+                            <span class="mf">0.411936908</span><span class="p">,</span>
+                            <span class="mf">0.344082204</span><span class="p">,</span>
+                            <span class="mf">0.280561241</span><span class="p">,</span>
+                            <span class="mf">0.428492598</span><span class="p">,</span>
+                        <span class="p">],</span>
+                    <span class="p">},</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;e005&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Electrificación del transporte ligero camionetas&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;N/A&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;variable&quot;</span><span class="p">:</span> <span class="s2">&quot;Número de vehículos eléctricos&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;upper_value&quot;</span><span class="p">:</span> <span class="mi">100000</span><span class="p">,</span>
+                        <span class="s2">&quot;lower_value&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                        <span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2025</span><span class="p">,</span>
+                        <span class="s2">&quot;unit&quot;</span><span class="p">:</span> <span class="s2">&quot;Vehículos&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;variable_aux&quot;</span><span class="p">:</span> <span class="s2">&quot;Rendimiento del motor&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;upper_value_aux&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+                        <span class="s2">&quot;lower_value_aux&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s2">&quot;value_aux&quot;</span><span class="p">:</span> <span class="mf">0.197962342</span><span class="p">,</span>
+                        <span class="s2">&quot;rm_Km_Lge&quot;</span><span class="p">:</span> <span class="mf">47.1</span><span class="p">,</span>
+                        <span class="s2">&quot;year_aux&quot;</span><span class="p">:</span> <span class="mi">2025</span><span class="p">,</span>
+                        <span class="s2">&quot;unit_aux&quot;</span><span class="p">:</span> <span class="s2">&quot;kWh/km&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;avkt&quot;</span><span class="p">:</span> <span class="mi">15187</span><span class="p">,</span>
+                        <span class="s2">&quot;id_tipo_vehiculo&quot;</span><span class="p">:</span> <span class="s2">&quot;ve001&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;num_vehic_elect&quot;</span><span class="p">:</span> <span class="p">[</span>
+                            <span class="mf">171.25089</span><span class="p">,</span>
+                            <span class="mf">338.1644</span><span class="p">,</span>
+                            <span class="mf">666.71475</span><span class="p">,</span>
+                            <span class="mf">1304.5494</span><span class="p">,</span>
+                            <span class="mf">2518.27142</span><span class="p">,</span>
+                            <span class="mf">4745.89206</span><span class="p">,</span>
+                            <span class="mf">8590.80326</span><span class="p">,</span>
+                            <span class="mf">14643.562</span><span class="p">,</span>
+                            <span class="mf">24592.1032</span><span class="p">,</span>
+                        <span class="p">],</span>
+                        <span class="s2">&quot;incremto_n_vehiculos&quot;</span><span class="p">:</span> <span class="p">[</span>  <span class="c1">#valor en porcentaje ya que es un imcrento</span>
+                            <span class="mf">0.844633743</span><span class="p">,</span>
+                            <span class="mf">0.974672365</span><span class="p">,</span>
+                            <span class="mf">0.971569893</span><span class="p">,</span>
+                            <span class="mf">0.956682974</span><span class="p">,</span>
+                            <span class="mf">0.930376435</span><span class="p">,</span>
+                            <span class="mf">0.884583219</span><span class="p">,</span>
+                            <span class="mf">0.810155636</span><span class="p">,</span>
+                            <span class="mf">0.704562607</span><span class="p">,</span>
+                            <span class="mf">0.679379867</span><span class="p">,</span>
+                        <span class="p">],</span>
+                    <span class="p">},</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;e006&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Electrificación del transporte ligero taxis&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;N/A&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;variable&quot;</span><span class="p">:</span> <span class="s2">&quot;Número de vehículos eléctricos&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;upper_value&quot;</span><span class="p">:</span> <span class="mi">10000</span><span class="p">,</span>
+                        <span class="s2">&quot;lower_value&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                        <span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2025</span><span class="p">,</span>
+                        <span class="s2">&quot;unit&quot;</span><span class="p">:</span> <span class="s2">&quot;Vehículos&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;variable_aux&quot;</span><span class="p">:</span> <span class="s2">&quot;Rendimiento del motor&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;upper_value_aux&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+                        <span class="s2">&quot;lower_value_aux&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s2">&quot;value_aux&quot;</span><span class="p">:</span> <span class="mf">0.159385065</span><span class="p">,</span>
+                        <span class="s2">&quot;rm_Km_Lge&quot;</span><span class="p">:</span> <span class="mf">58.5</span><span class="p">,</span>
+                        <span class="s2">&quot;year_aux&quot;</span><span class="p">:</span> <span class="mi">2025</span><span class="p">,</span>
+                        <span class="s2">&quot;unit_aux&quot;</span><span class="p">:</span> <span class="s2">&quot;kWh/km&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;avkt&quot;</span><span class="p">:</span> <span class="mi">60320</span><span class="p">,</span>
+                        <span class="s2">&quot;id_tipo_vehiculo&quot;</span><span class="p">:</span> <span class="s2">&quot;ve001&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;num_vehic_elect&quot;</span><span class="p">:</span> <span class="p">[</span>
+                            <span class="mf">31.40058</span><span class="p">,</span>
+                            <span class="mf">62.4397</span><span class="p">,</span>
+                            <span class="mf">124.02744</span><span class="p">,</span>
+                            <span class="mf">244.6955</span><span class="p">,</span>
+                            <span class="mf">476.44674</span><span class="p">,</span>
+                            <span class="mf">906.26872</span><span class="p">,</span>
+                            <span class="mf">1656.83173</span><span class="p">,</span>
+                            <span class="mf">2853.81824</span><span class="p">,</span>
+                            <span class="mf">4861.08009</span><span class="p">,</span>
+                        <span class="p">],</span>
+                        <span class="s2">&quot;incremto_n_vehiculos&quot;</span><span class="p">:</span> <span class="p">[</span>  <span class="c1">#valor en porcentaje ya que es un imcrento</span>
+                            <span class="mf">0.850766168</span><span class="p">,</span>
+                            <span class="mf">0.988488748</span><span class="p">,</span>
+                            <span class="mf">0.986355476</span><span class="p">,</span>
+                            <span class="mf">0.97291422</span><span class="p">,</span>
+                            <span class="mf">0.947100539</span><span class="p">,</span>
+                            <span class="mf">0.902140667</span><span class="p">,</span>
+                            <span class="mf">0.828190352</span><span class="p">,</span>
+                            <span class="mf">0.722455086</span><span class="p">,</span>
+                            <span class="mf">0.703360089</span><span class="p">,</span>
+                        <span class="p">],</span>
+                    <span class="p">},</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;e007&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Electrificación del transporte de carga camiones&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;N/A&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;variable&quot;</span><span class="p">:</span> <span class="s2">&quot;Número de vehículos eléctricos&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;upper_value&quot;</span><span class="p">:</span> <span class="mi">10000</span><span class="p">,</span>
+                        <span class="s2">&quot;lower_value&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                        <span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2025</span><span class="p">,</span>
+                        <span class="s2">&quot;unit&quot;</span><span class="p">:</span> <span class="s2">&quot;Vehículos&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;variable_aux&quot;</span><span class="p">:</span> <span class="s2">&quot;Rendimiento del motor&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;upper_value_aux&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+                        <span class="s2">&quot;lower_value_aux&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s2">&quot;value_aux&quot;</span><span class="p">:</span> <span class="mf">1.554004387</span><span class="p">,</span>
+                        <span class="s2">&quot;rm_Km_Lge&quot;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+                        <span class="s2">&quot;year_aux&quot;</span><span class="p">:</span> <span class="mi">2025</span><span class="p">,</span>
+                        <span class="s2">&quot;unit_aux&quot;</span><span class="p">:</span> <span class="s2">&quot;kWh/km&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;avkt&quot;</span><span class="p">:</span> <span class="mi">29000</span><span class="p">,</span>
+                        <span class="s2">&quot;id_tipo_vehiculo&quot;</span><span class="p">:</span> <span class="s2">&quot;ve002&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;num_vehic_elect&quot;</span><span class="p">:</span> <span class="p">[</span>
+                            <span class="mf">68.6098</span><span class="p">,</span>
+                            <span class="mf">88.9576</span><span class="p">,</span>
+                            <span class="mf">115.72036</span><span class="p">,</span>
+                            <span class="mf">149.89468</span><span class="p">,</span>
+                            <span class="mf">193.26135</span><span class="p">,</span>
+                            <span class="mf">247.28343</span><span class="p">,</span>
+                            <span class="mf">313.7112</span><span class="p">,</span>
+                            <span class="mf">325.09668</span><span class="p">,</span>
+                            <span class="mf">394.2456</span><span class="p">,</span>
+                        <span class="p">],</span>
+                        <span class="s2">&quot;incremto_n_vehiculos&quot;</span><span class="p">:</span> <span class="p">[</span>  <span class="c1">#valor en porcentaje ya que es un imcrento</span>
+                            <span class="mf">0.162208022</span><span class="p">,</span>
+                            <span class="mf">0.296572793</span><span class="p">,</span>
+                            <span class="mf">0.300848494</span><span class="p">,</span>
+                            <span class="mf">0.295318127</span><span class="p">,</span>
+                            <span class="mf">0.289314271</span><span class="p">,</span>
+                            <span class="mf">0.279528628</span><span class="p">,</span>
+                            <span class="mf">0.26863009</span><span class="p">,</span>
+                            <span class="mf">0.036292871</span><span class="p">,</span>
+                            <span class="mf">0.212702634</span><span class="p">,</span>
+                        <span class="p">],</span>
+                    <span class="p">},</span>
+                <span class="p">],</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;u002&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Estrategias de actualización tecnológica&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;descripcion&quot;</span><span class="p">:</span> <span class="s2">&quot;Estas estrategias están asociadas a la reducción del consumo eléctrico en los sectores de uso final, dado un cambio de tecnologías que tienden a una mejor eficiencia energética. La máxima eficiencia a alcanzar en el año de análisis, es aquella correspondiente a la mejor tecnología que se espera estará disponible en Colombia (BAT) para la fecha&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;strategies&quot;</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;f001&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Equipos en el sector residencial a BAT&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;N/A&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;variable&quot;</span><span class="p">:</span> <span class="s2">&quot;Porcentaje de integración&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;upper_value&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+                        <span class="s2">&quot;lower_value&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span> <span class="c1"># valor por defecto de porcentaje de integracion, su valor se reemplaza ...</span>
+                        <span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2025</span><span class="p">,</span><span class="c1"># con el valor de pi_bau [2022 ... 2030] dependiendo del año</span>
+                        <span class="s2">&quot;unit&quot;</span><span class="p">:</span> <span class="s2">&quot;%&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;variable_aux&quot;</span><span class="p">:</span> <span class="s2">&quot;Eficiencia deseada&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;upper_value_aux&quot;</span><span class="p">:</span> <span class="mf">62.86</span><span class="p">,</span>
+                        <span class="s2">&quot;lower_value_aux&quot;</span><span class="p">:</span> <span class="mf">33.86</span><span class="p">,</span>
+                        <span class="s2">&quot;value_aux&quot;</span><span class="p">:</span> <span class="mi">46</span><span class="p">,</span> <span class="c1"># valor por defecto para mostrar en los sliders es constante</span>
+                        <span class="s2">&quot;year_aux&quot;</span><span class="p">:</span> <span class="mi">2025</span><span class="p">,</span><span class="c1"># para todos los años [2022 ... 2030 ] (viene de informe)</span>
+                        <span class="s2">&quot;unit_aux&quot;</span><span class="p">:</span> <span class="s2">&quot;%&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;nb&quot;</span><span class="p">:</span> <span class="mf">0.338571429</span><span class="p">,</span> <span class="c1"># valor constante para todos los años [2022 .. 2030 ]</span>
+                        <span class="s2">&quot;np&quot;</span><span class="p">:</span> <span class="mi">46</span><span class="p">,</span> <span class="c1"># valor constante para todos los años [2022 .. 2030 ]</span>
+                        <span class="s2">&quot;consumption_percent&quot;</span><span class="p">:</span> <span class="mf">0.365870975887343</span><span class="p">,</span>
+                        <span class="s2">&quot;ce_bau&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">75787.66778</span><span class="p">,</span> <span class="mf">77602.11774</span><span class="p">,</span> <span class="mf">79114.00883</span><span class="p">,</span> <span class="mf">80850.5365</span><span class="p">,</span> <span class="mf">82748.11192</span><span class="p">,</span> <span class="mf">84635.31618</span><span class="p">,</span> <span class="mf">86473.81712</span><span class="p">,</span> <span class="mf">88286.0776</span><span class="p">,</span> <span class="mf">90113.08465</span><span class="p">,],</span>
+                        <span class="s2">&quot;poblacion&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">51609470</span><span class="p">,</span> <span class="mi">52156250</span><span class="p">,</span> <span class="mi">52691440</span><span class="p">,</span> <span class="mi">53216590</span><span class="p">,</span> <span class="mi">53732420</span><span class="p">,</span> <span class="mi">54237750</span><span class="p">,</span> <span class="mi">54731190</span><span class="p">,</span> <span class="mi">55211260</span><span class="p">,</span> <span class="mi">55678080</span><span class="p">,],</span>
+                        <span class="s2">&quot;PIB_billones_USD&quot;</span><span class="p">:</span> <span class="p">[</span>
+                            <span class="mf">344.1612833</span><span class="p">,</span>
+                            <span class="mf">355.4685381</span><span class="p">,</span>
+                            <span class="mf">367.8705797</span><span class="p">,</span>
+                            <span class="mf">380.837696</span><span class="p">,</span>
+                            <span class="mf">394.8857455</span><span class="p">,</span>
+                            <span class="mf">408.9742253</span><span class="p">,</span>
+                            <span class="mf">423.1216551</span><span class="p">,</span>
+                            <span class="mf">437.1906672</span><span class="p">,</span>
+                            <span class="mf">451.7446956</span><span class="p">,</span>
+                        <span class="p">],</span>
+                        <span class="s2">&quot;pi_bau&quot;</span><span class="p">:</span> <span class="p">[</span>
+                            <span class="mf">0.788451953</span> <span class="o">/</span> <span class="mi">100</span><span class="p">,</span>
+                            <span class="mf">1.030658539</span> <span class="o">/</span> <span class="mi">100</span><span class="p">,</span>
+                            <span class="mf">1.351527385</span> <span class="o">/</span> <span class="mi">100</span><span class="p">,</span>
+                            <span class="mf">1.775937717</span> <span class="o">/</span> <span class="mi">100</span><span class="p">,</span>
+                            <span class="mf">2.333159213</span> <span class="o">/</span> <span class="mi">100</span><span class="p">,</span>
+                            <span class="mf">3.059047229</span> <span class="o">/</span> <span class="mi">100</span><span class="p">,</span>
+                            <span class="mf">3.992018218</span> <span class="o">/</span> <span class="mi">100</span><span class="p">,</span>
+                            <span class="mf">5.172317986</span> <span class="o">/</span> <span class="mi">100</span><span class="p">,</span>
+                            <span class="mf">6.634338406</span> <span class="o">/</span> <span class="mi">100</span><span class="p">,</span>
+                        <span class="p">],</span>
+                    <span class="p">},</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;f002&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Equipos en el sector comercial y público a BAT&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;N/A&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;variable&quot;</span><span class="p">:</span> <span class="s2">&quot;Porcentaje de integración&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;upper_value&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+                        <span class="s2">&quot;lower_value&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span>
+                        <span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2025</span><span class="p">,</span>
+                        <span class="s2">&quot;unit&quot;</span><span class="p">:</span> <span class="s2">&quot;%&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;variable_aux&quot;</span><span class="p">:</span> <span class="s2">&quot;Eficiencia deseada&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;upper_value_aux&quot;</span><span class="p">:</span> <span class="mf">77.33</span><span class="p">,</span>
+                        <span class="s2">&quot;lower_value_aux&quot;</span><span class="p">:</span> <span class="mi">42</span><span class="p">,</span>
+                        <span class="s2">&quot;value_aux&quot;</span><span class="p">:</span> <span class="mf">60.2</span><span class="p">,</span> <span class="c1">#valor por defecto- sale de tabla adjuntada en informe</span>
+                        <span class="s2">&quot;year_aux&quot;</span><span class="p">:</span> <span class="mi">2025</span><span class="p">,</span>
+                        <span class="s2">&quot;unit_aux&quot;</span><span class="p">:</span> <span class="s2">&quot;%&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;nb&quot;</span><span class="p">:</span> <span class="mf">0.42</span><span class="p">,</span>
+                        <span class="s2">&quot;np&quot;</span><span class="p">:</span> <span class="mf">60.2</span><span class="p">,</span>
+                        <span class="s2">&quot;consumption_percent&quot;</span><span class="p">:</span> <span class="mf">0.247125862010456</span><span class="p">,</span>
+                        <span class="s2">&quot;ce_bau&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">75787.66778</span><span class="p">,</span> <span class="mf">77602.11774</span><span class="p">,</span> <span class="mf">79114.00883</span><span class="p">,</span> <span class="mf">80850.5365</span><span class="p">,</span> <span class="mf">82748.11192</span><span class="p">,</span> <span class="mf">84635.31618</span><span class="p">,</span> <span class="mf">86473.81712</span><span class="p">,</span> <span class="mf">88286.0776</span><span class="p">,</span> <span class="mf">90113.08465</span><span class="p">,],</span>
+                        <span class="s2">&quot;poblacion&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">51609470</span><span class="p">,</span> <span class="mi">52156250</span><span class="p">,</span> <span class="mi">52691440</span><span class="p">,</span> <span class="mi">53216590</span><span class="p">,</span> <span class="mi">53732420</span><span class="p">,</span> <span class="mi">54237750</span><span class="p">,</span> <span class="mi">54731190</span><span class="p">,</span> <span class="mi">55211260</span><span class="p">,</span> <span class="mi">55678080</span><span class="p">,],</span>
+                        <span class="s2">&quot;PIB_billones_USD&quot;</span><span class="p">:</span> <span class="p">[</span>
+                            <span class="mf">344.1612833</span><span class="p">,</span>
+                            <span class="mf">355.4685381</span><span class="p">,</span>
+                            <span class="mf">367.8705797</span><span class="p">,</span>
+                            <span class="mf">380.837696</span><span class="p">,</span>
+                            <span class="mf">394.8857455</span><span class="p">,</span>
+                            <span class="mf">408.9742253</span><span class="p">,</span>
+                            <span class="mf">423.1216551</span><span class="p">,</span>
+                            <span class="mf">437.1906672</span><span class="p">,</span>
+                            <span class="mf">451.7446956</span><span class="p">,</span>
+                        <span class="p">],</span>
+                        <span class="s2">&quot;pi_bau&quot;</span><span class="p">:</span> <span class="p">[</span>
+                            <span class="mf">0.532556233</span> <span class="o">/</span> <span class="mi">100</span><span class="p">,</span>
+                            <span class="mf">0.696153553</span> <span class="o">/</span> <span class="mi">100</span><span class="p">,</span>
+                            <span class="mf">0.912882934</span> <span class="o">/</span> <span class="mi">100</span><span class="p">,</span>
+                            <span class="mf">1.199548934</span> <span class="o">/</span> <span class="mi">100</span><span class="p">,</span>
+                            <span class="mf">1.575921622</span> <span class="o">/</span> <span class="mi">100</span><span class="p">,</span>
+                            <span class="mf">2.066219332</span> <span class="o">/</span> <span class="mi">100</span><span class="p">,</span>
+                            <span class="mf">2.69639028</span> <span class="o">/</span> <span class="mi">100</span><span class="p">,</span>
+                            <span class="mf">3.493618311</span> <span class="o">/</span> <span class="mi">100</span><span class="p">,</span>
+                            <span class="mf">4.481133256</span> <span class="o">/</span> <span class="mi">100</span><span class="p">,</span>
+                        <span class="p">],</span>
+                    <span class="p">},</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;f003&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Equipos en el sector industrial a BAT&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;N/A&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;variable&quot;</span><span class="p">:</span> <span class="s2">&quot;Porcentaje de integración&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;upper_value&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+                        <span class="s2">&quot;lower_value&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span>
+                        <span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2025</span><span class="p">,</span>
+                        <span class="s2">&quot;unit&quot;</span><span class="p">:</span> <span class="s2">&quot;%&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;variable_aux&quot;</span><span class="p">:</span> <span class="s2">&quot;Eficiencia deseada&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;upper_value_aux&quot;</span><span class="p">:</span> <span class="mf">87.75</span><span class="p">,</span>   <span class="c1"># internacional</span>
+                        <span class="s2">&quot;lower_value_aux&quot;</span><span class="p">:</span> <span class="mf">72.25</span><span class="p">,</span>   <span class="c1"># actual</span>
+                        <span class="s2">&quot;value_aux&quot;</span><span class="p">:</span> <span class="mf">82.25</span><span class="p">,</span>
+                        <span class="s2">&quot;year_aux&quot;</span><span class="p">:</span> <span class="mi">2025</span><span class="p">,</span>
+                        <span class="s2">&quot;unit_aux&quot;</span><span class="p">:</span> <span class="s2">&quot;%&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;nb&quot;</span><span class="p">:</span> <span class="mf">0.7225</span><span class="p">,</span>
+                        <span class="s2">&quot;np&quot;</span><span class="p">:</span> <span class="mf">82.25</span><span class="p">,</span>
+                        <span class="s2">&quot;consumption_percent&quot;</span><span class="p">:</span> <span class="mf">0.3870031621022</span><span class="p">,</span>
+                        <span class="s2">&quot;ce_bau&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">75787.66778</span><span class="p">,</span> <span class="mf">77602.11774</span><span class="p">,</span> <span class="mf">79114.00883</span><span class="p">,</span> <span class="mf">80850.5365</span><span class="p">,</span> <span class="mf">82748.11192</span><span class="p">,</span> <span class="mf">84635.31618</span><span class="p">,</span> <span class="mf">86473.81712</span><span class="p">,</span> <span class="mf">88286.0776</span><span class="p">,</span> <span class="mf">90113.08465</span><span class="p">,],</span>
+                        <span class="s2">&quot;poblacion&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">51609470</span><span class="p">,</span> <span class="mi">52156250</span><span class="p">,</span> <span class="mi">52691440</span><span class="p">,</span> <span class="mi">53216590</span><span class="p">,</span> <span class="mi">53732420</span><span class="p">,</span> <span class="mi">54237750</span><span class="p">,</span> <span class="mi">54731190</span><span class="p">,</span> <span class="mi">55211260</span><span class="p">,</span> <span class="mi">55678080</span><span class="p">,],</span>
+                        <span class="s2">&quot;PIB_billones_USD&quot;</span><span class="p">:</span> <span class="p">[</span>
+                            <span class="mf">344.1612833</span><span class="p">,</span>
+                            <span class="mf">355.4685381</span><span class="p">,</span>
+                            <span class="mf">367.8705797</span><span class="p">,</span>
+                            <span class="mf">380.837696</span><span class="p">,</span>
+                            <span class="mf">394.8857455</span><span class="p">,</span>
+                            <span class="mf">408.9742253</span><span class="p">,</span>
+                            <span class="mf">423.1216551</span><span class="p">,</span>
+                            <span class="mf">437.1906672</span><span class="p">,</span>
+                            <span class="mf">451.7446956</span><span class="p">,</span>
+                        <span class="p">],</span>
+                        <span class="s2">&quot;pi_bau&quot;</span><span class="p">:</span> <span class="p">[</span>
+                            <span class="mf">0.833991814</span> <span class="o">/</span> <span class="mi">100</span><span class="p">,</span>
+                            <span class="mf">1.090187908</span> <span class="o">/</span> <span class="mi">100</span><span class="p">,</span>
+                            <span class="mf">1.429589681</span> <span class="o">/</span> <span class="mi">100</span><span class="p">,</span>
+                            <span class="mf">1.878513349</span> <span class="o">/</span> <span class="mi">100</span><span class="p">,</span>
+                            <span class="mf">2.467919165</span> <span class="o">/</span> <span class="mi">100</span><span class="p">,</span>
+                            <span class="mf">3.235733438</span> <span class="o">/</span> <span class="mi">100</span><span class="p">,</span>
+                            <span class="mf">4.222591502</span> <span class="o">/</span> <span class="mi">100</span><span class="p">,</span>
+                            <span class="mf">5.471063703</span> <span class="o">/</span> <span class="mi">100</span><span class="p">,</span>
+                            <span class="mf">7.017528338</span> <span class="o">/</span> <span class="mi">100</span><span class="p">,</span>
+                        <span class="p">],</span>
+                    <span class="p">},</span>
+                <span class="p">],</span>
+            <span class="p">},</span>
+        <span class="p">],</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="functionTopsis"><a class="viewcode-back" href="../../../app.dashboard.html#app.dashboard.views.functionTopsis">[docs]</a><span class="k">def</span> <span class="nf">functionTopsis</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">weiths</span><span class="p">):</span>
+    <span class="n">topsis</span> <span class="o">=</span> <span class="n">TOPSIS</span><span class="p">()</span>
+    <span class="c1"># topsis.dataframe([[0.898834783514384, 0.166638958655125, 0.0],[0.403999992022169, 0.106074659601237, 13.4056094057448],[0.473372271796145, 0.0603668284274698, 7.6290994098352],[0.55725, 0.0363139093316429, 0.0],[0.223268, 0.031981378104915,  0.0]],[&#39;P Hidro&#39;, &#39;P Termicas&#39;, &#39;P A&amp;C&#39;, &#39;P Eolicas&#39;, &#39;P Solares&#39;],[&#39;EFICIENCIA&#39;, &#39;IEP&#39;, &#39;IEC&#39;]</span>
+    <span class="c1">#                 )</span>
+    <span class="n">weiths_</span> <span class="o">=</span> <span class="n">weiths</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">weiths_</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">weiths_</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">weiths_</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0000001</span>
+    <span class="n">topsis</span><span class="o">.</span><span class="n">dataframe</span><span class="p">(</span><span class="n">output</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">output</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">output</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">topsis</span><span class="o">.</span><span class="n">pretty_original</span><span class="p">())</span>
+    <span class="n">w_TOPSIS</span> <span class="o">=</span> <span class="n">topsis</span><span class="o">.</span><span class="n">set_weights_manually</span><span class="p">(</span><span class="n">weiths_</span><span class="p">)</span>
+    <span class="n">topsis</span><span class="o">.</span><span class="n">set_signals</span><span class="p">([</span><span class="n">MAX</span><span class="p">,</span> <span class="n">MIN</span><span class="p">,</span> <span class="n">MIN</span><span class="p">])</span>
+    <span class="n">topsis</span><span class="o">.</span><span class="n">decide</span><span class="p">()</span>
+    <span class="n">df_topsis</span> <span class="o">=</span> <span class="n">topsis</span><span class="o">.</span><span class="n">df_decision</span>
+    <span class="n">rank_alternatives</span> <span class="o">=</span> <span class="n">df_topsis</span><span class="o">.</span><span class="n">to_json</span><span class="p">(</span><span class="n">force_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">orient</span><span class="o">=</span><span class="s2">&quot;records&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">rank_alternatives</span></div>
+
+
+<span class="c1"># @login_required</span>
+<div class="viewcode-block" id="analysis"><a class="viewcode-back" href="../../../app.dashboard.html#app.dashboard.views.analysis">[docs]</a><span class="nd">@dashboard</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/analysis&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="s2">&quot;POST&quot;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">analysis</span><span class="p">():</span>
+    <span class="n">admin_session</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;admin_session&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;POST&quot;</span><span class="p">:</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">()</span>
+        <span class="c1"># This is the output that was stored in the JSON within the browser</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span>
+            <span class="n">output</span>
+        <span class="p">)</span>  <span class="c1"># this converts the json output to a python dictionary</span>
+        <span class="n">data_result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;data_topsis&quot;</span><span class="p">)</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">weiths</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">dataframe</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">data_result</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;row&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+            <span class="n">keys</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+            <span class="k">if</span> <span class="p">[</span><span class="o">*</span><span class="n">row</span><span class="o">.</span><span class="n">keys</span><span class="p">()][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;criteria_values&quot;</span><span class="p">:</span>
+                <span class="n">row_values</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">row_val</span> <span class="ow">in</span> <span class="n">row_values</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">row_val</span><span class="p">:</span>
+                        <span class="n">number</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="n">val</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span>
+                        <span class="n">weiths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">number</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">name</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span>
+                <span class="n">row_values</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">row_val</span> <span class="ow">in</span> <span class="n">row_values</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">row_val</span><span class="p">:</span>
+                        <span class="n">number</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="n">val</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span>
+                        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">number</span><span class="p">)):</span>
+                            <span class="k">if</span> <span class="n">number</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                                <span class="n">number</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+                        <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">number</span><span class="p">)</span>
+        <span class="n">criterios_name</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;EFICIENCIA&quot;</span><span class="p">,</span> <span class="s2">&quot;IEP&quot;</span><span class="p">,</span> <span class="s2">&quot;IEC&quot;</span><span class="p">]</span>
+        <span class="n">dataframe</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+        <span class="n">dataframe</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">dataframe</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">criterios_name</span><span class="p">)</span>
+        <span class="n">topsis</span> <span class="o">=</span> <span class="n">functionTopsis</span><span class="p">(</span><span class="n">dataframe</span><span class="p">,</span> <span class="n">weiths</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">topsis</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">strategies</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">db_object</span><span class="o">.</span><span class="n">get_strategies</span><span class="p">()</span>
+        <span class="n">description_strategies</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">db_object</span><span class="o">.</span><span class="n">get_description_strategies</span><span class="p">()</span>
+        <span class="n">data</span><span class="p">,</span> <span class="n">translating_dict</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">db_object</span><span class="o">.</span><span class="n">get_distribution</span><span class="p">()</span>
+        <span class="n">units</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">db_object</span><span class="o">.</span><span class="n">get_units</span><span class="p">()</span>
+        <span class="n">context</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;anonymous&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">&quot;user_ip&quot;</span><span class="p">:</span> <span class="s2">&quot;UserIp&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="n">data</span><span class="p">,</span>
+            <span class="s2">&quot;strategies&quot;</span><span class="p">:</span> <span class="n">strategies</span><span class="p">,</span>
+            <span class="s2">&quot;strategies_definition&quot;</span><span class="p">:</span> <span class="n">strategies_definition</span><span class="p">,</span>
+            <span class="s2">&quot;description_strategies&quot;</span><span class="p">:</span> <span class="n">description_strategies</span><span class="p">,</span>
+            <span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="n">units</span><span class="p">,</span>
+            <span class="s2">&quot;translating_dict&quot;</span><span class="p">:</span> <span class="n">translating_dict</span><span class="p">,</span>
+            <span class="s2">&quot;admin_session&quot;</span><span class="p">:</span> <span class="n">admin_session</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;module/analysis.html&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">context</span><span class="p">)</span></div>
+
+
+<span class="c1"># @login_required</span>
+<div class="viewcode-block" id="database"><a class="viewcode-back" href="../../../app.dashboard.html#app.dashboard.views.database">[docs]</a><span class="nd">@dashboard</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/database&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="s2">&quot;POST&quot;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">database</span><span class="p">():</span>
+    <span class="n">admin_session</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;admin_session&quot;</span><span class="p">)</span>
+    <span class="n">data</span><span class="p">,</span> <span class="n">translating_dict</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">db_object</span><span class="o">.</span><span class="n">get_distribution</span><span class="p">()</span>
+    <span class="n">data_indicators</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">db_object</span><span class="o">.</span><span class="n">get_indicators</span><span class="p">()</span>
+    <span class="n">units</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">db_object</span><span class="o">.</span><span class="n">get_units</span><span class="p">()</span>
+
+    <span class="n">dict_total_indicadores</span> <span class="o">=</span> <span class="n">return_indicators_calculation</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;------------entra a database-------&quot;</span><span class="p">)</span>
+    <span class="c1">#print(data)</span>
+    <span class="c1"># print(data)</span>
+    <span class="c1"># print(data)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;     json_data = json.dumps(data, ensure_ascii=False)</span>
+<span class="sd">    print(json_data)</span>
+<span class="sd">    print(type(json_data)) &quot;&quot;&quot;</span>
+    <span class="n">context</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;anonymous&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">&quot;user&quot;</span><span class="p">:</span> <span class="s2">&quot;UserIp&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="n">data</span><span class="p">,</span>
+        <span class="s2">&quot;data_total_indicators&quot;</span><span class="p">:</span> <span class="n">dict_total_indicadores</span><span class="p">,</span>
+        <span class="s2">&quot;translating_dict&quot;</span><span class="p">:</span> <span class="n">translating_dict</span><span class="p">,</span>
+        <span class="s2">&quot;data_indicators&quot;</span><span class="p">:</span> <span class="n">data_indicators</span><span class="p">,</span>
+        <span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="n">units</span><span class="p">,</span>
+        <span class="s2">&quot;admin_session&quot;</span><span class="p">:</span> <span class="n">admin_session</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;module/database.html&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">context</span><span class="p">)</span></div>
+
+
+<span class="c1"># @login_required</span>
+<div class="viewcode-block" id="calc"><a class="viewcode-back" href="../../../app.dashboard.html#app.dashboard.views.calc">[docs]</a><span class="nd">@dashboard</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/calc&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="s2">&quot;POST&quot;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">calc</span><span class="p">():</span>
+    <span class="n">data</span><span class="p">,</span> <span class="n">translating_dict</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">db_object</span><span class="o">.</span><span class="n">get_distribution</span><span class="p">()</span>
+    <span class="n">data_indicators</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">db_object</span><span class="o">.</span><span class="n">get_indicators</span><span class="p">()</span>
+    <span class="n">data_projections</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">db_object</span><span class="o">.</span><span class="n">get_projections</span><span class="p">()</span>
+    <span class="n">units</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">db_object</span><span class="o">.</span><span class="n">get_units</span><span class="p">()</span>
+
+    <span class="n">dict_total_indicadores</span> <span class="o">=</span> <span class="n">return_indicators_calculation</span><span class="p">()</span>
+    <span class="n">context</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;anonymous&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">&quot;user&quot;</span><span class="p">:</span> <span class="s2">&quot;UserIp&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="n">data</span><span class="p">,</span>
+        <span class="s2">&quot;data_total_indicators&quot;</span><span class="p">:</span> <span class="n">dict_total_indicadores</span><span class="p">,</span>
+        <span class="s2">&quot;translating_dict&quot;</span><span class="p">:</span> <span class="n">translating_dict</span><span class="p">,</span>
+        <span class="s2">&quot;data_indicators&quot;</span><span class="p">:</span> <span class="n">data_indicators</span><span class="p">,</span>
+        <span class="s2">&quot;data_projections&quot;</span><span class="p">:</span> <span class="n">data_projections</span><span class="p">,</span>
+        <span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="n">units</span><span class="p">,</span>
+        <span class="s2">&quot;admin_session&quot;</span><span class="p">:</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;admin_session&quot;</span><span class="p">),</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;module/calc.html&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">context</span><span class="p">)</span></div>
+
+
+<span class="c1"># @login_required</span>
+<div class="viewcode-block" id="config"><a class="viewcode-back" href="../../../app.dashboard.html#app.dashboard.views.config">[docs]</a><span class="nd">@dashboard</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/config&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="s2">&quot;POST&quot;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">config</span><span class="p">():</span>
+    <span class="n">context</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;anonymous&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">&quot;user&quot;</span><span class="p">:</span> <span class="s2">&quot;UserIp&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;module/config.html&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">context</span><span class="p">)</span></div>
+
+
+<span class="c1"># @login_required</span>
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../app.dashboard.html#app.dashboard.views.main">[docs]</a><span class="nd">@dashboard</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="s2">&quot;POST&quot;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">admin_user</span> <span class="o">=</span> <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">)[</span>
+        <span class="p">(</span><span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;username&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;mateo.barrera@correounivalle.edu.co&quot;</span><span class="p">)</span>
+    <span class="p">]</span>
+    <span class="n">admin_session</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;admin_session&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;POST&quot;</span><span class="p">:</span>
+        <span class="n">admin_session</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s2">&quot;admin-session&quot;</span><span class="p">])</span>
+        <span class="n">session</span><span class="p">[</span><span class="s2">&quot;admin_session&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">admin_session</span>
+
+    <span class="n">text_module_db</span> <span class="o">=</span> <span class="s1">&#39;En este módulo se recopila la información de las variables y los indicadores de &#39;</span> \
+                     <span class="s1">&#39;eficiencia energética asociados a los procesos de generación, distribución y uso final de la &#39;</span> \
+                     <span class="s1">&#39;energía eléctrica en Colombia, visualizando su tendencia histórica.&#39;</span>
+    <span class="n">text_module_calc</span> <span class="o">=</span> <span class="s1">&#39;En este módulo se presenta la especificación del modelo de proyección para las variables, &#39;</span> \
+                       <span class="s1">&#39;empleadas en la evaluación de estrategias de eficiencia energética del sector eléctrico &#39;</span> \
+                       <span class="s1">&#39;en Colombia. También se incluye la visualización de los resultados de proyección con la &#39;</span> \
+                       <span class="s1">&#39;tendencia histórica de las variables hasta el 2030.&#39;</span>
+    <span class="n">text_module_anl</span> <span class="o">=</span> <span class="s1">&#39;En este módulo se construyen y evalúan las estrategias de eficiencia energética asociadas al &#39;</span> \
+                      <span class="s1">&#39;sector eléctrico colombiano, mediante criterios económicos, ambientales y energéticos, &#39;</span> \
+                      <span class="s1">&#39;permitiendo definir las estrategias más viables para el país, según el año de análisis.&#39;</span>
+    <span class="n">text_module_conf</span> <span class="o">=</span> <span class="s1">&#39;En el apartado de Configuración se puede acceder a la información del usuario y ajustes &#39;</span>\
+                       <span class="s1">&#39;referentes con las credenciales empleadas en el acceso a la herramienta.&#39;</span>
+
+    <span class="n">context</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;anonymous&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">&quot;user&quot;</span><span class="p">:</span> <span class="s2">&quot;UserIp&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;admin_session&quot;</span><span class="p">:</span> <span class="n">admin_session</span><span class="p">,</span>
+        <span class="s2">&quot;admin_user&quot;</span><span class="p">:</span> <span class="n">admin_user</span><span class="p">,</span>
+        <span class="s2">&quot;text_module_db&quot;</span><span class="p">:</span> <span class="n">text_module_db</span><span class="p">,</span>
+        <span class="s2">&quot;text_module_calc&quot;</span><span class="p">:</span> <span class="n">text_module_calc</span><span class="p">,</span>
+        <span class="s2">&quot;text_module_anl&quot;</span><span class="p">:</span> <span class="n">text_module_anl</span><span class="p">,</span>
+        <span class="s2">&quot;text_module_conf&quot;</span><span class="p">:</span> <span class="n">text_module_conf</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;module/main.html&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">context</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">Inteegra</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../app.html">app package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  <li><a href="../../app.html">app</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023, Mateo Barrera.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 6.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

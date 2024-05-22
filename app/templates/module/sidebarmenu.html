@@ -1,0 +1,195 @@
+<nav id="sidebarMenu" class="sidebar d-lg-block text-white collapse rounded" data-simplebar="init">
+	<div class="sidebar-inner px-1 pt-5 pt-lg-0 overflow-hidden">
+		<div
+			class="user-card d-flex d-md-none align-items-center justify-content-between justify-content-md-center p-4"
+		>
+			<div class="d-flex align-items-center">
+				<div class="avatar-lg me-4">
+					<img
+						src="{{url_for('static',filename='/images/user.jpg')}}"
+						class="card-img-top rounded-circle border-white"
+						alt="User profile image"
+					/>
+				</div>
+				<div class="ms-auto">
+					<h2 class="h5 mb-3">{{ current_user.name }}</h2>
+					<a
+						href="{{ url_for('auth.logout')}}"
+						class="btn btn-primary btn-sm d-inline-flex align-items-center"
+					>
+						<svg
+							class="icon text-danger me-2"
+							fill="none"
+							stroke="currentColor"
+							viewBox="0 0 24 24"
+							xmlns="http://www.w3.org/2000/svg"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+							></path>
+						</svg>
+						Cerrar sesión
+					</a>
+				</div>
+			</div>
+		</div>
+		<ul class="nav flex-column pt-3">
+			<li class="nav-item d-none d-lg-flex justify-content-center">
+				<a class="navbar-brand d-flex align-items-center" href="{{url_for('index')}}">
+					<span class="sidebar-icon my-2" id="sidebar-inteegra-icon">
+						<img
+							class="icon icon-md"
+							src="{{url_for('static',filename='images/Inteegra_2-min.svg')}}"
+							height="30" width="120"
+							alt="Logo Inteegra"
+						/>
+					</span>
+				</a>
+			</li>
+			<li role="separator" class="dropdown-divider mt-3 mb-3 border-gray-700 d-none d-md-flex"></li>
+			<li id="I-database" class="nav-item">
+				<a href="{{url_for('dashboard.database')}}" class="nav-link">
+					<span class="sidebar-icon">
+						<svg
+							class="icon incon-xs"
+							fill="black"
+							viewBox="0 0 22 22"
+							xmlns="http://www.w3.org/2000/svg"
+						>
+							<path
+								d="M3 12v3c0 1.657 3.134 3 7 3s7-1.343 7-3v-3c0 1.657-3.134 3-7 3s-7-1.343-7-3z"
+							/>
+							<path d="M3 7v3c0 1.657 3.134 3 7 3s7-1.343 7-3V7c0 1.657-3.134 3-7 3S3 8.657 3 7z" />
+							<path d="M17 5c0 1.657-3.134 3-7 3S3 6.657 3 5s3.134-3 7-3 7 1.343 7 3z" />
+						</svg>
+					</span>
+					<span class="sidebar-text fs-6">Base de Datos</span>
+				</a>
+			</li>
+			<li id="I-calc" class="nav-item">
+				<a href="{{url_for('dashboard.calc')}}" class="nav-link">
+					<span class="sidebar-icon">
+						<svg
+							class="icon incon-xs"
+							fill="black"
+							viewBox="0 0 22 22"
+							xmlns="http://www.w3.org/2000/svg"
+						>
+							<path
+								fill-rule="evenodd"
+								d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V4a2 2 0 00-2-2H6zm1 2a1 1 0 000 2h6a1 1 0 100-2H7zm6 7a1 1 0 011 1v3a1 1 0 11-2 0v-3a1 1 0 011-1zm-3 3a1 1 0 100 2h.01a1 1 0 100-2H10zm-4 1a1 1 0 011-1h.01a1 1 0 110 2H7a1 1 0 01-1-1zm1-4a1 1 0 100 2h.01a1 1 0 100-2H7zm2 1a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1zm4-4a1 1 0 100 2h.01a1 1 0 100-2H13zM9 9a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1zM7 8a1 1 0 000 2h.01a1 1 0 000-2H7z"
+								clip-rule="evenodd"
+							></path>
+						</svg>
+					</span>
+					<span class="sidebar-text fs-6">Escenario base</span>
+				</a>
+			</li>
+			<li id="I-analysis" class="nav-item">
+				<a href="{{url_for('dashboard.analysis')}}" class="nav-link">
+					<span class="sidebar-icon">
+						<svg
+							class="icon incon-xs"
+							fill="black"
+							viewBox="0 0 22 22"
+							xmlns="http://www.w3.org/2000/svg"
+						>
+							<path
+								fill-rule="evenodd"
+								d="M5 3a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V5a2 2 0 00-2-2H5zm9 4a1 1 0 10-2 0v6a1 1 0 102 0V7zm-3 2a1 1 0 10-2 0v4a1 1 0 102 0V9zm-3 3a1 1 0 10-2 0v1a1 1 0 102 0v-1z"
+								clip-rule="evenodd"
+							></path>
+						</svg>
+					</span>
+					<span class="sidebar-text fs-6">Análisis de Estrategias</span>
+				</a>
+			</li>
+		</ul>
+		<li role="separator" class="dropdown-divider mt-4 mb-3 border-gray-700"></li>
+		<ul class="nav flex-column pt-3 pt-md-0">
+			<li id="I-config" class="nav-item">
+				<a href="{{url_for('dashboard.config')}}" class="nav-link">
+					<span class="sidebar-icon">
+						<svg
+							class="icon incon-xs"
+							fill="black"
+							viewBox="0 0 22 22"
+							xmlns="http://www.w3.org/2000/svg"
+						>
+							<path
+								fill-rule="evenodd"
+								d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z"
+								clip-rule="evenodd"
+							></path>
+						</svg>
+					</span>
+					<span class="sidebar-text fs-6">Configuración</span>
+				</a>
+			</li>
+			<li class="nav-item">
+				<a href="{{ url_for('dashboard.guia_usuario') }}" target="_blank" class="nav-link">
+					<span class="sidebar-icon">
+						<svg
+							class="icon incon-xs"
+							fill="black"
+							viewBox="0 0 24 24"
+							xmlns="http://www.w3.org/2000/svg"
+						>
+							<path
+								fill-rule="evenodd"
+								d="m19.828 3.414-2.242-2.242a4.024 4.024 0 0 0 -2.828-1.172h-8.758a3 3 0 0 0 -3 3v21h18v-17.758a4.024 4.024 0 0 0 -1.172-2.828zm-1.414 1.414a2.113 2.113 0 0 1 .141.172h-2.555v-2.555a2.113 2.113 0 0 1 .172.141zm-13.414 17.172v-19a1 1 0 0 1 1-1h8v5h5v15zm9-5h3v2h-3zm1-2v-1.707a6.964 6.964 0 0 0 -.621-2.883l-.522-1.153a2 2 0 0 0 -3.7-.04l-.539 1.194a6.956 6.956 0 0 0 -.618 2.882v1.707h2v-1h2v1zm-2.982-4.959.539 1.192a4.949 4.949 0 0 1 .252.767h-1.618a4.9 4.9 0 0 1 .252-.766zm-.478 6 1.42 1.408-1.866 1.884a2.255 2.255 0 0 1 -3.185 0l-.873-.891 1.428-1.4.866.884a.249.249 0 0 0 .347-.007z"
+								clip-rule="evenodd"
+							></path>
+						</svg>
+					</span>
+					<span class="sidebar-text fs-6">Guia de usuario</span>
+				</a>
+			</li>
+			<!-- {% if admin_session %} -->
+			<li class="nav-item">
+				<a href="#" class="nav-link">
+					<span class="sidebar-icon">
+						<svg
+							class="icon icon-xs"
+							fill="black"
+							viewBox="0 0 24 18"
+							xmlns="http://www.w3.org/2000/svg"
+						>
+							<path
+								fill-rule="evenodd"
+								d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z"
+								clip-rule="evenodd"
+							></path>
+						</svg>
+					</span>
+					<span class="sidebar-text fs-6">Documentación</span>
+				</a>
+			</li>
+			<!-- {% endif %} -->
+			<li class="nav-item d-none d-md-block d-lg-none">
+				<a href="{{ url_for('auth.logout')}}" class="nav-link">
+					<span class="sidebar-icon">
+						<svg
+							class="icon icon-xs text-danger m-1"
+							fill="none"
+							stroke="currentColor"
+							viewBox="0 0 22 22"
+							xmlns="http://www.w3.org/2000/svg"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+							></path>
+						</svg>
+					</span>
+					<span class="sidebar-text fs-6">Cerrar sesión</span>
+				</a>
+			</li>
+		</ul>
+	</div>
+</nav>

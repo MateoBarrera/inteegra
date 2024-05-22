@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% block head %}
+        <!-- Document meta -->
+        <meta charset="utf-8"/>
+        <meta http-equiv="x-ua-compatible" content="ie=edge"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <meta name="author" content="Team Inteegra"/>
+        <meta name="msapplication-TileColor" content="#ffffff"/>
+        <meta name="theme-color" content="#ffffff"/>
+        <meta
+                name="description"
+                content="Inteegra is a tool that allows managing energy efficiency indicators associated with the processes of generation, distribution and final use of electrical energy in Colombia"
+        />
+        <meta name="keywords" content="Engineer, Efficiency, Electricity, Inteegra, Colombia"/>
+        <meta name="twitter:card" content="summary"/>
+        <meta name="twitter:creator" content="@materile_19"/>
+        <!-- Main stylesheet -->
+        <link
+                rel="stylesheet"
+                type="text/css"
+                href="{{ url_for('static',filename='css/preloader.css') }}"
+        />
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/volt.css') }}"/>
+        <!-- font awesome -->
+        <link
+                rel="preload"
+                href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+                rel="preload"
+                as="style"
+                onload="this.rel = 'stylesheet'"
+        />
+        <!-- Sweet Alert -->
+        <link
+                type="text/css"
+                href="{{ url_for('static',filename='vendor/sweetalert2/dist/sweetalert2.min.css') }}"
+                rel="preload"
+                as="style"
+                onload="this.rel = 'stylesheet'"
+        />
+        <!-- Notyf -->
+        <link
+                type="text/css"
+                href="{{ url_for('static',filename='vendor/notyf/notyf.min.css') }}"
+                rel="preload"
+                as="style"
+                onload="this.rel = 'stylesheet'"
+        />
+        <link
+                rel="apple-touch-icon"
+                sizes="180x180"
+                href="{{ url_for('static',filename='images/apple-touch-icon.png') }}"
+        />
+        <link
+                rel="icon"
+                type="image/png"
+                sizes="32x32"
+                href="{{ url_for('static',filename='images/favicon-32x32.png') }}"
+        />
+        <link
+                rel="icon"
+                type="image/png"
+                sizes="16x16"
+                href="{{ url_for('static',filename='images/favicon-16x16.png') }}"
+        />
+        <link rel="manifest" href="{{ url_for('static',filename='images/site.webmanifest') }}"/>
+        <link
+                rel="mask-icon"
+                href="{{ url_for('static',filename='images/safari-pinned-tab.svg') }}"
+                color="#5bbad5"
+        />
+        <meta name="msapplication-TileColor" content="#da532c"/>
+        <meta name="theme-color" content="#ffffff"/>
+
+        <title>{% block title %} Inteegra |{% endblock %}</title>
+    {% endblock %}
+</head>
+<body id="body-pd">
+{% block body %} {% block navbar %} {% endblock %}
+
+    <!-- Handler for flask flash messages -->
+    <div class="position-fixed top-0 end-0" style="z-index: 99999">
+        {% for message in get_flashed_messages() %}
+            <div class="p-1 px-2">
+                <div
+                        id="liveToast"
+                        class="toast show"
+                        role="alert"
+                        aria-live="assertive"
+                        aria-atomic="true"
+                        data-bs-delay="2000"
+                >
+                    <div class="toast-header">
+                        <span class="dot rounded-circle bg-secondary me-2"></span>
+                        <strong class="me-auto">Mensaje</strong>
+                        <small>ahora</small>
+                    </div>
+                    <div class="toast-body">{{ message }}</div>
+                </div>
+            </div>
+            <script>
+                function load() {
+                    setTimeout(function () {
+                        $(".toast").fadeOut("fast")
+                    }, 3000)
+                }
+
+                window.addEventListener("load", toastClose, true)
+
+                function toastClose() {
+                    load()
+                }
+            </script>
+        {% endfor %}
+    </div>
+    {% block content %}
+        <div class="preloader">
+            <div class="text-loader pb-5">
+                <span class="sidebar-icon p-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-lg" xmlns:xlink="http://www.w3.org/1999/xlink" id="inteegra-icon" height="120"
+                            width="480" viewBox="0 0 1440 360" version="1.1">
+                        <g>
+                            <symbol overflow="visible" id="glyph0-1">
+                                <path style="stroke:none;" d="M 85.765625 -274.96875 L 85.765625 0 L 14.265625 0 L 14.265625 -274.96875 Z M 85.765625 -274.96875 "/>
+                            </symbol>
+                            <symbol overflow="visible" id="glyph0-2">
+                                <path style="stroke:none;" d="M 173.921875 -274.96875 L 173.921875 0 L 111.25 0 L 74.046875 -125 L 74.046875 0 L 14.265625 0 L 14.265625 -274.96875 L 74.046875 -274.96875 L 114.125 -151.15625 L 114.125 -274.96875 Z M 173.921875 -274.96875 "/>
+                            </symbol>
+                            <symbol overflow="visible" id="glyph0-3">
+                                <path style="stroke:none;" d="M 158.28125 -274.96875 L 158.28125 -219.9375 L 115.828125 -219.9375 L 115.828125 0 L 44.328125 0 L 44.328125 -219.9375 L 2.03125 -219.9375 L 2.03125 -274.96875 Z M 158.28125 -274.96875 "/>
+                            </symbol>
+                            <symbol overflow="visible" id="glyph0-4">
+                                <path style="stroke:none;" d="M 178.328125 -173.75 L 106.828125 -173.75 L 106.828125 -198.703125 C 106.828125 -214.441406 106.144531 -224.289062 104.78125 -228.25 C 103.425781 -232.21875 100.203125 -234.203125 95.109375 -234.203125 C 90.691406 -234.203125 87.691406 -232.503906 86.109375 -229.109375 C 84.523438 -225.710938 83.734375 -216.992188 83.734375 -202.953125 L 83.734375 -71 C 83.734375 -58.65625 84.523438 -50.53125 86.109375 -46.625 C 87.691406 -42.71875 90.863281 -40.765625 95.625 -40.765625 C 100.832031 -40.765625 104.367188 -42.972656 106.234375 -47.390625 C 108.097656 -51.804688 109.03125 -60.410156 109.03125 -73.203125 L 109.03125 -105.8125 L 94.59375 -105.8125 L 94.59375 -147.59375 L 178.328125 -147.59375 L 178.328125 0 L 133.328125 0 L 126.703125 -19.703125 C 121.828125 -11.210938 115.679688 -4.84375 108.265625 -0.59375 C 100.847656 3.65625 92.101562 5.78125 82.03125 5.78125 C 70.03125 5.78125 58.789062 2.863281 48.3125 -2.96875 C 37.84375 -8.800781 29.890625 -16.019531 24.453125 -24.625 C 19.015625 -33.226562 15.617188 -42.253906 14.265625 -51.703125 C 12.910156 -61.160156 12.234375 -75.347656 12.234375 -94.265625 L 12.234375 -175.953125 C 12.234375 -202.222656 13.644531 -221.300781 16.46875 -233.1875 C 19.300781 -245.070312 27.425781 -255.96875 40.84375 -265.875 C 54.257812 -275.78125 71.613281 -280.734375 92.90625 -280.734375 C 113.851562 -280.734375 131.234375 -276.429688 145.046875 -267.828125 C 158.859375 -259.222656 167.859375 -249.003906 172.046875 -237.171875 C 176.234375 -225.347656 178.328125 -208.171875 178.328125 -185.640625 Z M 178.328125 -173.75 "/>
+                            </symbol>
+                            <symbol overflow="visible" id="glyph0-5">
+                                <path style="stroke:none;" d="M 14.265625 -274.96875 L 64.875 -274.96875 C 98.613281 -274.96875 121.457031 -273.664062 133.40625 -271.0625 C 145.351562 -268.457031 155.09375 -261.804688 162.625 -251.109375 C 170.15625 -240.410156 173.921875 -223.34375 173.921875 -199.90625 C 173.921875 -178.5 171.257812 -164.113281 165.9375 -156.75 C 160.613281 -149.394531 150.140625 -144.984375 134.515625 -143.515625 C 148.660156 -140.003906 158.164062 -135.300781 163.03125 -129.40625 C 167.90625 -123.519531 170.9375 -118.113281 172.125 -113.1875 C 173.320312 -108.269531 173.921875 -94.710938 173.921875 -72.515625 L 173.921875 0 L 107.5 0 L 107.5 -91.375 C 107.5 -106.09375 106.335938 -115.207031 104.015625 -118.71875 C 101.703125 -122.226562 95.617188 -123.984375 85.765625 -123.984375 L 85.765625 0 L 14.265625 0 Z M 85.765625 -227.921875 L 85.765625 -166.78125 C 93.804688 -166.78125 99.4375 -167.882812 102.65625 -170.09375 C 105.882812 -172.300781 107.5 -179.460938 107.5 -191.578125 L 107.5 -206.6875 C 107.5 -215.40625 105.941406 -221.125 102.828125 -223.84375 C 99.722656 -226.5625 94.035156 -227.921875 85.765625 -227.921875 Z M 85.765625 -227.921875 "/>
+                            </symbol>
+                            <symbol overflow="visible" id="glyph0-6">
+                                <path style="stroke:none;" d="M 137.734375 -274.96875 L 178.671875 0 L 105.46875 0 L 101.90625 -49.421875 L 76.25 -49.421875 L 72.015625 0 L -2.03125 0 L 34.3125 -274.96875 Z M 99.859375 -98.171875 C 96.242188 -129.304688 92.625 -167.742188 89 -213.484375 C 81.75 -160.953125 77.21875 -122.515625 75.40625 -98.171875 Z M 99.859375 -98.171875 "/>
+                            </symbol>
+                        </g>
+                        <g style="fill:rgb(0%,0%,0%);fill-opacity:1;" id="g-icon-left">
+                            <use xlink:href="#glyph0-1" x="-8.175781" y="317.62534"/>
+                            <use xlink:href="#glyph0-2" x="92.028023" y="317.62534"/>
+                            <use xlink:href="#glyph0-3" x="280.377208" y="317.62534"/>
+                        </g>
+                        <g style="fill:rgb(0%,0%,0%);fill-opacity:1;" id="g-icon-right">
+                            <use xlink:href="#glyph0-4" x="874.925781" y="317.62534"/>
+                            <use xlink:href="#glyph0-5" x="1066.671705" y="317.62534"/>
+                            <use xlink:href="#glyph0-6" x="1254.001868" y="317.62534"/>
+                        </g>
+                    </svg>
+				</span>
+                <div class="parent-loader">
+                    <span class="new-loader"></span>
+                </div>
+            </div>
+            {# <span class="loader-bar">
+            </span> #}
+
+            {#  <div class="loader my-5">
+                <div class="duo duo1">
+                    <div class="dott dott-a"></div>
+                    <div class="dott dott-b"></div>
+                </div>
+                <div class="duo duo2">
+                    <div class="dott dott-a"></div>
+                    <div class="dott dott-b"></div>
+                </div>
+            </div>#}
+        </div>
+
+        {% block cookies %} {% if not cookies_check() %} {# show a cookie consent banner #}
+            <section>
+                <div id="cookie-consent-container">{% include 'consent.html' %}</div>
+            </section>
+            <script type="text/javascript">
+                function fn_cookies(user_select) {
+                    if (user_select) {
+                        document.cookie = "cookie_consent=true; Secure; SameSite=Strict"
+                        document.getElementById("cookie-consent-container").hidden = true
+                    }
+                }
+            </script>
+        {% endif %} {% endblock %} {% endblock %} {% block scripts %}
+    <!-- Core -->
+    <script
+            type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js"
+    ></script>
+    <script type="text/javascript" src="{{ url_for('static',filename='js/popper.min.js') }}"></script>
+    <script
+            type="text/javascript"
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
+    ></script>
+    <!-- Local scripts -->
+    <script type="text/javascript" src="{{ url_for('static',filename='js/scripts.js') }}"></script>
+
+    <script type="text/javascript">
+        function preloaderFn() {
+            $(".preloader").fadeOut("fast")
+        }
+
+        window.addEventListener("load", preloaderClose, true)
+
+        function preloaderClose() {
+            preloaderFn()
+        }
+    </script>
+
+    <!-- Vendor JS -->
+    <script
+            type="text/javascript"
+            src="{{ url_for('static',filename='js/src/on-screen.umd.min.js') }}"
+    ></script>
+    <!-- Slider -->
+    <script
+            type="text/javascript"
+            src="{{ url_for('static',filename='js/src/nouislider.min.js') }}"
+    ></script>
+    <!-- Smooth scroll -->
+    <script
+            type="text/javascript"
+            src="{{ url_for('static',filename='js/src/smooth-scroll.polyfills.min.js') }}"
+    ></script>
+    <!-- Charts -->
+    <!--     <script type="text/javascript" src="{{url_for('static',filename='js/src/chartist.min.js')}}"></script>
+    <script type="text/javascript" src="{{url_for('static',filename='js/src/chartist-plugin-tooltip.min.js')}}"></script> -->
+    <!-- Datepicker -->
+    <script
+            type="text/javascript"
+            src="{{ url_for('static',filename='js/src/datepicker.min.js') }}"
+    ></script>
+    <!-- Sweet Alerts 2 -->
+    <script
+            type="text/javascript"
+            src="{{ url_for('static',filename='js/src/sweetalert2.all.min.js') }}"
+    ></script>
+    <!-- Moment JS -->
+    <!--     <script type="text/javascript" src="{{url_for('static',filename='js/src/moment.js')}}"></script> -->
+    <!-- Notyf -->
+    <script
+            type="text/javascript"
+            src="{{ url_for('static',filename='js/src/notyf.min.js') }}"
+    ></script>
+    <!-- Simplebar -->
+    <script
+            type="text/javascript"
+            src="{{ url_for('static',filename='js/src/simplebar.min.js') }}"
+    ></script>
+
+    <!-- Volt JS -->
+    <script type="text/javascript" src="{{ url_for('static',filename='js/src/volt.js') }}"></script>
+
+    <!-- Schema genator -->
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "WebTool",
+            "headline": "Inteegra",
+            "image": [
+                "https://example.com/photos/1x1/photo.jpg",
+                "https://example.com/photos/4x3/photo.jpg",
+                "https://example.com/photos/16x9/photo.jpg"
+            ],
+            "datePublished": "2022-05-26T08:00:00+08:00",
+            "dateModified": "2015-09-22T09:20:00+08:00",
+            "author": [
+                {
+                    "@type": "Person",
+                    "name": "Mateo Barrera",
+                    "url": "http://example.com/profile/janedoe123"
+                },
+                {
+                    "@type": "Person",
+                    "name": "Alex Pinchao",
+                    "url": "http://example.com/profile/johndoe123"
+                }
+            ]
+        }
+    </script>
+
+{% endblock %} {% endblock %}
+</body>
+</html>
